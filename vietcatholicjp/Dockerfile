@@ -12,12 +12,12 @@ RUN dnf -y install oracle-instantclient-release-el8 && \
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-WORKDIR /usr/src/anviet
+WORKDIR /usr/src/vietcatholicjp
 
 # install requirement libraries for Pillow
 RUN dnf -y install gcc python3-devel libjpeg-turbo-devel libjpeg-turbo-utils zlib-devel
 
-COPY ./requirements.txt /usr/src/anviet/requirements.txt
+COPY ./requirements.txt /usr/src/vietcatholicjp/requirements.txt
 RUN python3.8 -m pip install --upgrade pip
 RUN python3.8 -m pip install setuptools 
 RUN python3.8 -m pip install -r requirements.txt
