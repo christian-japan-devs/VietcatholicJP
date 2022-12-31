@@ -9,30 +9,25 @@ RUN dnf -y install oracle-instantclient-release-el8 && \
 #COPY ./clientadmin/ /lib/oracle/21/client64/lib/network/admin/
 
 # Install app
+# PYTHONDONTWRITEBYTECODEとPYTHONUNBUFFEREDはオプション
+# pycファイル(および__pycache__)の生成を行わないようにする
 ENV PYTHONDONTWRITEBYTECODE 1
+# 標準出力・標準エラーのストリームのバッファリングを行わない
 ENV PYTHONUNBUFFERED 1
 
-WORKDIR /usr/src/vietcatholicjp
+WORKDIR /code
 
 # install requirement libraries for Pillow
 RUN dnf -y install gcc python3-devel libjpeg-turbo-devel libjpeg-turbo-utils zlib-devel
 
-COPY ./requirements.txt /usr/src/vietcatholicjp/requirements.txt
+COPY requirements.txt /code/
 RUN python3.8 -m pip install --upgrade pip
 RUN python3.8 -m pip install setuptools 
 RUN python3.8 -m pip install -r requirements.txt
-RUN mkdir -p /var/run/gunicorn
-RUN mkdir -p /var/run/gunicorn/cert
 
-#ssl
-#COPY ./cert/server.crt /var/run/gunicorn/cert/server.crt
-#COPY ./cert/server.key /var/run/gunicorn/cert/server.key
-#COPY ./cert/server.password /var/run/gunicorn/cert/server.password
-
-# make migrations
-COPY ./manage.py /usr/src/vietcatholicjp/manage.py
-#RUN python3 /usr/src/vietcatholicjp/manage.py makemigrations
-# apply migrations
-#RUN python3 /usr/src/vietcatholicjp/manage.py migrate
 ENV PYTHONPATH /usr/src/vietcatholicjp
-CMD ["gunicorn", "vietcatholicjp.wsgi", "--bind=unix:/var/run/gunicorn/gunicorn.sock"]
+
+# entrypoint.shに実行権限を付与
+RUN chmod 755 entrypoint.sh
+# ソースコードをコンテナにコピー
+COPY . /code/

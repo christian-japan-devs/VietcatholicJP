@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: containers/django/Dockerfile
+    image: gunicorn:20.1.0
+    container_name: app
+    volumes:
+      - .:/code
+    # 8000番ポートをNginx側が接続できるよう開く
+    expose:
+      - "8000"
+    # コンテナ内の環境変数を.env.prodを使って設定
+    env_file: .env
+
+  web:
+    # コンテナ名をwebに指定
+    container_name: web
+    build:
+      # ビルドコンテキストはカレントディレクトリ
+      context: .
+      dockerfile: containers/nginx/Dockerfile
+    # ボリュームを指定
+    # ローカルの/staticをコンテナの/staticにマウントする
+    volumes:
+      - ./static:/static
+    # ローカルの80番ボートをコンテナの80番ポートとつなぐ
+    ports:
+      - "80:80"
+    # 先にappを起動してからwebを起動する
+    depends_on:
+      - app
