@@ -6,7 +6,7 @@ services:
     image: gunicorn:20.1.0
     container_name: gunicorn
     volumes:
-      - .:/usr/src/anviet/
+      - .:/usr/src/vietcatholicjp/
       - gunicorn:/var/run/gunicorn
     env_file: docker.env
 
@@ -16,7 +16,7 @@ services:
     depends_on:
       - gunicorn
     ports:
-      - "80:443"
+      - "80:80"
     volumes:
       - ./gunicorn.conf:/etc/nginx/conf.d/default.conf
       - gunicorn:/var/run/gunicorn
