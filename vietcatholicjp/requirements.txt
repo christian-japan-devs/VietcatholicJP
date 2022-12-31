@@ -1,0 +1,12 @@
+Django>=3.0,<4.0
+djangorestframework>=3.13.1
+dj-rest-auth
+django-allauth
+djangorestframework-simplejwt
+django-tinymce>=3.5.0
+Pillow>=7.0.2
+gunicorn==20.1.0
+boto3
+django-storages
+django-cors-headers>=3.5.0
+django-qr-code>=2.1.0
