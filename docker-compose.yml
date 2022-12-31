@@ -5,7 +5,6 @@ services:
     build:
       context: .
       dockerfile: containers/django/Dockerfile
-    image: gunicorn:20.1.0
     container_name: app
     volumes:
       - .:/code

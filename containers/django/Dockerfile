@@ -25,7 +25,7 @@ RUN python3.8 -m pip install --upgrade pip
 RUN python3.8 -m pip install setuptools 
 RUN python3.8 -m pip install -r requirements.txt
 
-ENV PYTHONPATH /usr/src/vietcatholicjp
+ENV PYTHONPATH /code/
 
 # entrypoint.shに実行権限を付与
 RUN chmod 755 entrypoint.sh
