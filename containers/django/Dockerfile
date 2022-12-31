@@ -25,10 +25,10 @@ RUN python3.8 -m pip install --upgrade pip
 RUN python3.8 -m pip install setuptools 
 RUN python3.8 -m pip install -r requirements.txt
 
-ENV PYTHONPATH /code/
+#ENV PYTHONPATH /code/
 
 # ソースコードをコンテナにコピー
 COPY . /code/
 
 # entrypoint.shに実行権限を付与
-RUN chmod 755 entrypoint.sh
+RUN chmod 755 /code/entrypoint.sh
