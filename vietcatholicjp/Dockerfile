@@ -34,5 +34,5 @@ COPY ./manage.py /usr/src/vietcatholicjp/manage.py
 #RUN python3 /usr/src/vietcatholicjp/manage.py makemigrations
 # apply migrations
 #RUN python3 /usr/src/vietcatholicjp/manage.py migrate
-
+ENV PYTHONPATH /usr/src/vietcatholicjp
 CMD ["gunicorn", "vietcatholicjp.wsgi", "--bind=unix:/var/run/gunicorn/gunicorn.sock"]
