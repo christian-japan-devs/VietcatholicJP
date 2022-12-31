@@ -26,7 +26,7 @@ JWT_SECRET_KEY= os.environ.get('JWT_SECRET_KEY','django-insecure-eb!$sstrytjb!4)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG") == "True"
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS")
 
 
 # Application definition
@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # local app
+    'home.apps.MainConfig',
 ]
 
 MIDDLEWARE = [
