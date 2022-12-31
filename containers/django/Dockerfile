@@ -27,7 +27,8 @@ RUN python3.8 -m pip install -r requirements.txt
 
 ENV PYTHONPATH /code/
 
-# entrypoint.shに実行権限を付与
-RUN chmod 755 entrypoint.sh
 # ソースコードをコンテナにコピー
 COPY . /code/
+
+# entrypoint.shに実行権限を付与
+RUN chmod 755 entrypoint.sh
