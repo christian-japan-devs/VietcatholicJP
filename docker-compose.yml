@@ -12,6 +12,7 @@ services:
     # 8000番ポートをNginx側が接続できるよう開く
     expose:
       - "8000"
+    command: sh -c "/code/entrypoint.sh"
     # コンテナ内の環境変数を.env.prodを使って設定
     env_file: .env
 

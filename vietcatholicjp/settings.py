@@ -24,9 +24,9 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY','django-insecure-eb!$sstrytjb!4)
 JWT_SECRET_KEY= os.environ.get('JWT_SECRET_KEY','django-insecure-eb!$sstrytjb!4)f!*5lu#bm25ub*4@l3o$9623x(++841gw$x')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = (os.environ.get('DEBUG','True') == 'True')
+DEBUG = os.environ.get("DEBUG") == "True"
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
 
 # Application definition
