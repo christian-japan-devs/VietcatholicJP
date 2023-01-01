@@ -149,12 +149,12 @@ CORS_ALLOWED_ORIGINS = [
     "https://vietcatholic.jp",
     "https://service.vietcatholic.jp",
     "https://140.238.37.43",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
     "https://nr8ih2nhfkio.compat.objectstorage.ap-tokyo-1.oraclecloud.com",
 ]
 
-CSRF_TRUSTED_ORIGINS = ["www.vietcatholic.jp","140.238.37.43","service.vietcatholic.jp","https://140.238.37.43","https://wwww.vietcatholic.jp","https://service.vietcatholic.jp"]
+CSRF_TRUSTED_ORIGINS = ["localhost","www.vietcatholic.jp","140.238.37.43","service.vietcatholic.jp","https://140.238.37.43","https://wwww.vietcatholic.jp","https://service.vietcatholic.jp"]
 
 # custom user model, because we do not want to use the Django provided user model
 AUTH_USER_MODEL = 'users.CustomUserModel'
@@ -279,3 +279,7 @@ EMAIL_HOST_PASSWORD = (os.environ.get('OCI_EMAIL_PASSWORD'))
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+DJANGO_SUPERUSER_PASSWORD = os.environ.get('SUPERUSER_PASSWORD')
+DJANGO_SUPERUSER_USERNAME = os.environ.get('SUPERUSER_USERNAME')
+DJANGO_SUPERUSER_EMAIL = os.environ.get('SUPERUSER_EMAIL')

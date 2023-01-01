@@ -38,8 +38,8 @@ class CustomUserModel(AbstractBaseUser, PermissionsMixin):
 
     active = models.BooleanField(default = True)
 
-    is_staff = models.BooleanField(default = False)
-    is_superuser = models.BooleanField(default = False)
+    is_staff = models.BooleanField(default = True)
+    is_superuser = models.BooleanField(default = True)
 
     created_on  = models.DateTimeField(auto_now_add = True, blank=True, null=True)
     updated_on = models.DateTimeField(auto_now = True)
