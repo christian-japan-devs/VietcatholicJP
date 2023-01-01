@@ -22,5 +22,6 @@ admin.site.site_title = 'Viet Catholic Japan Admintration'       # default: "Dja
 
 urlpatterns = [
     path('',include('home.urls')),
+    path('',include('users.urls')),
     path('admin/', admin.site.urls),
 ]
