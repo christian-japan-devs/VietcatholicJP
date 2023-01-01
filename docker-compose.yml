@@ -28,7 +28,7 @@ services:
       - ./static:/static
     # ローカルの80番ボートをコンテナの80番ポートとつなぐ
     ports:
-      - "80:80"
+      - "80:443"
     # 先にappを起動してからwebを起動する
     depends_on:
       - app

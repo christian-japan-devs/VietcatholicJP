@@ -148,14 +148,14 @@ CORS_ALLOWED_ORIGINS = [
     "https://www.vietcatholic.jp",
     "https://vietcatholic.jp",
     "https://service.vietcatholic.jp",
-    "https://140.238.37.43",
+    "https://150.230.200.189",
     "http://140.238.37.43",
     "http://localhost:8000",
     "http://127.0.0.1:8000",
     "https://nr8ih2nhfkio.compat.objectstorage.ap-tokyo-1.oraclecloud.com",
 ]
 
-CSRF_TRUSTED_ORIGINS = ["localhost","www.vietcatholic.jp","140.238.37.43","service.vietcatholic.jp","https://140.238.37.43","https://wwww.vietcatholic.jp","https://service.vietcatholic.jp"]
+CSRF_TRUSTED_ORIGINS = ["localhost","www.vietcatholic.jp","150.230.200.189","service.vietcatholic.jp","https://150.230.200.189","https://wwww.vietcatholic.jp","https://service.vietcatholic.jp"]
 
 # custom user model, because we do not want to use the Django provided user model
 AUTH_USER_MODEL = 'users.CustomUserModel'
