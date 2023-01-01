@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
 from pathlib import Path
+from django.utils.translation import ugettext_lazy as _
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,13 +21,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY','django-insecure-eb!$sstrytjb!4)f!*5lu#bm25ub*4@l3o$9623x(++841gw$x')
-JWT_SECRET_KEY= os.environ.get('JWT_SECRET_KEY','django-insecure-eb!$sstrytjb!4)f!*5lu#bm25ub*4@l3o$9623x(++841gw$x')
+SECRET_KEY = os.environ.get('SECRET_KEY')
+JWT_SECRET_KEY= os.environ.get('JWT_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG") == "True"
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS")
+ALLOWED_HOSTS = ['localhost','127.0.0.1','0.0.0.0']
 
 
 # Application definition
@@ -38,11 +39,28 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Third party
+    'tinymce',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+    'corsheaders',
+    'django.contrib.sites',
+    # authentication
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',
     # local app
     'home.apps.HomeConfig',
+    'users.apps.UsersConfig'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -70,18 +88,115 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'vietcatholicjp.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    },
+    'facebook': {
+        'METHOD': 'oauth2',
+        'SDK_URL': '//connect.facebook.net/{locale}/sdk.js',
+        'SCOPE': ['email', 'public_profile'],
+        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'INIT_PARAMS': {'cookie': True},
+        'FIELDS': [
+            'id',
+            'first_name',
+            'last_name',
+            'middle_name',
+            'name',
+            'name_format',
+            'picture',
+            'short_name'
+        ],
+        'EXCHANGE_TOKEN': True,
+        'LOCALE_FUNC': 'path.to.callable',
+        'VERIFIED_EMAIL': False,
+        'VERSION': 'v13.0',
     }
 }
+
+# Turn off email verification
+SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
+SOCIALACCOUNT_EMAIL_REQUIRED = False
+
+SITE_ID = 1
+REST_USE_JWT = True # use JSON Web Tokens
+
+# setting for simple jwt
+from datetime import timedelta
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=8),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+    'ROTATE_FRESHTOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN': True,
+    'USER_ID_FIELD': 'userId',
+    'USER_ID_CLAIM': 'userId',
+    'SIGNING_KEY': JWT_SECRET_KEY
+}
+
+WSGI_APPLICATION = 'vietcatholicjp.wsgi.application'
+
+# this should be changed before you push to production
+CORS_ALLOWED_ORIGINS = [
+    "https://www.vietcatholic.jp",
+    "https://vietcatholic.jp",
+    "https://service.vietcatholic.jp",
+    "https://140.238.37.43",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://nr8ih2nhfkio.compat.objectstorage.ap-tokyo-1.oraclecloud.com",
+]
+
+CSRF_TRUSTED_ORIGINS = ["www.vietcatholic.jp","140.238.37.43","service.vietcatholic.jp","https://140.238.37.43","https://wwww.vietcatholic.jp","https://service.vietcatholic.jp"]
+
+# custom user model, because we do not want to use the Django provided user model
+AUTH_USER_MODEL = 'users.CustomUserModel'
+# need to specify the exact serializer as well for dj-rest-auth, otherwise it will end up shooting itself in the foot and me in the head
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAIL_SERIALIZER': 'users.serializers.CustomUserModelSerializer'
+}
+
+# set up the authentication classes
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES':(
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES':(
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'dj_rest_auth.utils.JWTCookieAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+# Database
+# [START db_setup]
+# Use django-environ to parse the connection string
+if os.environ.get("OCI_ENV", None):
+    DATABASES = {
+        "default": {
+            "ENGINE": os.environ.get('OCI_ENGINE'),
+            "NAME": (os.environ.get('OCI_NAME')),
+            "USER": os.environ.get('OCI_USER','ADMIN'),
+            "PASSWORD": os.environ.get('OCI_PASSWORD'),
+            "HOST":'',
+            "PORT":''
+        }
+    }
+else :
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
@@ -103,12 +218,21 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+QR_CODE_CACHE_ALIAS = 'qr-code'
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
+LANGUAGES = (
+    ('en', _('English')),
+    ('vi', _('Vietnamese')),
+    ('ja', _('Japanese')),
+    ('es', _('Spanish'))
+)
+
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Japan'
 
 USE_I18N = True
 
@@ -117,8 +241,39 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
+if os.environ.get("OCI_ENV", None):
+    AWS_ACCESS_KEY_ID = os.environ.get("ACCESS_KEY_ID", None)
+    AWS_SECRET_ACCESS_KEY = os.environ.get("SECRET_ACCESS_KEY", None)
+    AWS_STORAGE_BUCKET_NAME = os.environ.get("STORAGE_BUCKET_NAME", None)
+    AWS_S3_ENDPOINT_URL = os.environ.get("BUCKET_ENDPOINT_URL", None)
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',
+    }
+    AWS_LOCATION = 'AnVietStatic'
+    STATIC_URL = 'https://%s/%s/' % (AWS_S3_ENDPOINT_URL, AWS_LOCATION)
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    #TINYMCE 
+    TINYMCE_JS_ROOT = f'{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/{AWS_LOCATION}/tinymce'
+    TINYMCE_JS_URL = f'{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/{AWS_LOCATION}/tinymce/tinymce.min.js'
+else:
+    MEDIA_ROOT_NAME = "media"
+    MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_ROOT_NAME)
+    MEDIA_URL = f"/{MEDIA_ROOT_NAME}/"
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+    STATIC_URL = '/static/'
 
-STATIC_URL = 'static/'
+# Default primary key field type
+# https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.environ.get('OCI_SMTP_HOST')
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get('OCI_EMAIL_USER')
+EMAIL_HOST_PASSWORD = (os.environ.get('OCI_EMAIL_PASSWORD'))
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
