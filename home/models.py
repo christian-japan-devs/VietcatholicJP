@@ -69,7 +69,7 @@ class Announcement(models.Model):
     updated_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='updated_user',default=None, blank=True, null=True)
 
     class Meta:
-        ordering = ['created_date']
+        ordering = ['created_on']
         verbose_name = "Thông báo chung"
         verbose_name_plural = "Thông báo chung"
 
@@ -99,9 +99,9 @@ class MassDateSchedule(models.Model):
 class MassTimeSchedule(models.Model):
     date_schedule = models.ForeignKey(MassDateSchedule,verbose_name='Thánh Lễ',on_delete=models.CASCADE)
     time = models.TimeField('Giờ',default='',max_length=300)
-    father = models.ForeignKey(Father,verbose_name='Cha', on_delete=models.CASCADE)
-    church = models.ForeignKey(Church,verbose_name='Nhà thờ', on_delete=models.CASCADE)
-    province = models.ForeignKey(Province,verbose_name='Tỉnh',default=None,blank=True,null=True,on_delete=models.SET_NULL)
+    father = models.ForeignKey(Father,verbose_name='Cha', on_delete=models.CASCADE,related_name='mass_father')
+    church = models.ForeignKey(Church,verbose_name='Nhà thờ', on_delete=models.CASCADE,related_name='mass_church')
+    province = models.ForeignKey(Province,verbose_name='Tỉnh',default=None,blank=True,null=True,on_delete=models.SET_NULL,related_name='mass_province')
     notes = HTMLField('Ghi chú',blank=True, null=True,default='')
 
     class Meta:
@@ -110,14 +110,14 @@ class MassTimeSchedule(models.Model):
         verbose_name_plural = "Lịch Lễ chi tiết"
     
     def __str__(self):
-        return f'{self.from_date_time}-{self.to_date_time}'
+        return f'{self.date_schedule}-{self.time}'
 
 class ConfessSchedule(models.Model):
     from_date_time= models.DateTimeField('Bắt đầu từ', default=timezone.now)
     to_date_time= models.DateTimeField('Đến khi', default=timezone.now)
     father = models.ForeignKey(Father,verbose_name='Cha', on_delete=models.CASCADE)
     notes= models.CharField('Ghi chú',max_length=500,blank=True,default='')
-    church = models.ForeignKey(Church, on_delete=models.CASCADE,help_text='chọn Nhà thờ',blank=True,null=True)
+    church = models.ForeignKey(Church, on_delete=models.CASCADE,help_text='chọn Nhà thờ',blank=True,null=True,related_name='confess_church')
     publish= models.BooleanField('Công khai',default=True, blank=True)
     created_on = models.DateTimeField('Created on',default=timezone.now)
 
