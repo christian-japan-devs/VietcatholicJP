@@ -196,56 +196,7 @@ class FatherAndChurch(models.Model):
     class Meta:
         verbose_name = "Cha tại nhà thờ"
         verbose_name_plural = "Cha tại nhà thờ"
-        unique_together = ('user','full_name','address')
         ordering = ('is_active','father__full_name','church__name',)
 
     def __str__(self):
         return f'{self.father.full_name} : {self.church.name}'
-
-
-class MassDateSchedule(models.Model):
-    title = models.CharField('Tiêu đề',default='',max_length=300)
-    slug = models.CharField('slug',blank=True, null=True,default='',max_length=400)
-    date = models.DateField('Ngày',blank=True, null=True,auto_now = True)
-    
-    def __str__(self):
-        return f'{self.date}: {self.title}'
-
-    class Meta:
-        ordering = ['-date']
-        verbose_name = "Lịch giải tội"
-        verbose_name_plural = "Lịch giải tội"
-
-class MassTimeSchedule(models.Model):
-    date_schedule = models.ForeignKey(MassDateSchedule,verbose_name='Thánh Lễ',on_delete=models.CASCADE)
-    time = models.TimeField('Giờ',default='',max_length=300)
-    father = models.ForeignKey(Father,verbose_name='Cha', on_delete=models.CASCADE)
-    church = models.ForeignKey(Church,verbose_name='Nhà thờ', on_delete=models.CASCADE)
-    province = models.ForeignKey(Province,verbose_name='Tỉnh',default=None,blank=True,null=True,on_delete=models.SET_NULL)
-    notes = HTMLField('Ghi chú',blank=True, null=True,default='')
-
-    class Meta:
-        ordering = ['-date_schedule']
-        verbose_name = "Lịch giải tội"
-        verbose_name_plural = "Lịch giải tội"
-    
-    def __str__(self):
-        return f'{self.from_date_time}-{self.to_date_time}'
-
-class ConfessSchedule(models.Model):
-    from_date_time= models.DateTimeField('Bắt đầu từ', default=timezone.now)
-    to_date_time= models.DateTimeField('Đến khi', default=timezone.now)
-    father = models.ForeignKey(Father,verbose_name='Cha', on_delete=models.CASCADE)
-    notes= models.CharField('Ghi chú',max_length=500,blank=True,default='')
-    church = models.ForeignKey(Church, on_delete=models.CASCADE,help_text='chọn Nhà thờ',blank=True,null=True)
-    publish= models.BooleanField('Công khai',default=True, blank=True)
-    created_on = models.DateTimeField('Created on',default=timezone.now)
-
-    class Meta:
-        ordering = ['-from_date_time']
-        verbose_name = "Lịch giải tội"
-        verbose_name_plural = "Lịch giải tội"
-    
-    def __str__(self):
-        return f'{self.from_date_time}-{self.to_date_time}'
-
