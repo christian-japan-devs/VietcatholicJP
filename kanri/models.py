@@ -94,8 +94,8 @@ class Facility(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.id:
-            if self.imageUrl:
-                self.imageUrl = compressImage(self.imageUrl)
+            if self.image:
+                self.image = compressImage(self.image)
         super(ChurchImages, self).save(*args, **kwargs)
 
 class Church(models.Model):
@@ -130,8 +130,8 @@ class Church(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.id:
-            if self.imageUrl:
-                self.imageUrl = compressImage(self.imageUrl)
+            if self.image:
+                self.image = compressImage(self.image)
         super(ChurchImages, self).save(*args, **kwargs)
 
 class ChurchImages(models.Model):
@@ -151,8 +151,8 @@ class ChurchImages(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.id:
-            if self.imageUrl:
-                self.imageUrl = compressImage(self.imageUrl)
+            if self.image:
+                self.image = compressImage(self.image)
         super(ChurchImages, self).save(*args, **kwargs)
 
 class Father(models.Model):
