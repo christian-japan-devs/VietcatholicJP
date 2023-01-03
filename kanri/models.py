@@ -74,7 +74,7 @@ class Province(models.Model):
         return self.japanese_name
 
 class Facility(models.Model):
-    name = models.CharField('Tên Nhà thờ',help_text='Tên Nhà thờ',max_length=200)
+    name = models.CharField('Tên',help_text='Tên',max_length=200)
     image = models.ImageField('Hình ảnh',help_text='Hình ảnh đại diện',null=True,blank=True,upload_to='images')
     introduction = HTMLField('Giới thiệu',help_text='Mô tả sơ lược về Nhà thờ',blank=True)
     url = models.CharField('Web URL',help_text='Link liên kết',max_length=100, default='',blank=True)
@@ -89,8 +89,8 @@ class Facility(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = "Nhà thờ"
-        verbose_name_plural = "Nhà thờ"
+        verbose_name = "Facility"
+        verbose_name_plural = "Facilities"
     
     def save(self, *args, **kwargs):
         if not self.id:
@@ -111,14 +111,14 @@ class Church(models.Model):
     province = models.ForeignKey(Province,verbose_name='Tỉnh',default=None,blank=True,null=True,on_delete=models.CASCADE)
     address = models.CharField('Địa chỉ',help_text='Địa chỉ',max_length=400)
     google_map_link = models.CharField('googlemap link',max_length=500)
-    notice_on_map = HTMLField('Thông báo',help_text='Nội dung hiển thị trên Map',blank=True,default = "")
+    notice_on_map = HTMLField('Thông báo',help_text='Nội dung hiển thị trên Map',null=True,blank=True,default = "")
     geo_lon = models.FloatField('Kinh độ',help_text='Kinh độ theo bản đồ Google',default=0.0,blank=True,null=True)
     geo_lat = models.FloatField('Vĩ độ',help_text='Vĩ độ theo bản đồ Google',default=0.0,blank=True,null=True)
     geo_hash = models.CharField('geo_hash',max_length=30, default='',blank=True)
-    created_on = models.DateTimeField('Ngày tạo',default=timezone.now)
+    created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,default=timezone.now)
     created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,default=None,blank=True,null=True)
     updated_user = models.ForeignKey(CustomUserModel, verbose_name='Người cập nhật',on_delete=models.CASCADE,default=None,blank=True,null=True,help_text='Người cuối cập nhật',related_name='update_user')
-    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',default=timezone.now)
+    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',default=timezone.now,blank=True,null=True)
 
     def __str__(self):
         return self.name
