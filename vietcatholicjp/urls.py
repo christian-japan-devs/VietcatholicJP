@@ -15,13 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth import views as auth_views #new
 
 admin.site.site_header = 'Viet Catholic Japan'                    # default: "Django Administration"
 admin.site.index_title = 'Viet Catholic Japan Admintration'       # default: "Site administration"
 admin.site.site_title = 'Viet Catholic Japan Admintration'       # default: "Django site admin"
 
 urlpatterns = [
-    path('',include('home.urls')),
+    path('',include('home.urls'),name="vcj-home"),
     path('',include('users.urls')),
+    #path('admin/login/', auth_views.LoginView.as_view(template_name='main/home.html'), name='login'), #new
     path('admin/', admin.site.urls),
 ]

@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.facebook',
     # local app
+    'kanri.apps.KanriConfig',
     'home.apps.HomeConfig',
     'users.apps.UsersConfig'
 ]
@@ -120,6 +121,8 @@ SOCIALACCOUNT_PROVIDERS = {
         'VERSION': 'v13.0',
     }
 }
+
+#LOGIN_REDIRECT_URL = '/admin'
 
 # Turn off email verification
 SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
@@ -281,6 +284,6 @@ EMAIL_HOST_PASSWORD = (os.environ.get('OCI_EMAIL_PASSWORD'))
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-DJANGO_SUPERUSER_PASSWORD = os.environ.get('SUPERUSER_PASSWORD')
-DJANGO_SUPERUSER_USERNAME = os.environ.get('SUPERUSER_USERNAME')
-DJANGO_SUPERUSER_EMAIL = os.environ.get('SUPERUSER_EMAIL')
+#DJANGO_SUPERUSER_PASSWORD = os.environ.get('SUPERUSER_PASSWORD')
+#DJANGO_SUPERUSER_USERNAME = os.environ.get('SUPERUSER_USERNAME')
+#DJANGO_SUPERUSER_EMAIL = os.environ.get('SUPERUSER_EMAIL')
