@@ -83,10 +83,24 @@ class Announcement(models.Model):
 
         super(Announcement, self).save(*args, **kwargs)
 
-class MassDateSchedule(models.Model):
+class Gospel(models.Model):
+    date = models.DateField('Ngày')
     title = models.CharField('Tiêu đề',default='',max_length=300)
     slug = models.CharField('slug',blank=True, null=True,default='',max_length=400)
-    date = models.DateField('Ngày',blank=True, null=True,auto_now = True)
+    excerpt = models.CharField('Tóm lược',blank=True, null=True,default='',max_length=500)
+
+class GospelContent(models.Model):
+    chapter_title = models.CharField('Tiêu đề',default='',max_length=300)
+    slug = models.CharField('slug',default='',max_length=400)
+    chapter_reference = models.CharField('Nguồn',default='',max_length=300)
+    paragraphs = HTMLField('Nội dung')
+    gospel = models.ForeignKey(Gospel,verbose_name='Bài đọc',on_delete=models.CASCADE,related_name='content_gospel')
+
+class MassDateSchedule(models.Model):
+    date = models.DateField('Ngày')
+    title = models.CharField('Tiêu đề',default='',max_length=300)
+    slug = models.CharField('slug',blank=True, null=True,default='',max_length=400)
+    gospel = models.ForeignKey(Gospel,verbose_name='Bài đọc',on_delete=models.CASCADE,related_name='mass_gospel')
     
     def __str__(self):
         return f'{self.date}: {self.title}'
