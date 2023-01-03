@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import (home,)
+from django.contrib.auth import views
+from .views import (home,UserLoginForm)
 
 urlpatterns = [
-    path('', home, name='vietcatholic-home'),
+    path('', views.LoginView.as_view(template_name='main/home.html',authentication_form=UserLoginForm), name='vietcatholic-home'),
 ]
