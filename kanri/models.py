@@ -96,7 +96,7 @@ class Facility(models.Model):
         if not self.id:
             if self.image:
                 self.image = compressImage(self.image)
-        super(ChurchImages, self).save(*args, **kwargs)
+        super(Facility, self).save(*args, **kwargs)
 
 class Church(models.Model):
     name = models.CharField('Tên Nhà thờ',help_text='Tên Nhà thờ',max_length=120)
@@ -132,7 +132,7 @@ class Church(models.Model):
         if not self.id:
             if self.image:
                 self.image = compressImage(self.image)
-        super(ChurchImages, self).save(*args, **kwargs)
+        super(Church, self).save(*args, **kwargs)
 
 class ChurchImages(models.Model):
     title = models.CharField('Title',max_length=120)
