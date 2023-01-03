@@ -41,7 +41,7 @@ class Country(models.Model):
         ordering = ('english_name',)
 
     def __str__(self):
-        return self.vietnamese_name
+        return self.english_name
 
 class Region(models.Model):
     id = models.CharField(max_length = 50, primary_key = True, editable = False)
@@ -56,7 +56,7 @@ class Region(models.Model):
         ordering = ('name',)
 
     def __str__(self):
-        return self.japanese_name
+        return self.name
 
 class Province(models.Model):
     id = models.CharField(max_length = 50, primary_key = True, editable = False)
@@ -71,7 +71,7 @@ class Province(models.Model):
         ordering = ('name',)
 
     def __str__(self):
-        return self.japanese_name
+        return self.name
 
 class Facility(models.Model):
     name = models.CharField('Tên',help_text='Tên',max_length=200)
