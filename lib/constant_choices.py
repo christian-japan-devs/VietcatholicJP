@@ -9,6 +9,11 @@ status_choice = (
     ('C', 'Cancel')
 )
 
+group_type_choice = (
+    ('commu','Cộng đoàn'),
+    ('group','Nhóm giới trẻ'),
+)
+
 cf_status_choice = (
     ('CF', 'CONFIRMED'),
     ('NF', 'NOTCONFIRM')
@@ -22,6 +27,21 @@ language_choice = (
     ('vi', _('Tiếng Việt'))
 )
 
+priority_choice = (
+    ('3', 'Cao'),
+    ('2', 'Trung bình'),
+    ('1', 'Thấp')
+)
+
+sequence_choise = (
+    ('0', '1'),
+    ('1', '2'),
+    ('2', '3'),
+    ('3', '4'),
+    ('4', '5'),
+    ('5', '6'),
+    ('6', '7'),
+)
 
 week_day_choice = (
     ('0', _('Thứ hai')),

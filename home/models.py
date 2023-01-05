@@ -7,7 +7,7 @@ from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from tinymce.models import HTMLField
 from users.models import CustomUserModel
-from lib.constant_choises import (jp_region_choices,jp_province_choices,language_choice)
+from lib.constant_choices import (jp_region_choices,sequence_choise,priority_choice)
 from kanri.models import Province, Church, Father
 
 #image compression method
@@ -29,19 +29,114 @@ class Language(models.Model):
         return self.language_name
 
 # Create your models here.
-class Aboutus(models.Model):
-    title = models.CharField('Title',max_length=100)
+class YoutubeVideo(models.Model):
+    title = models.CharField('Chủ đề',max_length=100)
     slug = models.CharField('Slug',max_length=100)
-    imageUrl = models.ImageField('Image',null=True, blank=True, upload_to='web_images/announ')
-    excerpt = HTMLField('Tóm tắt')
+    excerpt = models.CharField('Tóm tắt',help_text='Không quá 300 ký tự',max_length=300)
+    youtube_url = models.CharField('Youtube link',max_length=200)
+    isActive = models.BooleanField('Công khai',default=True, blank=True)
+    created_on = models.DateTimeField('Created on',auto_now = True)
+    created_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE, default=None, blank=True, null=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['created_on']
+        verbose_name = "Video youtube"
+        verbose_name_plural = "Video youtube"
+
+class Letter(models.Model):
+    title = models.CharField('Chủ đề',max_length=100)
+    slug = models.CharField('Slug',max_length=100)
+    imageUrl = models.ImageField('Hình ảnh',null=True, blank=True, upload_to='web_images/letter')
+    excerpt = models.CharField('Tóm tắt',help_text='Không quá 300 ký tự',max_length=300)
     content = HTMLField('Nội dung')
-    isActive = models.BooleanField('Publish',default=True, blank=True)
-    created_date = models.DateTimeField('Created on',default=timezone.now)
-    created_user = models.ForeignKey(
+    isActive = models.BooleanField('Công khai',default=True, blank=True)
+    created_on = models.DateTimeField('Created on',auto_now = True)
+    author = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='letter_author', default=None, blank=True, null=True)
+
+    def __str__(self):
+        return self.slug
+
+    class Meta:
+        ordering = ['created_on']
+        verbose_name = "Thư mục vụ"
+        verbose_name_plural = "Thư mục vụ"
+    
+    def save(self, *args, **kwargs):
+        if not self.id:
+            if self.imageUrl:
+                self.imageUrl = compressImage(self.imageUrl)
+        super(Letter, self).save(*args, **kwargs)
+
+class PostType(models.Model):
+    name = models.CharField('Tên',max_length=100)
+    slug = models.CharField('Slug',max_length=100)
+    isActive = models.BooleanField('Công khai',default=True, blank=True)
+    created_on = models.DateTimeField('Created on',auto_now = True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = "Bài viết"
+        verbose_name_plural = "Bài viết"
+
+class Post(models.Model):
+    title = models.CharField('Chủ đề',max_length=300)
+    slug = models.CharField('Slug',max_length=100)
+    imageUrl = models.ImageField('Hình ảnh',null=True, blank=True, upload_to='web_images/post')
+    excerpt = models.CharField('Tóm tắt',help_text='Không quá 300 ký tự',max_length=300)
+    post_type = models.ForeignKey(PostType,verbose_name='Loại',on_delete=models.CASCADE)
+    isActive = models.BooleanField('Công khai',default=True, blank=True)
+    created_on = models.DateTimeField('Created on',auto_now = True)
+    author = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='post_author', default=None, blank=True, null=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['created_on']
+        verbose_name = "Bài viết"
+        verbose_name_plural = "Bài viết"
+    
+    def save(self, *args, **kwargs):
+        if not self.id:
+            if self.imageUrl:
+                self.imageUrl = compressImage(self.imageUrl)
+        super(Post, self).save(*args, **kwargs)
+
+class PostContent(models.Model):
+    post = models.ForeignKey(Post,verbose_name='Bài',on_delete=models.CASCADE)
+    chapter_title = models.CharField('Tên mục',max_length=200)
+    slug = models.CharField('Slug',max_length=100)
+    sequence = models.CharField('Thứ tự',default='0',choices=sequence_choise,max_length=4)
+    imageUrl = models.ImageField('Hình ảnh',null=True, blank=True, upload_to='web_images/post')
+    chapter_summary = models.CharField('Tóm tắt',help_text='Không quá 500 ký tự',max_length=500)
+    content = HTMLField('Nội dung')
+    created_on = models.DateTimeField('Created on',auto_now = True)
+    edited_by = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='content_author', default=None, blank=True, null=True)
+
+    class Meta:
+        ordering = ['post','sequence']
+        verbose_name = "Nội dung bài viết"
+        verbose_name_plural = "Nội dung bài viết"
+
+class Aboutus(models.Model):
+    title = models.CharField('Chủ đề',max_length=100)
+    slug = models.CharField('Slug',max_length=100)
+    imageUrl = models.ImageField('Hình ảnh',null=True, blank=True, upload_to='web_images/announ')
+    excerpt = models.CharField('Tóm tắt',help_text='Không quá 300 ký tự',max_length=300)
+    content = HTMLField('Nội dung')
+    isActive = models.BooleanField('Công khai',default=True, blank=True)
+    created_on = models.DateTimeField('Created on',auto_now = True)
+    author = models.ForeignKey(
         CustomUserModel, on_delete=models.CASCADE, default=None, blank=True, null=True)
 
     class Meta:
-        ordering = ['created_date']
+        ordering = ['created_on']
         verbose_name = "Giới thiệu"
         verbose_name_plural = "Giới thiệu"
     
@@ -52,24 +147,24 @@ class Aboutus(models.Model):
         super(Aboutus, self).save(*args, **kwargs)
 
 class Announcement(models.Model):
-    title = models.CharField('Title',max_length=100)
+    title = models.CharField('Chủ đề',max_length=100)
     slug = models.CharField('Slug',max_length=200)
-    imageUrl = models.ImageField('Image',null=True, blank=True, upload_to='web_images/announ')
-    excerpt = HTMLField('short description',null=True, blank=True,default='')
+    imageUrl = models.ImageField('Hình ảnh',null=True, blank=True, upload_to='web_images/announ')
+    excerpt = models.CharField('Tóm tắt',help_text='Không quá 300 ký tự',default='',max_length=300)
     content = HTMLField()
-    language = models.ForeignKey(Language, on_delete=models.CASCADE, default=None, blank=True, null=True)
-    isActive = models.BooleanField('Publish',default=True, blank=True)
-    from_date = models.DateField('From Date',default=timezone.now)
-    to_date = models.DateField('To Date',default=timezone.now)
-    event_date_time = models.DateTimeField('Event date time',default=timezone.now)
+    priority_choice = models.CharField('Ưu tiên',choices=priority_choice,default='2',max_length=10)
+    isActive = models.BooleanField('Công khai',default=True, blank=True)
+    from_date = models.DateField('Công khai từ',default=timezone.now)
+    to_date = models.DateField('Công khai đến',default=timezone.now)
+    event_date_time = models.DateTimeField('Event date time',default=timezone.now, blank=True, null=True)
     google_map_link = models.CharField('Google Map Link',null=True, blank=True,default='',max_length=200)
-    register_link = models.CharField('Register Link',null=True, blank=True,default='',max_length=200)
-    created_on = models.DateTimeField('Created on',default=timezone.now)
-    author = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='author', default=None, blank=True, null=True)
+    register_link = models.CharField('Register Link',null=True, blank=True,default='',max_length=400)
+    created_on = models.DateTimeField('Created on',auto_now = True)
+    author = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='announ_author', default=None, blank=True, null=True)
     updated_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='updated_user',default=None, blank=True, null=True)
 
     class Meta:
-        ordering = ['created_on']
+        ordering = ['priority_choice','isActive','created_on']
         verbose_name = "Thông báo chung"
         verbose_name_plural = "Thông báo chung"
 
@@ -85,16 +180,63 @@ class Announcement(models.Model):
 
 class Gospel(models.Model):
     date = models.DateField('Ngày')
-    title = models.CharField('Tiêu đề',default='',max_length=300)
+    title = models.CharField('Chủ đề',default='',max_length=300)
     slug = models.CharField('slug',blank=True, null=True,default='',max_length=400)
-    excerpt = models.CharField('Tóm lược',blank=True, null=True,default='',max_length=500)
+    imageUrl = models.ImageField('Hình ảnh',null=True, blank=True, upload_to='web_images/gospel')
+    excerpt = models.CharField('Tóm tắt',help_text='Không quá 300 ký tự',default='',max_length=300)
+    audio_link = models.CharField('Audio Link',null=True, blank=True,default='',max_length=400)
+    created_on = models.DateTimeField('Created on',auto_now = True)
+    author = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='gospel_author', default=None, blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.date}: {self.title}'
+
+    class Meta:
+        ordering = ['-date']
+        verbose_name = "Lời Chúa chủ đề"
+        verbose_name_plural = "Lời Chúa chủ đề"
+    
+    def save(self, *args, **kwargs):
+        if not self.id:
+            if self.imageUrl:
+                self.imageUrl = compressImage(self.imageUrl)
+
+        super(Gospel, self).save(*args, **kwargs)
 
 class GospelContent(models.Model):
+    gospel = models.ForeignKey(Gospel,verbose_name='Lời Chúa tiêu đề',on_delete=models.CASCADE,related_name='content_gospel')
+    sequence = models.CharField('Thứ tự',default='0',choices=sequence_choise,max_length=4)
     chapter_title = models.CharField('Tiêu đề',default='',max_length=300)
     slug = models.CharField('slug',default='',max_length=400)
-    chapter_reference = models.CharField('Nguồn',default='',max_length=300)
-    paragraphs = HTMLField('Nội dung')
-    gospel = models.ForeignKey(Gospel,verbose_name='Bài đọc',on_delete=models.CASCADE,related_name='content_gospel')
+    chapter_reference = models.CharField('Tác giả',default='',max_length=100)
+    content = HTMLField('Nội dung')
+    created_on = models.DateTimeField('Created on',auto_now = True)
+
+    def __str__(self):
+        return f'{self.date}: {self.title}'
+
+    class Meta:
+        ordering = ['gospel','sequence']
+        verbose_name = "Lời Chúa nội dung"
+        verbose_name_plural = "Lời Chúa nội dung"
+
+class GospelReflection(models.Model):
+    gospel = models.ForeignKey(Gospel,verbose_name='Lời Chúa tiêu đề',on_delete=models.CASCADE,related_name='reflection_gospel')
+    title = models.CharField('Tiêu đề',default='',max_length=300)
+    slug = models.CharField('slug',default='',max_length=400)
+    audio_link = models.CharField('Audio Link',null=True, blank=True,default='',max_length=400)
+    excerpt = models.CharField('Tóm tắt',help_text='Không quá 300 ký tự',default='',max_length=300)
+    content = HTMLField('Nội dung')
+    author = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='reflection_author', default=None, blank=True, null=True)
+    created_on = models.DateTimeField('Created on',auto_now = True)
+
+    def __str__(self):
+        return f'{self.date}: {self.title}'
+
+    class Meta:
+        ordering = ['gospel','-created_on']
+        verbose_name = "Lời Chúa suy niệm"
+        verbose_name_plural = "Lời Chúa suy niệm"
 
 class MassDateSchedule(models.Model):
     date = models.DateField('Ngày')
@@ -133,7 +275,7 @@ class ConfessSchedule(models.Model):
     notes= models.CharField('Ghi chú',max_length=500,blank=True,default='')
     church = models.ForeignKey(Church, on_delete=models.CASCADE,help_text='chọn Nhà thờ',blank=True,null=True,related_name='confess_church')
     publish= models.BooleanField('Công khai',default=True, blank=True)
-    created_on = models.DateTimeField('Created on',default=timezone.now)
+    created_on = models.DateTimeField('Created on',auto_now = True)
 
     class Meta:
         ordering = ['-from_date_time']
