@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Language, Country, Region, Province, Facility, Church, ChurchImages, Father, FatherAndChurch
+from .models import Language, Country, Region, Province, Facility, Church, ChurchImages, Father, FatherAndChurch,Community
 
 class ChurchAdmin(admin.ModelAdmin):
     list_display = ('name','phone','email','region','province')
@@ -18,7 +18,10 @@ class FatherAndChurchAdmin(admin.ModelAdmin):
     list_filter = ('church',)
     search_fields = ['church', 'father']
 
-
+class CommunityAdmin(admin.ModelAdmin):
+    list_display = ('name','type','region','province','address')
+    list_filter = ('region',)
+    search_fields = ['name', 'address']
 
 # Register your models here. 
 admin.site.register(Language)
@@ -30,3 +33,4 @@ admin.site.register(Church,ChurchAdmin)
 admin.site.register(ChurchImages)
 admin.site.register(Father, FatherAdmin)
 admin.site.register(FatherAndChurch,FatherAndChurchAdmin)
+admin.site.register(Community,CommunityAdmin)

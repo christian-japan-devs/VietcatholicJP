@@ -7,7 +7,7 @@ from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from uuid import uuid4
-from lib.constant_choises import (jp_region_choices,jp_province_choices,language_choice)
+from lib.constant_choices import (jp_region_choices,jp_province_choices,priority_choice,group_type_choice,language_choice)
 
 # Create your models here.
 #image compression method
@@ -115,10 +115,8 @@ class Church(models.Model):
     geo_lon = models.FloatField('Kinh độ',help_text='Kinh độ theo bản đồ Google',default=0.0,blank=True,null=True)
     geo_lat = models.FloatField('Vĩ độ',help_text='Vĩ độ theo bản đồ Google',default=0.0,blank=True,null=True)
     geo_hash = models.CharField('geo_hash',max_length=30, default='',blank=True)
-    created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,default=timezone.now)
+    created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now = True)
     created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,default=None,blank=True,null=True)
-    updated_user = models.ForeignKey(CustomUserModel, verbose_name='Người cập nhật',on_delete=models.CASCADE,default=None,blank=True,null=True,help_text='Người cuối cập nhật',related_name='update_user')
-    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',default=timezone.now,blank=True,null=True)
 
     def __str__(self):
         return self.name
@@ -138,7 +136,7 @@ class ChurchImages(models.Model):
     title = models.CharField('Title',max_length=120)
     image = models.ImageField('Image',null=True,blank=True,upload_to='images/church/')
     church = models.ForeignKey(Church, on_delete=models.CASCADE)
-    created_on = models.DateTimeField('Ngày tạo',default=timezone.now)
+    created_on = models.DateTimeField('Ngày tạo',auto_now = True)
     created_user = models.ForeignKey(CustomUserModel,on_delete=models.CASCADE,default=None,blank=True,null=True,related_name='created_user')
 
     def __str__(self):
@@ -200,3 +198,37 @@ class FatherAndChurch(models.Model):
 
     def __str__(self):
         return f'{self.father.full_name} : {self.church.name}'
+
+class Community(models.Model):
+    name = models.CharField('Tên nhóm',help_text='Tên nhóm',max_length=120)
+    image = models.ImageField('Hình ảnh',help_text='Hình ảnh đại diện',null=True,blank=True,upload_to='images/group')
+    type = models.CharField('Phân loại',help_text='Cộng đoàn hoặc nhóm giới trẻ',max_length=10,default='group',choices=group_type_choice)
+    introduction = HTMLField('Giới thiệu',help_text='Mô tả sơ lược về nhóm',blank=True)
+    url = models.CharField('Facebook URL',help_text='Link liên kết facebook',max_length=100, default='',blank=True)
+    email = models.CharField('Email',help_text='Địa chỉ email',max_length=50 ,null=True, default='',blank=True)
+    region = models.ForeignKey(Region,verbose_name='Vùng',default=None,blank=True,null=True,on_delete=models.CASCADE)
+    province = models.ForeignKey(Province,verbose_name='Tỉnh',default=None,blank=True,null=True,on_delete=models.CASCADE)
+    church = models.ForeignKey(Church,verbose_name='Nhà thờ sinh hoạt', on_delete=models.CASCADE)
+    address = models.CharField('Địa chỉ sinh hoạt',help_text='Địa chỉ',max_length=400)
+    google_map_link = models.CharField('googlemap link',max_length=500)
+    notice_on_map = HTMLField('Thông báo',help_text='Nội dung hiển thị trên Map',null=True,blank=True,default = "")
+    geo_lon = models.FloatField('Kinh độ',help_text='Kinh độ theo bản đồ Google',default=0.0,blank=True,null=True)
+    geo_lat = models.FloatField('Vĩ độ',help_text='Vĩ độ theo bản đồ Google',default=0.0,blank=True,null=True)
+    geo_hash = models.CharField('geo_hash',max_length=30,null=True, default='',blank=True)
+    created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now = True)
+    created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,default=None,blank=True,null=True)
+    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',auto_now = True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name','created_on']
+        verbose_name = "Cộng đoàn, nhóm"
+        verbose_name_plural = "Cộng đoàn, nhóm"
+    
+    def save(self, *args, **kwargs):
+        if not self.id:
+            if self.image:
+                self.image = compressImage(self.image)
+        super(Community, self).save(*args, **kwargs)
