@@ -213,7 +213,7 @@ class GospelContent(models.Model):
     created_on = models.DateTimeField('Created on',auto_now = True)
 
     def __str__(self):
-        return f'{self.date}: {self.title}'
+        return f'{self.chapter_title}: {self.title}'
 
     class Meta:
         ordering = ['gospel','sequence']
@@ -231,7 +231,7 @@ class GospelReflection(models.Model):
     created_on = models.DateTimeField('Created on',auto_now = True)
 
     def __str__(self):
-        return f'{self.date}: {self.title}'
+        return f'{self.title}: {self.title}'
 
     class Meta:
         ordering = ['gospel','-created_on']
