@@ -213,7 +213,7 @@ class GospelContent(models.Model):
     created_on = models.DateTimeField('Created on',auto_now = True)
 
     def __str__(self):
-        return f'{self.chapter_title}: {self.title}'
+        return f'{self.chapter_title}'
 
     class Meta:
         ordering = ['gospel','sequence']
