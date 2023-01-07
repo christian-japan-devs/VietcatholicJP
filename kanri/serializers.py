@@ -8,7 +8,7 @@ class FatherContactSerializer(serializers.ModelSerializer):
     user = UserDetailSerializer()
     class Meta:
         model = Father
-        fields = ('id','user','address','facebook','phone_number')
+        fields = ('id','user','region','province','address','facebook','phone_number')
 
 class ChurchContactSerializer(serializers.ModelSerializer):
     class Meta:
