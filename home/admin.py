@@ -1,13 +1,18 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import YoutubeVideo,Letter, PostType,Post,PostContent,Aboutus,Announcement,Gospel,GospelContent, MassDateSchedule, MassTimeSchedule, ConfessSchedule
+from .models import YoutubeVideo,Letter, PostType,Post,PostContent,Aboutus,Announcement,Gospel,GospelContent,GospelReflection, MassDateSchedule, MassTimeSchedule, ConfessSchedule
 
 class LetterAdmin(admin.ModelAdmin):
     list_display = ('title','slug', 'isActive','created_on')
     list_filter = ('isActive',)
     search_fields = ['title', 'content']
     prepopulated_fields = {'slug': ('title',)}
+
+    def save_model(self, request, obj, form, change):
+        if getattr(obj, 'author', None) is None:
+            obj.author = request.user
+        obj.save()
 
 class PostAdmin(admin.ModelAdmin):
     list_display = ('title','slug','isActive','created_on')
@@ -43,6 +48,11 @@ class GospelContentAdmin(admin.ModelAdmin):
     search_fields = ['chapter_title', 'content','chapter_reference']
     prepopulated_fields = {'slug': ('chapter_title',)}
 
+class GospelReflectionAdmin(admin.ModelAdmin):
+    list_display = ('title','slug','created_on')
+    search_fields = ['title', 'content','chapter_reference']
+    prepopulated_fields = {'slug': ('title',)}
+
 class MassTimeScheduleAdmin(admin.ModelAdmin):
     list_display = ('date_schedule','time','father','church','province')
     list_filter = ('province',)
@@ -62,6 +72,7 @@ admin.site.register(Aboutus,AboutusAdmin)
 admin.site.register(Announcement,AnnouncementAdmin)
 admin.site.register(Gospel,GospelAdmin)
 admin.site.register(GospelContent,GospelContentAdmin)
+admin.site.register(GospelReflection,GospelReflectionAdmin)
 admin.site.register(MassDateSchedule)
 admin.site.register(MassTimeSchedule,MassTimeScheduleAdmin)
 admin.site.register(ConfessSchedule,ConfessScheduleAdmin)
