@@ -37,7 +37,9 @@ class CustomUserModel(AbstractBaseUser, PermissionsMixin):
     userId = models.CharField(max_length = 40, default = uuid4, primary_key = True, editable = False)
     username = models.CharField(max_length = 32, unique = True, null = False, blank = False)
     email = models.CharField(max_length = 100, unique = True, null = False, blank = False)
-
+    saint_name = models.CharField('Tên thánh',null = False, blank = False,default='', max_length=100)
+    full_name = models.CharField('Họ tên',null = False, blank = False,default='', max_length=100)
+    image = models.ImageField('Hình đại diện',default='default.jpg',null=True, upload_to='images/users')
     USERNAME_FIELD = 'username'
     REQUIRED_FIELD = ['email']
 
@@ -58,9 +60,6 @@ class CustomUserModel(AbstractBaseUser, PermissionsMixin):
 class Profile(models.Model):
     id = models.CharField(max_length = 40, default = uuid4, primary_key = True, editable = False)
     user = models.OneToOneField(CustomUserModel,verbose_name='Tài khoản', on_delete=models.CASCADE)
-    saint_name = models.CharField('Tên thánh',max_length=30)
-    full_name = models.CharField('Họ tên',max_length=100)
-    image = models.ImageField('Hình đại diện',default='default.jpg',null=True, upload_to='pics')
     facebook = models.CharField('Link facebook',default='',max_length=400)
     address = models.CharField('Địa chỉ',default='',max_length=300)
     phone_number = models.CharField('Số điện thoại',default='',blank=True, null=True,max_length=12)
@@ -70,7 +69,6 @@ class Profile(models.Model):
 
     class Meta:
         verbose_name = "User profile"
-        unique_together = ('user','full_name','address')
         ordering = ('user__username','user__email',)
 
     def __str__(self):
