@@ -9,9 +9,9 @@ class ChurchAdmin(admin.ModelAdmin):
     search_fields = ['name', 'province']
 
 class FatherAdmin(admin.ModelAdmin):
-    list_display = ('saint_name','full_name','facility','phone_number', )
+    list_display = ('user','facility','phone_number', )
     list_filter = ('facility',)
-    search_fields = ['full_name', 'facility']
+    search_fields = ['facility']
 
 class FatherAndChurchAdmin(admin.ModelAdmin):
     list_display = ('father','church','from_date','to_date','is_active')

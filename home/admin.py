@@ -1,7 +1,8 @@
 from django.contrib import admin
-
+from django import forms
 # Register your models here.
 from .models import YoutubeVideo,Letter, PostType,Post,PostContent,Aboutus,Announcement,Gospel,GospelContent,GospelReflection, MassDateSchedule, MassTimeSchedule, ConfessSchedule
+
 
 class LetterAdmin(admin.ModelAdmin):
     list_display = ('title','slug', 'isActive','created_on')
@@ -53,6 +54,11 @@ class GospelReflectionAdmin(admin.ModelAdmin):
     search_fields = ['title', 'content','chapter_reference']
     prepopulated_fields = {'slug': ('title',)}
 
+class MassDateScheduleScheduleAdmin(admin.ModelAdmin):
+    list_display = ('date','date','slug','gospel')
+    search_fields = ['date',]
+    prepopulated_fields = {'slug': ('title',)}
+
 class MassTimeScheduleAdmin(admin.ModelAdmin):
     list_display = ('date_schedule','time','father','church','province')
     list_filter = ('province',)
@@ -73,6 +79,6 @@ admin.site.register(Announcement,AnnouncementAdmin)
 admin.site.register(Gospel,GospelAdmin)
 admin.site.register(GospelContent,GospelContentAdmin)
 admin.site.register(GospelReflection,GospelReflectionAdmin)
-admin.site.register(MassDateSchedule)
+admin.site.register(MassDateSchedule,MassDateScheduleScheduleAdmin)
 admin.site.register(MassTimeSchedule,MassTimeScheduleAdmin)
 admin.site.register(ConfessSchedule,ConfessScheduleAdmin)
