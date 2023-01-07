@@ -155,6 +155,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://140.238.37.43",
     "http://localhost:8000",
     "http://127.0.0.1:8000",
+    "http://localhost:3000",
     "https://nr8ih2nhfkio.compat.objectstorage.ap-tokyo-1.oraclecloud.com",
 ]
 
