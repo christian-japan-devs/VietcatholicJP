@@ -69,14 +69,19 @@ class MassScheduleViewSet(viewsets.ViewSet):
             from .models import MassDateSchedule, MassTimeSchedule
             from .serializers import MassDateScheduleSerializer
             mass_schedule = MassDateSchedule.objects.filter(date__gte=timezone.now()).order_by('date').first()
-            mass_schedule_details = MassTimeSchedule.objects.filter(date_schedule=mass_schedule).order_by('time')
-            serializer = MassDateScheduleSerializer(mass_schedule_details, many=True)
-            res['status'] = 'ok'
-            res['mass_schedules'] = {
-                "title": mass_schedule.title,
-                "date": mass_schedule.date,
-                "time_schedule":serializer.data
-            }
+            if mass_schedule:
+                mass_schedule_details = MassTimeSchedule.objects.filter(date_schedule=mass_schedule).order_by('time')
+                serializer = MassDateScheduleSerializer(mass_schedule_details, many=True)
+                res['status'] = 'ok'
+                res['mass_schedules'] = {
+                    "title": mass_schedule.title,
+                    "date": mass_schedule.date,
+                    "time_schedule":serializer.data
+                }
+            else:
+                res['status'] = 'ok'
+                res['mass_schedules'] = {
+                }
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
             res['status'] = 'error'
