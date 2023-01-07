@@ -44,10 +44,10 @@ class Country(models.Model):
         return self.english_name
 
 class Region(models.Model):
-    id = models.CharField(max_length = 50, primary_key = True, editable = False)
-    hiragana = models.CharField('Tên tiếng nhật',max_length=50)
-    name = models.CharField('Tên theo tiếng anh',max_length=50)
-    nation = models.OneToOneField(Country,verbose_name='Quốc gia',on_delete=models.CASCADE)
+    id = models.CharField(max_length = 50, primary_key = True, editable =  False)
+    kanji = models.CharField('Tên Kanji',default='',max_length=50)
+    name = models.CharField('Tên hiragana',max_length=50)
+    nation = models.ForeignKey(Country,verbose_name='Quốc gia',on_delete=models.CASCADE)
     code = models.CharField('Mã',max_length=3,blank=True, null=True)
 
     class Meta:
@@ -58,11 +58,16 @@ class Region(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.id = self.name.lower()
+        super(Region, self).save(*args, **kwargs)
+
 class Province(models.Model):
     id = models.CharField(max_length = 50, primary_key = True, editable = False)
-    hiragana = models.CharField('Tên tiếng nhật',max_length=50)
-    name = models.CharField('Tên theo tiếng anh',max_length=50)
-    region = models.OneToOneField(Region,verbose_name='Vùng',on_delete=models.CASCADE)
+    kanji = models.CharField('Tên Kanji',default='',max_length=50)
+    name = models.CharField('Tên hiragana',max_length=50)
+    region = models.ForeignKey(Region,verbose_name='Vùng',on_delete=models.CASCADE)
     code = models.CharField('Mã',max_length=3,blank=True, null=True)
 
     class Meta:
@@ -73,8 +78,14 @@ class Province(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.id = self.name.lower()
+        super(Province, self).save(*args, **kwargs)
+
 class Facility(models.Model):
-    name = models.CharField('Tên',help_text='Tên',max_length=200)
+    kanji = models.CharField('Tên Kanji',default='',max_length=50)
+    name = models.CharField('Tên Hiragana',help_text='Tên',max_length=200)
     image = models.ImageField('Hình ảnh',help_text='Hình ảnh đại diện',null=True,blank=True,upload_to='images')
     introduction = HTMLField('Giới thiệu',help_text='Mô tả sơ lược về Nhà thờ',blank=True)
     url = models.CharField('Web URL',help_text='Link liên kết',max_length=100, default='',blank=True)
@@ -99,7 +110,8 @@ class Facility(models.Model):
         super(Facility, self).save(*args, **kwargs)
 
 class Church(models.Model):
-    name = models.CharField('Tên Nhà thờ',help_text='Tên Nhà thờ',max_length=120)
+    kanji = models.CharField('Tên Kanji',help_text='Tên Kanji', default='',max_length=200)
+    name = models.CharField('Tên Hiragana',help_text='Tên Hiragana', default='',max_length=200)
     image = models.ImageField('Hình ảnh',help_text='Hình ảnh đại diện',null=True,blank=True,upload_to='images')
     introduction = HTMLField('Giới thiệu',help_text='Mô tả sơ lược về Nhà thờ',blank=True)
     url = models.CharField('Web URL',help_text='Link liên kết',max_length=100, default='',blank=True)
@@ -156,11 +168,8 @@ class ChurchImages(models.Model):
 class Father(models.Model):
     id = models.CharField(max_length = 40, default = uuid4, primary_key = True, editable = False)
     user = models.OneToOneField(CustomUserModel,verbose_name='Tài khoản', on_delete=models.CASCADE)
-    saint_name = models.CharField('Tên thánh',max_length=30)
-    full_name = models.CharField('Họ tên',max_length=100)
     facility = models.ForeignKey(Facility,verbose_name='Tên nơi thuộc về', on_delete=models.CASCADE)
     introduction = HTMLField('Giới thiệu')
-    image = models.ImageField('Hình đại diện',default='default.jpg',null=True, upload_to='images/fathers')
     facebook = models.CharField('Link facebook',default='',max_length=400)
     address = models.CharField('Địa chỉ hiện tại',default='',max_length=300)
     phone_number = models.CharField('Số điện thoại',default='',blank=True, null=True,max_length=12)
@@ -170,18 +179,11 @@ class Father(models.Model):
     class Meta:
         verbose_name = "Quý cha"
         verbose_name_plural = "Quý cha"
-        unique_together = ('user','full_name','address')
-        ordering = ('full_name','user__username','user__email',)
+        unique_together = ('user','address')
+        ordering = ('last_update_time',)
 
     def __str__(self):
-        return f'{self.saint_name}-{self.full_name}'
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            print(self.id)
-            if(self.image.name != 'default.jpg'):
-                self.image = compressImage(self.image)
-        super(Father, self).save(*args, **kwargs)
+        return f'{self.user.full_name}'
 
 class FatherAndChurch(models.Model):
     id = models.CharField(max_length = 40, default = uuid4, primary_key = True, editable = False)
@@ -194,13 +196,14 @@ class FatherAndChurch(models.Model):
     class Meta:
         verbose_name = "Cha tại nhà thờ"
         verbose_name_plural = "Cha tại nhà thờ"
-        ordering = ('is_active','father__full_name','church__name',)
+        ordering = ('is_active','father','church__name',)
 
     def __str__(self):
         return f'{self.father.full_name} : {self.church.name}'
 
 class Community(models.Model):
-    name = models.CharField('Tên nhóm',help_text='Tên nhóm',max_length=120)
+    name = models.CharField('Tên nhóm',help_text='Tên nhóm',max_length=200)
+    name_jp = models.CharField('Tên tiếng Nhật',help_text='Tên nhóm',default='',max_length=200)
     image = models.ImageField('Hình ảnh',help_text='Hình ảnh đại diện',null=True,blank=True,upload_to='images/group')
     type = models.CharField('Phân loại',help_text='Cộng đoàn hoặc nhóm giới trẻ',max_length=10,default='group',choices=group_type_choice)
     introduction = HTMLField('Giới thiệu',help_text='Mô tả sơ lược về nhóm',blank=True)

@@ -43,6 +43,11 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
         return user
 
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUserModel
+        fields = ('userId','saint_name','full_name','image')
+
 class GroupSerializer(serializers.ModelSerializer):    
     class Meta:
         model = Group
