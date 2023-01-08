@@ -74,3 +74,11 @@ class AnnouncementSlugSerializer(serializers.ModelSerializer):
         fields = (
             'id','title', 'slug'
         )
+
+class YoutubeVideoSerializer(serializers.ModelSerializer):
+    created_user = UserDetailSerializer()
+    class Meta:
+        model = YoutubeVideo
+        fields = (
+            'id', 'title', 'slug', 'youtube_url','excerpt','created_user'
+        )

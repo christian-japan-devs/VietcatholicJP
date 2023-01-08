@@ -1,7 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views
 from .views import (home,UserLoginForm
-    ,LetterListViewSet, MassScheduleViewSet, AnnouncementListViewSet
+    ,LetterListViewSet, MassScheduleViewSet, AnnouncementListViewSet,VideoLinksListViewSet
 )
 
 urlpatterns = [
@@ -16,9 +16,12 @@ urlpatterns = [
         'get': 'get_nearest_mass_schedule',
     })),
     path('api/announcement/', AnnouncementListViewSet.as_view({
-        'get': 'getfirstletter',
+        'get': 'getannouncements',
     })),
     path('api/announcement/<str:slug>/', AnnouncementListViewSet.as_view({
         'get': 'retrieve'
+    })),
+    path('api/videolinks/', VideoLinksListViewSet.as_view({
+        'get': 'getVideoLinks',
     })),
 ]
