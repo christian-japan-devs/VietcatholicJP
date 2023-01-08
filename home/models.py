@@ -32,8 +32,8 @@ class Language(models.Model):
 class YoutubeVideo(models.Model):
     title = models.CharField('Chủ đề',max_length=100)
     slug = models.CharField('Slug',max_length=100)
-    excerpt = models.TextField('Tóm tắt',help_text='Không quá 500 ký tự',max_length=500)
-    youtube_url = models.CharField('Youtube link',max_length=200)
+    excerpt = models.TextField('Tóm tắt',null=True,blank=True,default='',help_text='Không quá 500 ký tự',max_length=500)
+    youtube_url = models.CharField('Youtube id',help_text='Lưu ý là id của video link phần XXXXXXXXX từ sau ?v=XXXXXXXXX',max_length=200)
     isActive = models.BooleanField('Công khai',default=True, blank=True)
     created_on = models.DateTimeField('Created on',auto_now = True)
     created_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE, default=None, blank=True, null=True)
@@ -42,9 +42,9 @@ class YoutubeVideo(models.Model):
         return self.title
 
     class Meta:
-        ordering = ['created_on']
-        verbose_name = "Video youtube"
-        verbose_name_plural = "Video youtube"
+        ordering = ['created_on','title']
+        verbose_name = "Youtube video"
+        verbose_name_plural = "Youtube videos"
 
 class Letter(models.Model):
     title = models.CharField('Chủ đề',max_length=100)

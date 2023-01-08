@@ -8,11 +8,12 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 
 from .serializers import (LetterShortSerializer,LetterContentSerializer,LetterSlugSerializer,
-    AnnouncementShortSerializer, AnnouncementContentSerializer, AnnouncementSlugSerializer
+    AnnouncementShortSerializer, AnnouncementContentSerializer, AnnouncementSlugSerializer,
+    YoutubeVideoSerializer
 )
 
 from django import forms
-from .models import Letter,Announcement
+from .models import Letter,Announcement,YoutubeVideo
 from lib.error_messages import *
 # Create your views here.
 
@@ -116,7 +117,7 @@ class AnnouncementListViewSet(viewsets.ViewSet):
     permission_classes = (AllowAny,)
 
     # /api/announcement/
-    def getfirstletter(self, request):
+    def getannouncements(self, request):
         get_type = request.GET.get('type','home')
         if get_type == 'home':
             letter = Announcement.objects.filter(from_date__lte=timezone.now(),to_date__gte=timezone.now(),isActive=True).order_by('-created_on').first()
@@ -153,3 +154,18 @@ class AnnouncementListViewSet(viewsets.ViewSet):
             res['message'] = SYSTEM_ERROR_0001
             print(sys.exc_info())
             return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class VideoLinksListViewSet(viewsets.ViewSet):
+    permission_classes = (AllowAny,)
+
+    # /api/videolinks/
+    def getVideoLinks(self, request):
+        get_type = request.GET.get('type','first')
+        if get_type == 'first':
+            youtubelink = YoutubeVideo.objects.filter(isActive=True).order_by('-created_on').first()
+            serializer = YoutubeVideoSerializer(youtubelink)
+            return Response(serializer.data)
+        else:
+            youtubelinks = YoutubeVideo.objects.filter(isActive=True).order_by('-created_on')[:10]
+            serializer = YoutubeVideoSerializer(youtubelinks, many=True)
+            return Response(serializer.data)
