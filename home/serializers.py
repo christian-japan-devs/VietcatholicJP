@@ -23,6 +23,13 @@ class LetterContentSerializer(serializers.ModelSerializer):
             'id', 'title', 'slug', 'imageUrl','excerpt','content', 'author','created_on'
         )
 
+class LetterSlugSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Letter
+        fields = (
+            'id','title', 'slug'
+        )
+
 class MassDateScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = MassDateSchedule
