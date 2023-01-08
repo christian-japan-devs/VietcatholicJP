@@ -168,7 +168,6 @@ class ChurchImages(models.Model):
 class Father(models.Model):
     id = models.CharField(max_length = 40, default = uuid4, primary_key = True, editable = False)
     user = models.OneToOneField(CustomUserModel,verbose_name='Tài khoản', on_delete=models.CASCADE)
-    facility = models.ForeignKey(Facility,verbose_name='Tên nơi thuộc về', on_delete=models.CASCADE)
     introduction = HTMLField('Giới thiệu',default='',blank=True,null=True)
     facebook = models.CharField('Link facebook',default='',blank=True,null=True,max_length=400)
     address = models.CharField('Địa chỉ hiện tại',default='',blank=True,null=True,max_length=300)

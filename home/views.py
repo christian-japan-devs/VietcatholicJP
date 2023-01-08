@@ -40,10 +40,10 @@ class LetterListViewSet(viewsets.ViewSet):
         get_type = request.GET.get('type','home')
         if get_type == 'home':
             letter = Letter.objects.filter(isActive=True).order_by('-created_on').first()
-            serializer = LetterShortSerializer(letter)
+            serializer = LetterContentSerializer(letter)
             return Response(serializer.data)
         else:
-            letter = Letter.objects.filter(isActive=True).order_by('-created_on')
+            letter = Letter.objects.filter(isActive=True).order_by('-created_on')[:10]
             serializer = LetterShortSerializer(letter, many=True)
             return Response(serializer.data)
     
