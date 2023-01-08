@@ -20,7 +20,7 @@ class LetterContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Letter
         fields = (
-            'id', 'title', 'slug', 'imageUrl', 'content', 'author','created_on'
+            'id', 'title', 'slug', 'imageUrl','excerpt','content', 'author','created_on'
         )
 
 class MassDateScheduleSerializer(serializers.ModelSerializer):
