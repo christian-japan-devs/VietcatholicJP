@@ -119,15 +119,15 @@ class AnnouncementListViewSet(viewsets.ViewSet):
     def getfirstletter(self, request):
         get_type = request.GET.get('type','home')
         if get_type == 'home':
-            letter = Announcement.objects.filter(isActive=True).order_by('-created_on').first()
+            letter = Announcement.objects.filter(from_date__lte=timezone.now(),to_date__gte=timezone.now(),isActive=True).order_by('-created_on').first()
             serializer = AnnouncementContentSerializer(letter)
             return Response(serializer.data)
         elif get_type == 'slug':
-            letter = Announcement.objects.filter(isActive=True).order_by('-created_on')[:10]
+            letter = Announcement.objects.filter(from_date__lte=timezone.now(),to_date__gte=timezone.now(),isActive=True).order_by('-created_on')[:10]
             serializer = AnnouncementSlugSerializer(letter, many=True)
             return Response(serializer.data)
         else:
-            letter = Announcement.objects.filter(isActive=True).order_by('-created_on')[:10]
+            letter = Announcement.objects.filter(isActive=True,from_date__lte=timezone.now(),to_date__gte=timezone.now()).order_by('-created_on')[:10]
             serializer = AnnouncementShortSerializer(letter, many=True)
             return Response(serializer.data)
     
@@ -144,7 +144,7 @@ class AnnouncementListViewSet(viewsets.ViewSet):
             serializer = AnnouncementContentSerializer(letter)
             res['status'] = 'ok'
             res['letter'] = serializer.data
-            letter1 = Announcement.objects.filter(isActive=True).exclude(id=letter.id).order_by('-created_on')[:10]
+            letter1 = Announcement.objects.filter(from_date__lte=timezone.now(),to_date__gte=timezone.now(),isActive=True).exclude(id=letter.id).order_by('-created_on')[:10]
             serializer1 = AnnouncementShortSerializer(letter1, many=True)
             res['recentlyPostedLetter'] = serializer1.data
             return Response(res, status=status.HTTP_202_ACCEPTED)
