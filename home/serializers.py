@@ -2,7 +2,7 @@ from django.db import models
 from rest_framework import serializers
 from users.models import CustomUserModel
 from users.serializers import UserDetailSerializer
-from .models import YoutubeVideo, Letter, MassDateSchedule, MassTimeSchedule
+from .models import YoutubeVideo, Letter, MassDateSchedule, MassTimeSchedule, Announcement
 from kanri.models import Father, Province, Church
 from kanri.serializers import FatherContactSerializer, ChurchContactSerializer,ProvinceSerializer
 
@@ -12,7 +12,7 @@ class LetterShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Letter
         fields = (
-            'id', 'title', 'slug', 'imageUrl', 'excerpt', 'author','created_on'
+            'id', 'title', 'slug', 'image_url', 'excerpt', 'author','created_on'
         )
 
 class LetterContentSerializer(serializers.ModelSerializer):
@@ -20,7 +20,7 @@ class LetterContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Letter
         fields = (
-            'id', 'title', 'slug', 'imageUrl','excerpt','content', 'author','created_on'
+            'id', 'title', 'slug', 'image_url','excerpt','content', 'author','number_readed','number_shared','created_on'
         )
 
 class LetterSlugSerializer(serializers.ModelSerializer):
@@ -51,3 +51,26 @@ class MassDateScheduleFullSerializer(serializers.ModelSerializer):
     class Meta:
         model = MassTimeSchedule
         fields = ('id','time','date_schedule','father','church','province','notes')
+
+class AnnouncementShortSerializer(serializers.ModelSerializer):
+    author = UserDetailSerializer()
+    class Meta:
+        model = Announcement
+        fields = (
+            'id', 'title', 'slug', 'image_url', 'excerpt', 'author','created_on'
+        )
+
+class AnnouncementContentSerializer(serializers.ModelSerializer):
+    author = UserDetailSerializer()
+    class Meta:
+        model = Announcement
+        fields = (
+            'id', 'title', 'slug', 'image_url','excerpt','content', 'author','created_on','number_shared','number_readed'
+        )
+
+class AnnouncementSlugSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Announcement
+        fields = (
+            'id','title', 'slug'
+        )
