@@ -6,7 +6,7 @@ from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from .serializers import (LetterShortSerializer,LetterContentSerializer)
+from .serializers import (LetterShortSerializer,LetterContentSerializer,LetterSlugSerializer)
 
 from django import forms
 from .models import Letter
@@ -42,17 +42,37 @@ class LetterListViewSet(viewsets.ViewSet):
             letter = Letter.objects.filter(isActive=True).order_by('-created_on').first()
             serializer = LetterContentSerializer(letter)
             return Response(serializer.data)
+        elif get_type == 'slug':
+            letter = Letter.objects.filter(isActive=True).order_by('-created_on')[:10]
+            serializer = LetterSlugSerializer(letter, many=True)
+            return Response(serializer.data)
         else:
             letter = Letter.objects.filter(isActive=True).order_by('-created_on')[:10]
             serializer = LetterShortSerializer(letter, many=True)
             return Response(serializer.data)
     
-    # /api/letter/<str:slug> for more detail.
+    # /api/letter/detail/<str:slug> for more detail.
     def retrieve(self, request, slug=None):
-        get_type = request.GET.get('type','slug')
-        letter = Letter.objects.get(slug=slug)
-        serializer = LetterContentSerializer(letter)
-        return Response(serializer.data)
+        res = {
+            'status': 'error',
+            'letter': {},
+            'recentlyPostedLetter':{},
+            'message': ''
+        }
+        try:
+            letter = Letter.objects.get(slug=slug)
+            serializer = LetterContentSerializer(letter)
+            res['status'] = 'ok'
+            res['letter'] = serializer.data
+            letter1 = Letter.objects.filter(isActive=True).order_by('-created_on')[:10]
+            serializer = LetterShortSerializer(letter1, many=True)
+            res['recentlyPostedLetter']:letter1.data
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            res['status'] = 'error'
+            res['message'] = SYSTEM_ERROR_0001
+            print(sys.exc_info())
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class MassScheduleViewSet(viewsets.ViewSet):
     permission_classes = (AllowAny,)
@@ -61,7 +81,7 @@ class MassScheduleViewSet(viewsets.ViewSet):
     def get_nearest_mass_schedule(self, request):
         res = {
             'status': 'error',
-            'notice': {},
+            'mass_schedules': {},
             'message': ''
         }
         try:
