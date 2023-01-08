@@ -6,10 +6,13 @@ from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from .serializers import (LetterShortSerializer,LetterContentSerializer,LetterSlugSerializer)
+
+from .serializers import (LetterShortSerializer,LetterContentSerializer,LetterSlugSerializer,
+    AnnouncementShortSerializer, AnnouncementContentSerializer, AnnouncementSlugSerializer
+)
 
 from django import forms
-from .models import Letter
+from .models import Letter,Announcement
 from lib.error_messages import *
 # Create your views here.
 
@@ -102,6 +105,48 @@ class MassScheduleViewSet(viewsets.ViewSet):
                 res['status'] = 'ok'
                 res['mass_schedules'] = {
                 }
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            res['status'] = 'error'
+            res['message'] = SYSTEM_ERROR_0001
+            print(sys.exc_info())
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class AnnouncementListViewSet(viewsets.ViewSet):
+    permission_classes = (AllowAny,)
+
+    # /api/announcement/
+    def getfirstletter(self, request):
+        get_type = request.GET.get('type','home')
+        if get_type == 'home':
+            letter = Announcement.objects.filter(isActive=True).order_by('-created_on').first()
+            serializer = AnnouncementContentSerializer(letter)
+            return Response(serializer.data)
+        elif get_type == 'slug':
+            letter = Announcement.objects.filter(isActive=True).order_by('-created_on')[:10]
+            serializer = AnnouncementSlugSerializer(letter, many=True)
+            return Response(serializer.data)
+        else:
+            letter = Announcement.objects.filter(isActive=True).order_by('-created_on')[:10]
+            serializer = AnnouncementShortSerializer(letter, many=True)
+            return Response(serializer.data)
+    
+    # /api/announcement/<str:slug>/ for more detail.
+    def retrieve(self, request, slug=None):
+        res = {
+            'status': 'error',
+            'letter': {},
+            'recentlyPostedLetter':{},
+            'message': ''
+        }
+        try:
+            letter = Announcement.objects.get(slug=slug)
+            serializer = AnnouncementContentSerializer(letter)
+            res['status'] = 'ok'
+            res['letter'] = serializer.data
+            letter1 = Announcement.objects.filter(isActive=True).exclude(id=letter.id).order_by('-created_on')[:10]
+            serializer1 = AnnouncementShortSerializer(letter1, many=True)
+            res['recentlyPostedLetter'] = serializer1.data
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
             res['status'] = 'error'
