@@ -65,7 +65,7 @@ class AnnouncementContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Announcement
         fields = (
-            'id', 'title', 'slug', 'image_url','excerpt','content', 'author','created_on','number_shared','number_readed'
+            'id', 'title', 'slug', 'image_url','excerpt','content', 'author','created_on','number_shared','number_readed','google_map_link','register_link','event_date_time'
         )
 
 class AnnouncementSlugSerializer(serializers.ModelSerializer):
