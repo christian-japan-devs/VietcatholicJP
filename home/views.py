@@ -51,7 +51,7 @@ class LetterListViewSet(viewsets.ViewSet):
             serializer = LetterShortSerializer(letter, many=True)
             return Response(serializer.data)
     
-    # /api/letter/detail/<str:slug> for more detail.
+    # /api/letter/<str:slug>/ for more detail.
     def retrieve(self, request, slug=None):
         res = {
             'status': 'error',
@@ -66,7 +66,7 @@ class LetterListViewSet(viewsets.ViewSet):
             res['letter'] = serializer.data
             letter1 = Letter.objects.filter(isActive=True).order_by('-created_on')[:10]
             serializer = LetterShortSerializer(letter1, many=True)
-            res['recentlyPostedLetter']:letter1.data
+            res['recentlyPostedLetter']:serializer.data
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
             res['status'] = 'error'
