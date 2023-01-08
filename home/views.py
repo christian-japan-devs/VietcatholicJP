@@ -64,7 +64,7 @@ class LetterListViewSet(viewsets.ViewSet):
             serializer = LetterContentSerializer(letter)
             res['status'] = 'ok'
             res['letter'] = serializer.data
-            letter1 = Letter.objects.filter(isActive=True).order_by('-created_on')[:10]
+            letter1 = Letter.objects.filter(isActive=True).exclude(id=letter.id).order_by('-created_on')[:10]
             serializer1 = LetterShortSerializer(letter1, many=True)
             res['recentlyPostedLetter'] = serializer1.data
             return Response(res, status=status.HTTP_202_ACCEPTED)
