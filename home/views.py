@@ -100,6 +100,7 @@ class MassScheduleViewSet(viewsets.ViewSet):
                 res['mass_schedules'] = {
                     "title": mass_schedule.title,
                     "date": mass_schedule.date,
+                    "audio_link": mass_schedule.gospel.audio_link, #TODO: chage to metadata
                     "time_schedule":serializer.data
                 }
             else:
