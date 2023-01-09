@@ -36,4 +36,11 @@ class CommunitySerializer(serializers.ModelSerializer):
     church = ChurchContactSerializer()
     class Meta:
         model = Community
-        fields = ('id','name','name_jp','image','type','introduction','url','province','church')
+        fields = ('id','slug','name','name_jp','image','type','url','province','church')
+
+class CommunityDetailSerializer(serializers.ModelSerializer):
+    province = ProvinceSerializer()
+    church = ChurchContactSerializer()
+    class Meta:
+        model = Community
+        fields = ('id','slug','name','name_jp','image','type','introduction','url','province','church')

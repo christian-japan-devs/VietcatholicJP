@@ -14,7 +14,7 @@ from lib.constant_choices import (jp_region_choices,jp_province_choices,priority
 def compressImage(input_image):
     imageTemproary = Image.open(input_image)
     outputIoStream = BytesIO()
-    imageTemproary.save(outputIoStream , format='JPEG', quality=60)
+    imageTemproary.save(outputIoStream , format='JPEG', quality=80)
     outputIoStream.seek(0)
     input_image = InMemoryUploadedFile(outputIoStream,'ImageField', "%s.jpg" % input_image.name.split('.')[0], 'image/jpg', sys.getsizeof(outputIoStream), None)
     return input_image

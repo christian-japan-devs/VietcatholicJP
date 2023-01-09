@@ -173,7 +173,7 @@ class Announcement(models.Model):
     updated_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='updated_user',default=None, blank=True, null=True)
 
     class Meta:
-        ordering = ['-priority_choice','is_active','created_on']
+        ordering = ['-priority_choice','is_active','-created_on']
         verbose_name = "Thông báo chung"
         verbose_name_plural = "Thông báo chung"
 

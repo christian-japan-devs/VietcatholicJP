@@ -118,22 +118,6 @@ class AnnouncementListViewSet(viewsets.ViewSet):
 
     # /api/announcement/
     def getannouncements(self, request):
-        get_type = request.GET.get('type','home')
-        if get_type == 'home':
-            letter = Announcement.objects.filter(from_date__lte=timezone.now(),to_date__gte=timezone.now(),is_active=True).order_by('-created_on').first()
-            serializer = AnnouncementContentSerializer(letter)
-            return Response(serializer.data)
-        elif get_type == 'slug':
-            letter = Announcement.objects.filter(from_date__lte=timezone.now(),to_date__gte=timezone.now(),is_active=True).order_by('-created_on')[:10]
-            serializer = AnnouncementSlugSerializer(letter, many=True)
-            return Response(serializer.data)
-        else:
-            letter = Announcement.objects.filter(is_active=True,from_date__lte=timezone.now(),to_date__gte=timezone.now()).order_by('-created_on')[:10]
-            serializer = AnnouncementShortSerializer(letter, many=True)
-            return Response(serializer.data)
-    
-    # /api/announcement/<str:slug>/ for more detail.
-    def retrieve(self, request, slug=None):
         res = {
             'status': 'error',
             'letter': {},
@@ -141,13 +125,46 @@ class AnnouncementListViewSet(viewsets.ViewSet):
             'message': ''
         }
         try:
-            letter = Announcement.objects.get(slug=slug)
-            serializer = AnnouncementContentSerializer(letter)
+            get_type = request.GET.get('type','index')
+            if get_type == 'index':
+                announcement = Announcement.objects.filter(from_date__lte=timezone.now(),to_date__gte=timezone.now(),is_active=True).order_by('-priority_choice','is_active','created_on').first()
+                serializer = AnnouncementContentSerializer(announcement)
+                res['status'] = 'ok'
+                res['announcement'] = serializer.data
+                announcements = Announcement.objects.filter(from_date__lte=timezone.now(),to_date__gte=timezone.now(),is_active=True).exclude(id=announcement.id).order_by('-priority_choice','is_active','created_on')[:10]
+                serializer1 = AnnouncementShortSerializer(announcements, many=True)
+                res['announcements'] = serializer1.data
+                return Response(res, status=status.HTTP_202_ACCEPTED)
+            elif get_type == 'slug':
+                announcement = Announcement.objects.filter(from_date__lte=timezone.now(),to_date__gte=timezone.now(),is_active=True).order_by('-priority_choice','is_active','created_on')[:10]
+                serializer = AnnouncementSlugSerializer(announcement, many=True)
+                return Response(serializer.data)
+            else: #short
+                announcement = Announcement.objects.filter(is_active=True,from_date__lte=timezone.now(),to_date__gte=timezone.now()).order_by('-priority_choice','is_active','created_on')[:10]
+                serializer = AnnouncementShortSerializer(announcement, many=True)
+                return Response(serializer.data)
+        except:
+            res['status'] = 'error'
+            res['message'] = SYSTEM_ERROR_0001
+            print(sys.exc_info())
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    # /api/announcement/<str:slug>/ for more detail.
+    def retrieve(self, request, slug=None):
+        res = {
+            'status': 'error',
+            'announcement': {},
+            'announcements':{},
+            'message': ''
+        }
+        try:
+            announcement = Announcement.objects.get(slug=slug)
+            serializer = AnnouncementContentSerializer(announcement)
             res['status'] = 'ok'
-            res['letter'] = serializer.data
-            letter1 = Announcement.objects.filter(from_date__lte=timezone.now(),to_date__gte=timezone.now(),is_active=True).exclude(id=letter.id).order_by('-created_on')[:10]
+            res['announcement'] = serializer.data
+            letter1 = Announcement.objects.filter(from_date__lte=timezone.now(),to_date__gte=timezone.now(),is_active=True).exclude(id=announcement.id).order_by('-priority_choice','is_active','created_on')[:10]
             serializer1 = AnnouncementShortSerializer(letter1, many=True)
-            res['recentlyPostedLetter'] = serializer1.data
+            res['announcements'] = serializer1.data
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
             res['status'] = 'error'
