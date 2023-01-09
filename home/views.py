@@ -9,11 +9,11 @@ from rest_framework.permissions import AllowAny
 
 from .serializers import (LetterShortSerializer,LetterContentSerializer,LetterSlugSerializer,
     AnnouncementShortSerializer, AnnouncementContentSerializer, AnnouncementSlugSerializer,
-    YoutubeVideoSerializer
+    YoutubeVideoSerializer, PostSlugSerializer, PostSerializer, PostContentSerializer
 )
 
 from django import forms
-from .models import Letter,Announcement,YoutubeVideo
+from .models import Letter,Announcement,YoutubeVideo,PostType, Post, PostContent
 from lib.error_messages import *
 # Create your views here.
 
@@ -43,15 +43,15 @@ class LetterListViewSet(viewsets.ViewSet):
     def getfirstletter(self, request):
         get_type = request.GET.get('type','home')
         if get_type == 'home':
-            letter = Letter.objects.filter(isActive=True).order_by('-created_on').first()
+            letter = Letter.objects.filter(is_active=True).order_by('-created_on').first()
             serializer = LetterContentSerializer(letter)
             return Response(serializer.data)
         elif get_type == 'slug':
-            letter = Letter.objects.filter(isActive=True).order_by('-created_on')[:10]
+            letter = Letter.objects.filter(is_active=True).order_by('-created_on')[:10]
             serializer = LetterSlugSerializer(letter, many=True)
             return Response(serializer.data)
         else:
-            letter = Letter.objects.filter(isActive=True).order_by('-created_on')[:10]
+            letter = Letter.objects.filter(is_active=True).order_by('-created_on')[:10]
             serializer = LetterShortSerializer(letter, many=True)
             return Response(serializer.data)
     
@@ -68,7 +68,7 @@ class LetterListViewSet(viewsets.ViewSet):
             serializer = LetterContentSerializer(letter)
             res['status'] = 'ok'
             res['letter'] = serializer.data
-            letter1 = Letter.objects.filter(isActive=True).exclude(id=letter.id).order_by('-created_on')[:10]
+            letter1 = Letter.objects.filter(is_active=True).exclude(id=letter.id).order_by('-created_on')[:10]
             serializer1 = LetterShortSerializer(letter1, many=True)
             res['recentlyPostedLetter'] = serializer1.data
             return Response(res, status=status.HTTP_202_ACCEPTED)
@@ -120,15 +120,15 @@ class AnnouncementListViewSet(viewsets.ViewSet):
     def getannouncements(self, request):
         get_type = request.GET.get('type','home')
         if get_type == 'home':
-            letter = Announcement.objects.filter(from_date__lte=timezone.now(),to_date__gte=timezone.now(),isActive=True).order_by('-created_on').first()
+            letter = Announcement.objects.filter(from_date__lte=timezone.now(),to_date__gte=timezone.now(),is_active=True).order_by('-created_on').first()
             serializer = AnnouncementContentSerializer(letter)
             return Response(serializer.data)
         elif get_type == 'slug':
-            letter = Announcement.objects.filter(from_date__lte=timezone.now(),to_date__gte=timezone.now(),isActive=True).order_by('-created_on')[:10]
+            letter = Announcement.objects.filter(from_date__lte=timezone.now(),to_date__gte=timezone.now(),is_active=True).order_by('-created_on')[:10]
             serializer = AnnouncementSlugSerializer(letter, many=True)
             return Response(serializer.data)
         else:
-            letter = Announcement.objects.filter(isActive=True,from_date__lte=timezone.now(),to_date__gte=timezone.now()).order_by('-created_on')[:10]
+            letter = Announcement.objects.filter(is_active=True,from_date__lte=timezone.now(),to_date__gte=timezone.now()).order_by('-created_on')[:10]
             serializer = AnnouncementShortSerializer(letter, many=True)
             return Response(serializer.data)
     
@@ -145,7 +145,7 @@ class AnnouncementListViewSet(viewsets.ViewSet):
             serializer = AnnouncementContentSerializer(letter)
             res['status'] = 'ok'
             res['letter'] = serializer.data
-            letter1 = Announcement.objects.filter(from_date__lte=timezone.now(),to_date__gte=timezone.now(),isActive=True).exclude(id=letter.id).order_by('-created_on')[:10]
+            letter1 = Announcement.objects.filter(from_date__lte=timezone.now(),to_date__gte=timezone.now(),is_active=True).exclude(id=letter.id).order_by('-created_on')[:10]
             serializer1 = AnnouncementShortSerializer(letter1, many=True)
             res['recentlyPostedLetter'] = serializer1.data
             return Response(res, status=status.HTTP_202_ACCEPTED)
@@ -162,10 +162,98 @@ class VideoLinksListViewSet(viewsets.ViewSet):
     def getVideoLinks(self, request):
         get_type = request.GET.get('type','first')
         if get_type == 'first':
-            youtubelink = YoutubeVideo.objects.filter(isActive=True).order_by('-created_on').first()
+            youtubelink = YoutubeVideo.objects.filter(is_active=True).order_by('-created_on').first()
             serializer = YoutubeVideoSerializer(youtubelink)
             return Response(serializer.data)
         else:
-            youtubelinks = YoutubeVideo.objects.filter(isActive=True).order_by('-created_on')[:10]
+            youtubelinks = YoutubeVideo.objects.filter(is_active=True).order_by('-created_on')[:10]
             serializer = YoutubeVideoSerializer(youtubelinks, many=True)
             return Response(serializer.data)
+
+class PostListViewSet(viewsets.ViewSet):
+    permission_classes = (AllowAny,)
+
+    # /api/post/gettype/
+    def gettypes(self, request):
+        res = {
+            'status': 'error',
+            'post_type': {},
+            'message': ''
+        }
+        try:
+            posttype = PostType.objects.filter(is_active=True).order_by('name')
+            serializer = PostSlugSerializer(posttype, many=True)
+            res['post_type'] = serializer.data
+            res['status'] = 'ok'
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            print(sys.exc_info())
+            res['message'] = sys.exc_info()
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    # /api/posts/?place=&type=
+    def getposts(self, request):
+        res = {
+            'status': 'error',
+            'post': {},
+            'recent_posts': [],
+            'message': ''
+        }
+        try:
+            get_type = request.GET.get('type','home')
+            get_post_type_slug = request.GET.get('post_type_slug','all')
+            if get_type == 'home':
+                if get_post_type_slug == 'all':
+                    post = Post.objects.filter(is_active=True).order_by('-created_on').first()
+                else:
+                    post_type = PostType.objects.get(slug=get_post_type_slug)
+                    post = Post.objects.filter(is_active=True,post_type=post_type).order_by('-created_on').first()
+                if(post):
+                    post_serializer = PostSerializer(post)
+                    post_content = PostContent.objects.filter(post=post).order_by('sequence')
+                    post_content_serializer = PostContentSerializer(post_content, many=True)
+                    recent_post = Post.objects.filter(is_active=True).exclude(id=post.id).order_by('-created_on')[:10]
+                    recent_post_serializer = PostSerializer(recent_post,many=True)
+                    res['post'] = {
+                        "post_meta":post_serializer.data,
+                        "content":post_content_serializer.data
+                    }
+                    res['recent_posts'] = recent_post_serializer.data
+                res['status'] = 'ok'
+                return Response(res, status=status.HTTP_202_ACCEPTED)
+            elif get_type == 'recent':
+                recent_post = Post.objects.filter(is_active=True).order_by('-created_on')[1:11]
+                recent_post_serializer = PostSerializer(recent_post,many=True)
+                res['status'] = 'ok'
+                res['recent_posts'] = recent_post_serializer.data
+                return Response(res, status=status.HTTP_202_ACCEPTED)
+            else:
+                res['status'] = 'ok'
+                return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            print(sys.exc_info())
+            res['message'] = sys.exc_info()
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    # /api/letter/<str:slug>/ for more detail.
+    def retrieve(self, request, slug=None):
+        res = {
+            'status': 'error',
+            'letter': {},
+            'recentlyPostedLetter':{},
+            'message': ''
+        }
+        try:
+            letter = Letter.objects.get(slug=slug)
+            serializer = LetterContentSerializer(letter)
+            res['status'] = 'ok'
+            res['letter'] = serializer.data
+            letter1 = Letter.objects.filter(is_active=True).exclude(id=letter.id).order_by('-created_on')[:10]
+            serializer1 = LetterShortSerializer(letter1, many=True)
+            res['recentlyPostedLetter'] = serializer1.data
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            res['status'] = 'error'
+            res['message'] = SYSTEM_ERROR_0001
+            print(sys.exc_info())
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

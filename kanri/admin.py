@@ -22,6 +22,7 @@ class CommunityAdmin(admin.ModelAdmin):
     list_display = ('name','type','region','province','address')
     list_filter = ('region',)
     search_fields = ['name', 'address']
+    prepopulated_fields = {'slug': ('name',)}
 
 # Register your models here. 
 admin.site.register(Language)

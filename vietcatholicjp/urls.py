@@ -24,6 +24,7 @@ admin.site.site_title = 'Viet Catholic Japan Admintration'       # default: "Dja
 urlpatterns = [
     path('',include('home.urls'),name="vcj-home"),
     path('',include('users.urls')),
+    path('',include('kanri.urls')),
     #path('admin/login/', auth_views.LoginView.as_view(template_name='main/home.html'), name='login'), #new
     path('admin/', admin.site.urls),
 ]

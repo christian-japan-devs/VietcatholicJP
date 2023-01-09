@@ -205,6 +205,7 @@ class FatherAndChurch(models.Model):
 class Community(models.Model):
     name = models.CharField('Tên nhóm',help_text='Tên nhóm',max_length=200)
     name_jp = models.CharField('Tên tiếng Nhật',help_text='Tên nhóm',default='',max_length=200)
+    slug = models.CharField('Slug',default='',max_length=200)
     image = models.ImageField('Hình ảnh',help_text='Hình ảnh đại diện',null=True,blank=True,upload_to='images/group')
     type = models.CharField('Phân loại',help_text='Cộng đoàn hoặc nhóm giới trẻ',max_length=10,default='group',choices=group_type_choice)
     introduction = HTMLField('Giới thiệu',help_text='Mô tả sơ lược về nhóm',blank=True)
@@ -215,6 +216,7 @@ class Community(models.Model):
     church = models.ForeignKey(Church,verbose_name='Nhà thờ sinh hoạt', on_delete=models.CASCADE)
     address = models.CharField('Địa chỉ sinh hoạt',help_text='Địa chỉ',max_length=400)
     google_map_link = models.CharField('googlemap link',max_length=500)
+    is_active = models.BooleanField('Còn hoạt động',blank=True, null=True,default=False)
     notice_on_map = HTMLField('Thông báo',help_text='Nội dung hiển thị trên Map',null=True,blank=True,default = "")
     geo_lon = models.FloatField('Kinh độ',help_text='Kinh độ theo bản đồ Google',default=0.0,blank=True,null=True)
     geo_lat = models.FloatField('Vĩ độ',help_text='Vĩ độ theo bản đồ Google',default=0.0,blank=True,null=True)
@@ -227,7 +229,7 @@ class Community(models.Model):
         return self.name
 
     class Meta:
-        ordering = ['name','created_on']
+        ordering = ['name','province','created_on']
         verbose_name = "Cộng đoàn, nhóm"
         verbose_name_plural = "Cộng đoàn, nhóm"
     
