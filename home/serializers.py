@@ -2,7 +2,7 @@ from django.db import models
 from rest_framework import serializers
 from users.models import CustomUserModel
 from users.serializers import UserDetailSerializer
-from .models import YoutubeVideo, Letter, MassDateSchedule, MassTimeSchedule, Announcement
+from .models import YoutubeVideo, Letter, MassDateSchedule, MassTimeSchedule, Announcement, PostType, Post, PostContent
 from kanri.models import Father, Province, Church
 from kanri.serializers import FatherContactSerializer, ChurchContactSerializer,ProvinceSerializer
 
@@ -12,7 +12,7 @@ class LetterShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Letter
         fields = (
-            'id', 'title', 'slug', 'image_url', 'excerpt', 'author','created_on'
+            'id', 'title', 'slug', 'image_url', 'excerpt', 'author','created_on','number_readed'
         )
 
 class LetterContentSerializer(serializers.ModelSerializer):
@@ -81,4 +81,26 @@ class YoutubeVideoSerializer(serializers.ModelSerializer):
         model = YoutubeVideo
         fields = (
             'id', 'title', 'slug', 'youtube_url','excerpt','created_user'
+        )
+
+class PostSlugSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostType
+        fields = (
+            'id','name', 'slug'
+        )
+
+class PostSerializer(serializers.ModelSerializer):
+    author = UserDetailSerializer()
+    class Meta:
+        model = Post
+        fields = (
+            'id', 'title', 'slug','audio_link', 'image_url', 'excerpt', 'author','created_on','number_readed','number_shared'
+        )
+
+class PostContentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostContent
+        fields = (
+            'id', 'chapter_title', 'slug', 'image_url', 'content','chapter_summary'
         )

@@ -2,7 +2,7 @@ from django.db import models
 from rest_framework import serializers
 from users.models import CustomUserModel
 from users.serializers import UserDetailSerializer
-from .models import Father, Province, Church, Region
+from .models import Father, Province, Church, Region, Community
 
 class FatherContactSerializer(serializers.ModelSerializer):
     user = UserDetailSerializer()
@@ -30,3 +30,10 @@ class ProvinceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Province
         fields = ('id','kanji','name','region')
+
+class CommunitySerializer(serializers.ModelSerializer):
+    province = ProvinceSerializer()
+    church = ChurchContactSerializer()
+    class Meta:
+        model = Community
+        fields = ('id','name','name_jp','image','type','introduction','url','province','church')

@@ -5,8 +5,8 @@ from .models import YoutubeVideo,Letter, PostType,Post,PostContent,Aboutus,Annou
 
 
 class LetterAdmin(admin.ModelAdmin):
-    list_display = ('title','slug', 'isActive','created_on')
-    list_filter = ('isActive',)
+    list_display = ('title','slug', 'is_active','created_on')
+    list_filter = ('is_active',)
     search_fields = ['title', 'content']
     prepopulated_fields = {'slug': ('title',)}
 
@@ -16,36 +16,60 @@ class LetterAdmin(admin.ModelAdmin):
         obj.save()
 
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('title','slug','isActive','created_on')
-    list_filter = ('isActive',)
+    list_display = ('title','post_type','is_active','created_on')
+    list_filter = ('is_active',)
     search_fields = ['title', 'content']
     prepopulated_fields = {'slug': ('title',)}
 
+    def save_model(self, request, obj, form, change):
+        if getattr(obj, 'author', None) is None:
+            obj.author = request.user
+        obj.save()
+
 class PostContentAdmin(admin.ModelAdmin):
-    list_display = ('chapter_title','slug','created_on')
+    list_display = ('post','chapter_title','created_on')
     list_filter = ('post',)
     search_fields = ['chapter_title', 'content']
     prepopulated_fields = {'slug': ('chapter_title',)}
 
+    def save_model(self, request, obj, form, change):
+        obj.edited_by = request.user
+        obj.save()
+
 class AboutusAdmin(admin.ModelAdmin):
-    list_display = ('title','slug', 'isActive','created_on')
-    list_filter = ('isActive',)
+    list_display = ('title', 'is_active','created_on')
+    list_filter = ('is_active',)
     search_fields = ['title', 'content']
     prepopulated_fields = {'slug': ('title',)}
 
+    def save_model(self, request, obj, form, change):
+        if getattr(obj, 'author', None) is None:
+            obj.author = request.user
+        obj.save()
+
 class AnnouncementAdmin(admin.ModelAdmin):
-    list_display = ('title','slug','created_on')
-    list_filter = ('isActive',)
+    list_display = ('title','created_on')
+    list_filter = ('is_active',)
     search_fields = ['title', 'content']
     prepopulated_fields = {'slug': ('title',)}
+
+    def save_model(self, request, obj, form, change):
+        if getattr(obj, 'author', None) is None:
+            obj.author = request.user
+        obj.save()
 
 class GospelAdmin(admin.ModelAdmin):
     list_display = ('title','slug','created_on')
     search_fields = ['title', 'content']
     prepopulated_fields = {'slug': ('title',)}
 
+    def save_model(self, request, obj, form, change):
+        if getattr(obj, 'author', None) is None:
+            obj.author = request.user
+        obj.save()
+
 class GospelContentAdmin(admin.ModelAdmin):
-    list_display = ('chapter_title','slug','created_on')
+    list_display = ('gospel','chapter_title','slug','created_on')
     search_fields = ['chapter_title', 'content','chapter_reference']
     prepopulated_fields = {'slug': ('chapter_title',)}
 
@@ -53,6 +77,11 @@ class GospelReflectionAdmin(admin.ModelAdmin):
     list_display = ('title','slug','created_on')
     search_fields = ['title', 'content','chapter_reference']
     prepopulated_fields = {'slug': ('title',)}
+
+    def save_model(self, request, obj, form, change):
+        if getattr(obj, 'author', None) is None:
+            obj.author = request.user
+        obj.save()
 
 class MassDateScheduleScheduleAdmin(admin.ModelAdmin):
     list_display = ('date','date','slug','gospel')

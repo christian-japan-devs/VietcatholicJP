@@ -1,7 +1,8 @@
 from django.urls import path
 from django.contrib.auth import views
 from .views import (home,UserLoginForm
-    ,LetterListViewSet, MassScheduleViewSet, AnnouncementListViewSet,VideoLinksListViewSet
+    ,LetterListViewSet, MassScheduleViewSet, AnnouncementListViewSet,VideoLinksListViewSet,
+    PostListViewSet
 )
 
 urlpatterns = [
@@ -23,5 +24,11 @@ urlpatterns = [
     })),
     path('api/videolinks/', VideoLinksListViewSet.as_view({
         'get': 'getVideoLinks',
+    })),
+    path('api/post/gettype/', PostListViewSet.as_view({
+        'get': 'gettypes',
+    })),
+    path('api/post/', PostListViewSet.as_view({
+        'get': 'getposts',
     })),
 ]

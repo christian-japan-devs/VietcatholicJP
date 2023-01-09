@@ -34,7 +34,7 @@ class YoutubeVideo(models.Model):
     slug = models.CharField('Slug',max_length=100)
     excerpt = models.TextField('Tóm tắt',null=True,blank=True,default='',help_text='Không quá 500 ký tự',max_length=500)
     youtube_url = models.CharField('Youtube id',help_text='Lưu ý là id của video link phần XXXXXXXXX từ sau ?v=XXXXXXXXX',max_length=200)
-    isActive = models.BooleanField('Công khai',default=True, blank=True)
+    is_active = models.BooleanField('Công khai',default=True, blank=True)
     created_on = models.DateTimeField('Created on',auto_now = True)
     created_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE, default=None, blank=True, null=True)
 
@@ -53,7 +53,7 @@ class Letter(models.Model):
     excerpt = models.TextField('Tóm tắt',help_text='Không quá 1000 ký tự',max_length=1000)
     content = HTMLField('Nội dung')
     audio_link = models.CharField('Audio Link',null=True, blank=True,default='',max_length=400)
-    isActive = models.BooleanField('Công khai',default=True, blank=True)
+    is_active = models.BooleanField('Công khai',default=True, blank=True)
     number_readed = models.SmallIntegerField('Số lượt đọc',default=0,blank=True,null=True,help_text='Số lượt đọc')
     number_shared = models.SmallIntegerField('Số lượt chia sẻ',default=0,blank=True,null=True,help_text='Số lượt chia sẻ')
     created_on = models.DateTimeField('Created on',auto_now = True)
@@ -75,7 +75,7 @@ class Letter(models.Model):
 class PostType(models.Model):
     name = models.CharField('Tên',max_length=100)
     slug = models.CharField('Slug',max_length=100)
-    isActive = models.BooleanField('Công khai',default=True, blank=True)
+    is_active = models.BooleanField('Công khai',default=True, blank=True)
     created_on = models.DateTimeField('Created on',auto_now = True)
 
     def __str__(self):
@@ -83,8 +83,8 @@ class PostType(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = "Loại bài viết"
-        verbose_name_plural = "Loại bài viết"
+        verbose_name = "Bài viết-phân loại"
+        verbose_name_plural = "Bài viết-phân loại"
 
 class Post(models.Model):
     title = models.CharField('Chủ đề',max_length=300)
@@ -93,7 +93,7 @@ class Post(models.Model):
     excerpt = models.TextField('Tóm tắt',help_text='Không quá 500 ký tự',max_length=500)
     post_type = models.ForeignKey(PostType,verbose_name='Loại',on_delete=models.CASCADE)
     audio_link = models.CharField('Audio Link',null=True, blank=True,default='',max_length=400)
-    isActive = models.BooleanField('Công khai',default=True, blank=True)
+    is_active = models.BooleanField('Công khai',default=True, blank=True)
     number_readed = models.SmallIntegerField('Số lượt đọc',default=0,blank=True,null=True,help_text='Số lượt đọc')
     number_shared = models.SmallIntegerField('Số lượt chia sẻ',default=0,blank=True,null=True,help_text='Số lượt chia sẻ')
     created_on = models.DateTimeField('Created on',auto_now = True)
@@ -103,9 +103,9 @@ class Post(models.Model):
         return self.title
 
     class Meta:
-        ordering = ['created_on']
-        verbose_name = "Bài viết"
-        verbose_name_plural = "Bài viết"
+        ordering = ['-created_on']
+        verbose_name = "Bài viết-chủ đề"
+        verbose_name_plural = "Bài viết-chủ đề"
     
     def save(self, *args, **kwargs):
         if not self.id:
@@ -119,15 +119,15 @@ class PostContent(models.Model):
     slug = models.CharField('Slug',max_length=100)
     sequence = models.CharField('Thứ tự',default='0',choices=sequence_choise,max_length=4)
     image_url = models.ImageField('Hình ảnh',null=True, blank=True, upload_to='web_images/post')
-    chapter_summary = models.CharField('Tóm tắt',help_text='Không quá 500 ký tự',max_length=500)
+    chapter_summary = models.CharField('Tóm tắt',default='',null=True, blank=True,help_text='Không quá 500 ký tự',max_length=500)
     content = HTMLField('Nội dung')
     created_on = models.DateTimeField('Created on',auto_now = True)
     edited_by = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='content_author', default=None, blank=True, null=True)
 
     class Meta:
-        ordering = ['post','sequence']
-        verbose_name = "Nội dung bài viết"
-        verbose_name_plural = "Nội dung bài viết"
+        ordering = ['post','sequence','-created_on']
+        verbose_name = "Bài viết-nội dung"
+        verbose_name_plural = "Bài viết-nội dung"
 
 class Aboutus(models.Model):
     title = models.CharField('Chủ đề',max_length=100)
@@ -135,7 +135,7 @@ class Aboutus(models.Model):
     image_url = models.ImageField('Hình ảnh',null=True, blank=True, upload_to='web_images/announ')
     excerpt = models.TextField('Tóm tắt',help_text='Không quá 500 ký tự',max_length=500)
     content = HTMLField('Nội dung')
-    isActive = models.BooleanField('Công khai',default=True, blank=True)
+    is_active = models.BooleanField('Công khai',default=True, blank=True)
     number_readed = models.SmallIntegerField('Số lượt đọc',default=0,blank=True,null=True,help_text='Số lượt đọc')
     number_shared = models.SmallIntegerField('Số lượt chia sẻ',default=0,blank=True,null=True,help_text='Số lượt chia sẻ')
     created_on = models.DateTimeField('Created on',auto_now = True)
@@ -143,7 +143,7 @@ class Aboutus(models.Model):
         CustomUserModel, on_delete=models.CASCADE, default=None, blank=True, null=True)
 
     class Meta:
-        ordering = ['created_on']
+        ordering = ['-created_on']
         verbose_name = "Giới thiệu"
         verbose_name_plural = "Giới thiệu"
     
@@ -160,7 +160,7 @@ class Announcement(models.Model):
     excerpt = models.TextField('Tóm tắt',help_text='Không quá 500 ký tự',default='',max_length=500)
     content = HTMLField('Nội dung')
     priority_choice = models.CharField('Ưu tiên',choices=priority_choice,default='2',max_length=10)
-    isActive = models.BooleanField('Công khai',default=True, blank=True)
+    is_active = models.BooleanField('Công khai',default=True, blank=True)
     from_date = models.DateField('Công khai từ',default=timezone.now)
     to_date = models.DateField('Công khai đến',default=timezone.now)
     event_date_time = models.DateTimeField('Event date time',default=timezone.now, blank=True, null=True)
@@ -173,7 +173,7 @@ class Announcement(models.Model):
     updated_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='updated_user',default=None, blank=True, null=True)
 
     class Meta:
-        ordering = ['priority_choice','isActive','created_on']
+        ordering = ['-priority_choice','is_active','created_on']
         verbose_name = "Thông báo chung"
         verbose_name_plural = "Thông báo chung"
 
@@ -246,7 +246,7 @@ class GospelContent(models.Model):
         return f'{self.chapter_title}'
 
     class Meta:
-        ordering = ['gospel','sequence']
+        ordering = ['gospel','sequence','-created_on']
         verbose_name = "Lời Chúa nội dung"
         verbose_name_plural = "Lời Chúa nội dung"
 
