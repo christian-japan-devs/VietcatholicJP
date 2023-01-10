@@ -2,13 +2,20 @@ from django.db import models
 from rest_framework import serializers
 from users.models import CustomUserModel
 from users.serializers import UserDetailSerializer
-from .models import Father, Province, Church, Region, Community
+from .models import (Father, Province, Church, Region, Community,
+      RepresentativeResponsibility, Representative, RepresentativeAndCommunity)
 
 class FatherContactSerializer(serializers.ModelSerializer):
     user = UserDetailSerializer()
     class Meta:
         model = Father
-        fields = ('id','user','region','province','address','facebook','phone_number')
+        fields = ('id','user','province','address','facebook','phone_number')
+
+class RepresentativeContactSerializer(serializers.ModelSerializer):
+    user = UserDetailSerializer()
+    class Meta:
+        model = Representative
+        fields = ('id','user','province','address','facebook','phone_number')
 
 class ChurchContactSerializer(serializers.ModelSerializer):
     class Meta:
