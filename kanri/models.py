@@ -170,9 +170,8 @@ class Father(models.Model):
     user = models.OneToOneField(CustomUserModel,verbose_name='Tài khoản', on_delete=models.CASCADE)
     introduction = HTMLField('Giới thiệu',default='',blank=True,null=True)
     facebook = models.CharField('Link facebook',default='',blank=True,null=True,max_length=400)
-    address = models.CharField('Địa chỉ hiện tại',default='',blank=True,null=True,max_length=300)
-    region = models.ForeignKey(Region,verbose_name='Vùng',default=None,blank=True,null=True,on_delete=models.CASCADE)
-    province = models.ForeignKey(Province,verbose_name='Tỉnh',default=None,blank=True,null=True,on_delete=models.CASCADE)
+    address = models.CharField('Địa chỉ hiện tại',default='',blank=True,max_length=300)
+    province = models.ForeignKey(Province,verbose_name='Tỉnh',default=None,blank=True,on_delete=models.CASCADE)
     phone_number = models.CharField('Số điện thoại',default='',blank=True, null=True,max_length=12)
     last_update_time = models.DateField('Lần cuối truy cập',blank=True, null=True,auto_now = True)
     account_confimred = models.BooleanField('Xác minh',blank=True, null=True,default=False)
@@ -193,6 +192,10 @@ class FatherAndChurch(models.Model):
     from_date = models.DateField('Từ ngày',blank=True, null=True,auto_now = True)
     to_date = models.DateField('Đến ngày',blank=True, null=True,auto_now = True)
     is_active = models.BooleanField('Còn phụ trách',blank=True, null=True,default=False)
+    created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now = True)
+    created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='created_user',default=None,blank=True,null=True)
+    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',auto_now = True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='updated_user',default=None,blank=True,null=True)
 
     class Meta:
         verbose_name = "Cha tại nhà thờ"
@@ -211,8 +214,7 @@ class Community(models.Model):
     introduction = HTMLField('Giới thiệu',help_text='Mô tả sơ lược về nhóm',blank=True)
     url = models.CharField('Facebook URL',help_text='Link liên kết facebook',max_length=100, default='',blank=True)
     email = models.CharField('Email',help_text='Địa chỉ email',max_length=50 ,null=True, default='',blank=True)
-    region = models.ForeignKey(Region,verbose_name='Vùng',default=None,blank=True,null=True,on_delete=models.CASCADE)
-    province = models.ForeignKey(Province,verbose_name='Tỉnh',default=None,blank=True,null=True,on_delete=models.CASCADE)
+    province = models.ForeignKey(Province,verbose_name='Tỉnh',default=None,blank=True,on_delete=models.CASCADE)
     church = models.ForeignKey(Church,verbose_name='Nhà thờ sinh hoạt', on_delete=models.CASCADE)
     address = models.CharField('Địa chỉ sinh hoạt',help_text='Địa chỉ',max_length=400)
     google_map_link = models.CharField('googlemap link',max_length=500)
@@ -222,8 +224,9 @@ class Community(models.Model):
     geo_lat = models.FloatField('Vĩ độ',help_text='Vĩ độ theo bản đồ Google',default=0.0,blank=True,null=True)
     geo_hash = models.CharField('geo_hash',max_length=30,null=True, default='',blank=True)
     created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now = True)
-    created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,default=None,blank=True,null=True)
+    created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='created_user',default=None,blank=True,null=True)
     updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',auto_now = True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='updated_user',default=None,blank=True,null=True)
 
     def __str__(self):
         return self.name
@@ -238,3 +241,65 @@ class Community(models.Model):
             if self.image:
                 self.image = compressImage(self.image)
         super(Community, self).save(*args, **kwargs)
+
+class RepresentativeResponsibility(models.Model):
+    name = models.CharField('Tên',max_length=100)
+    slug = models.CharField('Slug',max_length=100)
+    is_active = models.BooleanField('Hoat dong',default=True, blank=True)
+    created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now = True)
+    created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='created_user',default=None,blank=True,null=True)
+    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',auto_now = True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='updated_user',default=None,blank=True,null=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = "Representative responsibility"
+        verbose_name_plural = "Representative responsibilities"
+
+class Representative(models.Model):
+    id = models.CharField(max_length = 40, default = uuid4, primary_key = True, editable = False)
+    user = models.OneToOneField(CustomUserModel,verbose_name='Tài khoản', on_delete=models.CASCADE)
+    tepresentative_type = models.ForeignKey(PostType,verbose_name='Loại',on_delete=models.CASCADE)
+    introduction = HTMLField('Giới thiệu',default='',blank=True,null=True)
+    facebook = models.CharField('Link facebook',default='',blank=True,null=True,max_length=400)
+    address = models.CharField('Địa chỉ hiện tại',default='',blank=True,null=True,max_length=300)
+    province = models.ForeignKey(Province,verbose_name='Tỉnh',default=None,blank=True,on_delete=models.CASCADE)
+    phone_number = models.CharField('Số điện thoại',default='',blank=True, null=True,max_length=12)
+    last_update_time = models.DateField('Lần cuối truy cập',blank=True, null=True,auto_now = True)
+    account_confimred = models.BooleanField('Xác minh',blank=True, null=True,default=False)
+    created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now = True)
+    created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='created_user',default=None,blank=True,null=True)
+    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',auto_now = True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='updated_user',default=None,blank=True,null=True)
+
+    class Meta:
+        verbose_name = "Representative"
+        verbose_name_plural = "Representatives"
+        ordering = ('-created_on',)
+
+    def __str__(self):
+        return f'{self.user.full_name}'
+
+class RepresentativeAndCommunity(models.Model):
+    id = models.CharField(max_length = 40, default = uuid4, primary_key = True, editable = False)
+    representative = models.ForeignKey(Leader,verbose_name='Truong', on_delete=models.CASCADE)
+    responsibility = models.ForeignKey(RepresentativeResponsibility,verbose_name='Trach nhiem',on_delete=models.CASCADE)
+    community = models.ForeignKey(Community,verbose_name='Nhom', on_delete=models.CASCADE)
+    from_date = models.DateField('Từ ngày',blank=True, null=True,auto_now = True)
+    to_date = models.DateField('Đến ngày',blank=True, null=True,auto_now = True)
+    is_active = models.BooleanField('Còn phụ trách',blank=True, null=True,default=False)
+    created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now = True)
+    created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='created_user',default=None,blank=True,null=True)
+    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',auto_now = True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='updated_user',default=None,blank=True,null=True)
+
+    class Meta:
+        verbose_name = "Communnity and representative"
+        verbose_name_plural = "Communnity and representatives"
+        ordering = ('is_active','community','responsibility','representative','-from_date','-to_date')
+
+    def __str__(self):
+        return f'{self.leader.user.full_name} : {self.community.name}'
