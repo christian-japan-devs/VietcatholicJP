@@ -32,7 +32,11 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'username',
             'email',
             'password',
+            'saint_name',
+            'full_name',
+            'image',
         ]
+        valid = {'required': False}
     
     def create(self, validated_data):
         user = CustomUserModel.objects.create_user(
