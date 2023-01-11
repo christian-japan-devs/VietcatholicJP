@@ -11,26 +11,58 @@ class ChurchAdmin(admin.ModelAdmin):
     list_display = ('name','phone','email','province')
     list_filter = ('region','province',)
     search_fields = ['name', 'province']
+    exclude = ('created_on','created_user', 'updated_user',)
     list_per_page = 50
+
+    def save_model(self, request, obj, form, change):
+        if getattr(obj, 'created_user', None) is None:
+            obj.created_user = request.user
+        obj.updated_on = timezone.now
+        obj.updated_user = request.user
+        obj.save()
 
 class FatherAdmin(admin.ModelAdmin):
     list_display = ('user','phone_number', )
     list_filter = ('province',)
     search_fields = ['introduction']
+    exclude = ('created_on','created_user', 'updated_user','updated_on',)
     list_per_page = 50
+
+    def save_model(self, request, obj, form, change):
+        if getattr(obj, 'created_user', None) is None:
+            obj.created_user = request.user
+        obj.updated_on = timezone.now
+        obj.updated_user = request.user
+        obj.save()
 
 class FatherAndChurchAdmin(admin.ModelAdmin):
     list_display = ('father','church','from_date','to_date','is_active')
     list_filter = ('church',)
     search_fields = ['church', 'father']
+    exclude = ('created_on','created_user', 'updated_user','updated_on',)
     list_per_page = 50
+
+    def save_model(self, request, obj, form, change):
+        if getattr(obj, 'created_user', None) is None:
+            obj.created_user = request.user
+        obj.updated_on = timezone.now
+        obj.updated_user = request.user
+        obj.save()
 
 class CommunityAdmin(admin.ModelAdmin):
     list_display = ('name','type','province','address')
     list_filter = ('province',)
     search_fields = ['name', 'address']
+    exclude = ('created_on','created_user', 'updated_user','updated_on',)
     prepopulated_fields = {'slug': ('name',)}
     list_per_page = 50
+
+    def save_model(self, request, obj, form, change):
+        if getattr(obj, 'created_user', None) is None:
+            obj.created_user = request.user
+        obj.updated_on = timezone.now
+        obj.updated_user = request.user
+        obj.save()
 
 class RepresentativeResponsibilityAdmin(admin.ModelAdmin):
     list_display = ('name','updated_on','updated_user')

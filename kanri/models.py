@@ -105,8 +105,8 @@ class Facility(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = 'Master-Facility'
-        verbose_name_plural = 'Master-Facilities'
+        verbose_name = 'Facility'
+        verbose_name_plural = 'Facilities'
     
     def save(self, *args, **kwargs):
         if not self.id:
@@ -134,7 +134,9 @@ class Church(models.Model):
     geo_hash = models.CharField('geo_hash',max_length=30, default='',blank=True)
     created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now = True)
     created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,default=None,blank=True,null=True,related_name='church_created_user')
-
+    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',auto_now = True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='church_updated_user',default=None,blank=True,null=True)
+    
     def __str__(self):
         return self.name
 
@@ -153,7 +155,7 @@ class ChurchImages(models.Model):
     title = models.CharField('Title',max_length=120)
     image = models.ImageField('Image',null=True,blank=True,upload_to='images/church/')
     church = models.ForeignKey(Church, on_delete=models.CASCADE)
-    created_on = models.DateTimeField('Ngày tạo',auto_now = True)
+    created_on = models.DateTimeField('Ngày tạo',auto_now_add = True)
     created_user = models.ForeignKey(CustomUserModel,on_delete=models.CASCADE,default=None,blank=True,null=True,related_name='church_image_created_user')
 
     def __str__(self):
@@ -161,8 +163,8 @@ class ChurchImages(models.Model):
     
     class Meta:
         ordering = ['created_on']
-        verbose_name = 'Ảnh nhà thờ'
-        verbose_name_plural = 'Ảnh nhà thờ'
+        verbose_name = 'Nhà thờ ảnh'
+        verbose_name_plural = 'Nhà thờ ảnh'
     
     def save(self, *args, **kwargs):
         if not self.id:
@@ -185,8 +187,8 @@ class Father(models.Model):
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='father_updated_user',default=None,blank=True,null=True)
 
     class Meta:
-        verbose_name = 'Master-User-Quý cha'
-        verbose_name_plural = 'Master-User-Quý cha'
+        verbose_name = 'User-Quý cha'
+        verbose_name_plural = 'User-Quý cha'
         unique_together = ('user','address')
         ordering = ('created_on',)
 
@@ -241,8 +243,8 @@ class Community(models.Model):
 
     class Meta:
         ordering = ['name','province','created_on']
-        verbose_name = 'Master-Group-Cộng đoàn, nhóm'
-        verbose_name_plural = 'Master-Group-Cộng đoàn, nhóm'
+        verbose_name = 'Cộng đoàn, nhóm'
+        verbose_name_plural = 'Cộng đoàn, nhóm'
     
     def save(self, *args, **kwargs):
         if not self.id:
@@ -282,8 +284,8 @@ class Representative(models.Model):
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='representative_updated_user',default=None,blank=True,null=True)
 
     class Meta:
-        verbose_name = 'Master-User-Representative'
-        verbose_name_plural = 'Master-Representatives'
+        verbose_name = 'User-Representative'
+        verbose_name_plural = 'User-Representatives'
         ordering = ('-created_on',)
 
     def __str__(self):
@@ -294,8 +296,8 @@ class RepresentativeAndCommunity(models.Model):
     representative = models.ForeignKey(Representative,verbose_name='Truong', on_delete=models.CASCADE)
     responsibility = models.ForeignKey(RepresentativeResponsibility,verbose_name='Trach nhiem',on_delete=models.CASCADE)
     community = models.ForeignKey(Community,verbose_name='Nhom', on_delete=models.CASCADE)
-    from_date = models.DateField('Từ ngày',blank=True, null=True,auto_now = True)
-    to_date = models.DateField('Đến ngày',blank=True, null=True,auto_now = True)
+    from_date = models.DateField('Từ ngày',blank=True, null=True,default=timezone.now)
+    to_date = models.DateField('Đến ngày',blank=True, null=True,default=timezone.now)
     is_active = models.BooleanField('Còn phụ trách',blank=True, null=True,default=False)
     created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now_add = True)
     created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='representative_comm_created_user',default=None,blank=True,null=True,editable=False)
@@ -303,7 +305,7 @@ class RepresentativeAndCommunity(models.Model):
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='representative_comm_updated_user',default=None,blank=True,null=True,)
 
     class Meta:
-        verbose_name = 'Master-Communnity and representative'
+        verbose_name = 'Communnity and representative'
         verbose_name_plural = 'Master-Communnity and representatives'
         ordering = ('is_active','community','responsibility','representative','-from_date','-to_date')
 
@@ -321,13 +323,13 @@ class UserProfile(models.Model):
     is_active = models.BooleanField('Còn phụ trách',blank=True, null=True,default=False)
     account_confimred = models.BooleanField('Xác minh',blank=True, null=True,default=False)
     code = models.CharField('Mã xác nhận',default='', null=True,blank=True,max_length=20)
-    code_created_time = models.DateTimeField('Thời gian tạo mã',blank=True, null=True,auto_now_add = True)
+    code_created_time = models.DateTimeField('Thời gian tạo mã',blank=True, null=True,auto_now = True)
     updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',auto_now = True)
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='profile_updated_user',default=None,blank=True,null=True)
 
     class Meta:
-        verbose_name = "Master-User-User profile"
-        verbose_name_plural = "Master-User-User profiles"
+        verbose_name = "User-User profile"
+        verbose_name_plural = "User-User profiles"
         ordering = ('user__username','user__email',)
 
     def __str__(self):
