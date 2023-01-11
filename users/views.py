@@ -28,6 +28,7 @@ class UserCreate(viewsets.ViewSet):
         print("Start create new account")
         try:
             serializer = CustomUserSerializer(data=request.data)
+            #print(serializer.data)
             if serializer.is_valid():
                 user = serializer.save()
                 user.save()
@@ -66,11 +67,13 @@ class UserCreate(viewsets.ViewSet):
                 print(serializer.errors)
                 return Response(res, status=status.HTTP_226_IM_USED)
         except:
-            print(request.data)
+            #print(request.data)
             print(f"Create new user error: {sys.exc_info()[0]}")
             res = {
                     'status': 'error',
-                    'message': {'system':'Không thể tạo tài khoản. Vui lòng liên hệ quản trị hệ thống.'}
+                    'message': {'system':'Không thể tạo tài khoản. Vui lòng liên hệ quản trị hệ thống.',
+                                'error':{sys.exc_info()[0]}
+                                }
                 }
             return Response(res, status=status.HTTP_400_BAD_REQUEST)
 

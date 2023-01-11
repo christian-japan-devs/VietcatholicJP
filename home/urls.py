@@ -1,7 +1,8 @@
 from django.urls import path
 from django.contrib.auth import views
-from .views import (home,UserLoginForm
-    ,LetterListViewSet, MassScheduleViewSet, AnnouncementListViewSet,VideoLinksListViewSet,
+from .views import (home,UserLoginForm)
+from .api import (LetterListViewSet, MassScheduleViewSet, 
+    AnnouncementListViewSet,VideoLinksListViewSet,
     PostListViewSet
 )
 
