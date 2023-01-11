@@ -57,6 +57,9 @@ class CustomUserModel(AbstractBaseUser, PermissionsMixin):
         verbose_name = "User"
         ordering = ('-created_on','-username',)
 
+    def __str__(self):
+        return f'{self.user.full_name}'
+
 class Profile(models.Model):
     id = models.CharField(max_length = 40, default = uuid4, primary_key = True, editable = False)
     user = models.OneToOneField(CustomUserModel,verbose_name='Tài khoản', on_delete=models.CASCADE)

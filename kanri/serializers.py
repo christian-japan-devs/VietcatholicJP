@@ -15,7 +15,7 @@ class RepresentativeContactSerializer(serializers.ModelSerializer):
     user = UserDetailSerializer()
     class Meta:
         model = Representative
-        fields = ('id','user','province','address','facebook','phone_number')
+        fields = ('id','user','province','address','facebook','phone_number',)
 
 class ChurchContactSerializer(serializers.ModelSerializer):
     class Meta:

@@ -4,7 +4,7 @@ from django.contrib import admin
 from .models import Language, Country, Region, Province, Facility, Church, ChurchImages, Father, FatherAndChurch,Community
 
 class ChurchAdmin(admin.ModelAdmin):
-    list_display = ('name','phone','email','region','province')
+    list_display = ('name','phone','email','province')
     list_filter = ('region','province',)
     search_fields = ['name', 'province']
 
@@ -19,8 +19,8 @@ class FatherAndChurchAdmin(admin.ModelAdmin):
     search_fields = ['church', 'father']
 
 class CommunityAdmin(admin.ModelAdmin):
-    list_display = ('name','type','region','province','address')
-    list_filter = ('region',)
+    list_display = ('name','type','province','address')
+    list_filter = ('province',)
     search_fields = ['name', 'address']
     prepopulated_fields = {'slug': ('name',)}
 

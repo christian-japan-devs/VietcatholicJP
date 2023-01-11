@@ -16,7 +16,7 @@ def compressImage(input_image):
     outputIoStream = BytesIO()
     imageTemproary.save(outputIoStream , format='JPEG', quality=80)
     outputIoStream.seek(0)
-    input_image = InMemoryUploadedFile(outputIoStream,'ImageField', "%s.jpg" % input_image.name.split('.')[0], 'image/jpg', sys.getsizeof(outputIoStream), None)
+    input_image = InMemoryUploadedFile(outputIoStream,'ImageField', '%s.jpg' % input_image.name.split('.')[0], 'image/jpg', sys.getsizeof(outputIoStream), None)
     return input_image
 
 class Language(models.Model):
@@ -43,8 +43,8 @@ class YoutubeVideo(models.Model):
 
     class Meta:
         ordering = ['created_on','title']
-        verbose_name = "Youtube video"
-        verbose_name_plural = "Youtube videos"
+        verbose_name = 'Youtube video'
+        verbose_name_plural = 'Youtube videos'
 
 class Letter(models.Model):
     title = models.CharField('Chủ đề',max_length=100)
@@ -64,8 +64,8 @@ class Letter(models.Model):
 
     class Meta:
         ordering = ['created_on']
-        verbose_name = "Thư mục vụ"
-        verbose_name_plural = "Thư mục vụ"
+        verbose_name = 'Thư mục vụ'
+        verbose_name_plural = 'Thư mục vụ'
     
     def save(self, *args, **kwargs):
         if self.image_url:
@@ -83,8 +83,8 @@ class PostType(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = "Bài viết-phân loại"
-        verbose_name_plural = "Bài viết-phân loại"
+        verbose_name = 'Bài viết-phân loại'
+        verbose_name_plural = 'Bài viết-phân loại'
 
 class Post(models.Model):
     title = models.CharField('Chủ đề',max_length=300)
@@ -104,8 +104,8 @@ class Post(models.Model):
 
     class Meta:
         ordering = ['-created_on']
-        verbose_name = "Bài viết-chủ đề"
-        verbose_name_plural = "Bài viết-chủ đề"
+        verbose_name = 'Bài viết-chủ đề'
+        verbose_name_plural = 'Bài viết-chủ đề'
     
     def save(self, *args, **kwargs):
         if not self.id:
@@ -126,8 +126,8 @@ class PostContent(models.Model):
 
     class Meta:
         ordering = ['post','sequence','-created_on']
-        verbose_name = "Bài viết-nội dung"
-        verbose_name_plural = "Bài viết-nội dung"
+        verbose_name = 'Bài viết-nội dung'
+        verbose_name_plural = 'Bài viết-nội dung'
 
 class Aboutus(models.Model):
     title = models.CharField('Chủ đề',max_length=100)
@@ -144,8 +144,8 @@ class Aboutus(models.Model):
 
     class Meta:
         ordering = ['-created_on']
-        verbose_name = "Giới thiệu"
-        verbose_name_plural = "Giới thiệu"
+        verbose_name = 'Giới thiệu'
+        verbose_name_plural = 'Giới thiệu'
     
     def save(self, *args, **kwargs):
         if not self.id:
@@ -174,8 +174,8 @@ class Announcement(models.Model):
 
     class Meta:
         ordering = ['-priority_choice','is_active','-created_on']
-        verbose_name = "Thông báo chung"
-        verbose_name_plural = "Thông báo chung"
+        verbose_name = 'Thông báo chung'
+        verbose_name_plural = 'Thông báo chung'
 
     def __str__(self):
         return f'{self.slug}'
@@ -223,8 +223,8 @@ class Gospel(models.Model):
 
     class Meta:
         ordering = ['-date']
-        verbose_name = "Lời Chúa chủ đề"
-        verbose_name_plural = "Lời Chúa chủ đề"
+        verbose_name = 'Lời Chúa chủ đề'
+        verbose_name_plural = 'Lời Chúa chủ đề'
     
     def save(self, *args, **kwargs):
         if not self.id:
@@ -247,8 +247,8 @@ class GospelContent(models.Model):
 
     class Meta:
         ordering = ['gospel','sequence','-created_on']
-        verbose_name = "Lời Chúa nội dung"
-        verbose_name_plural = "Lời Chúa nội dung"
+        verbose_name = 'Lời Chúa nội dung'
+        verbose_name_plural = 'Lời Chúa nội dung'
 
 class GospelReflection(models.Model):
     gospel = models.ForeignKey(Gospel,verbose_name='Lời Chúa tiêu đề',on_delete=models.CASCADE,related_name='reflection_gospel')
@@ -268,8 +268,8 @@ class GospelReflection(models.Model):
 
     class Meta:
         ordering = ['gospel','-created_on']
-        verbose_name = "Lời Chúa suy niệm"
-        verbose_name_plural = "Lời Chúa suy niệm"
+        verbose_name = 'Lời Chúa suy niệm'
+        verbose_name_plural = 'Lời Chúa suy niệm'
 
 class MassDateSchedule(models.Model):
     date = models.DateField('Ngày')
@@ -282,8 +282,8 @@ class MassDateSchedule(models.Model):
 
     class Meta:
         ordering = ['-date']
-        verbose_name = "Lịch Lễ"
-        verbose_name_plural = "Lịch Lễ"
+        verbose_name = 'Lịch Lễ'
+        verbose_name_plural = 'Lịch Lễ'
 
 class MassTimeSchedule(models.Model):
     date_schedule = models.ForeignKey(MassDateSchedule,verbose_name='Thánh Lễ',on_delete=models.CASCADE)
@@ -295,8 +295,8 @@ class MassTimeSchedule(models.Model):
 
     class Meta:
         ordering = ['-date_schedule']
-        verbose_name = "Lịch Lễ chi tiết"
-        verbose_name_plural = "Lịch Lễ chi tiết"
+        verbose_name = 'Lịch Lễ chi tiết'
+        verbose_name_plural = 'Lịch Lễ chi tiết'
     
     def __str__(self):
         return f'{self.date_schedule}-{self.time}'
@@ -312,8 +312,8 @@ class ConfessSchedule(models.Model):
 
     class Meta:
         ordering = ['-from_date_time']
-        verbose_name = "Lịch giải tội"
-        verbose_name_plural = "Lịch giải tội"
+        verbose_name = 'Lịch giải tội'
+        verbose_name_plural = 'Lịch giải tội'
     
     def __str__(self):
         return f'{self.from_date_time}-{self.to_date_time}'
