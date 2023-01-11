@@ -27,7 +27,9 @@ class UserCreate(viewsets.ViewSet):
     def create(self, request):  # /api/account/
         print("Start create new account")
         try:
+            print(request.data)
             serializer = CustomUserSerializer(data=request.data)
+            print(serializer.data)
             if serializer.is_valid():
                 user = serializer.save()
                 user.save()
@@ -66,7 +68,7 @@ class UserCreate(viewsets.ViewSet):
                 print(serializer.errors)
                 return Response(res, status=status.HTTP_226_IM_USED)
         except:
-            print(request.data)
+            #print(request.data)
             print(f"Create new user error: {sys.exc_info()[0]}")
             res = {
                     'status': 'error',

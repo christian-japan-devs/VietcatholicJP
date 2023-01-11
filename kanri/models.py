@@ -1,5 +1,4 @@
 from django.db import models
-from users.models import CustomUserModel
 from tinymce.models import HTMLField
 from django.utils import timezone
 import sys
@@ -7,7 +6,8 @@ from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from uuid import uuid4
-from lib.constant_choices import (jp_region_choices,jp_province_choices,priority_choice,group_type_choice,language_choice)
+from users.models import CustomUserModel
+from lib.constant_choices import (group_type_choice,language_choice)
 
 # Create your models here.
 #image compression method
@@ -29,6 +29,11 @@ class Language(models.Model):
     def __str__(self):
         return self.language_name
 
+    class Meta:
+        verbose_name = 'Master-Ngôn ngữ'
+        verbose_name_plural = 'Master-Ngôn ngữ'
+        ordering = ('language_name',)
+
 class Country(models.Model):
     japanese_name = models.CharField('Tên tiếng Nhật',max_length=50)
     english_name = models.CharField('Tên theo tiếng Anh',max_length=50)
@@ -36,8 +41,8 @@ class Country(models.Model):
     code = models.CharField('Mã',max_length=6,blank=True, null=True)
 
     class Meta:
-        verbose_name = 'Đất nước'
-        verbose_name_plural = 'Đất nước'
+        verbose_name = 'Master-Đất nước'
+        verbose_name_plural = 'Master-Đất nước'
         ordering = ('english_name',)
 
     def __str__(self):
@@ -51,8 +56,8 @@ class Region(models.Model):
     code = models.CharField('Mã',max_length=3,blank=True, null=True)
 
     class Meta:
-        verbose_name = 'Vùng'
-        verbose_name_plural = 'Vùng'
+        verbose_name = 'Master-Vùng'
+        verbose_name_plural = 'Master-Vùng'
         ordering = ('name',)
 
     def __str__(self):
@@ -71,8 +76,8 @@ class Province(models.Model):
     code = models.CharField('Mã',max_length=3,blank=True, null=True)
 
     class Meta:
-        verbose_name = 'Tỉnh'
-        verbose_name_plural = 'Tỉnh'
+        verbose_name = 'Master-Tỉnh'
+        verbose_name_plural = 'Master-Tỉnh'
         ordering = ('name',)
 
     def __str__(self):
@@ -100,8 +105,8 @@ class Facility(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = 'Facility'
-        verbose_name_plural = 'Facilities'
+        verbose_name = 'Master-Facility'
+        verbose_name_plural = 'Master-Facilities'
     
     def save(self, *args, **kwargs):
         if not self.id:
@@ -174,14 +179,14 @@ class Father(models.Model):
     province = models.ForeignKey(Province,verbose_name='Tỉnh',null=True,default=None,blank=True,on_delete=models.CASCADE)
     phone_number = models.CharField('Số điện thoại',default='',blank=True, null=True,max_length=12)
     account_confimred = models.BooleanField('Xác minh',blank=True, null=True,default=False)
-    created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now = True)
+    created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now_add = True)
     created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='father_created_user',default=None,blank=True,null=True)
     updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',auto_now = True)
-    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='father_updated_user',default=None,blank=True,null=True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='father_updated_user',default=None,blank=True,null=True)
 
     class Meta:
-        verbose_name = 'Quý cha'
-        verbose_name_plural = 'Quý cha'
+        verbose_name = 'Master-User-Quý cha'
+        verbose_name_plural = 'Master-User-Quý cha'
         unique_together = ('user','address')
         ordering = ('created_on',)
 
@@ -195,10 +200,10 @@ class FatherAndChurch(models.Model):
     from_date = models.DateField('Từ ngày',blank=True, null=True,auto_now = True)
     to_date = models.DateField('Đến ngày',blank=True, null=True,auto_now = True)
     is_active = models.BooleanField('Còn phụ trách',blank=True, null=True,default=False)
-    created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now = True)
+    created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now_add = True)
     created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='father_and_church_created_user',default=None,blank=True,null=True)
     updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',auto_now = True)
-    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='father_and_church_updated_user',default=None,blank=True,null=True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='father_and_church_updated_user',default=None,blank=True,null=True)
 
     class Meta:
         verbose_name = 'Cha tại nhà thờ'
@@ -217,7 +222,7 @@ class Community(models.Model):
     introduction = HTMLField('Giới thiệu',help_text='Mô tả sơ lược về nhóm',blank=True)
     url = models.CharField('Facebook URL',help_text='Link liên kết facebook',max_length=100, default='',blank=True)
     email = models.CharField('Email',help_text='Địa chỉ email',max_length=50 ,null=True, default='',blank=True)
-    province = models.ForeignKey(Province,verbose_name='Tỉnh',default=None,blank=True,on_delete=models.CASCADE)
+    province = models.ForeignKey(Province,verbose_name='Tỉnh',default=None,blank=True,on_delete=models.CASCADE,related_name='community_province')
     church = models.ForeignKey(Church,verbose_name='Nhà thờ sinh hoạt', on_delete=models.CASCADE)
     address = models.CharField('Địa chỉ sinh hoạt',help_text='Địa chỉ',max_length=400)
     google_map_link = models.CharField('googlemap link',max_length=500)
@@ -226,18 +231,18 @@ class Community(models.Model):
     geo_lon = models.FloatField('Kinh độ',help_text='Kinh độ theo bản đồ Google',default=0.0,blank=True,null=True)
     geo_lat = models.FloatField('Vĩ độ',help_text='Vĩ độ theo bản đồ Google',default=0.0,blank=True,null=True)
     geo_hash = models.CharField('geo_hash',max_length=30,null=True, default='',blank=True)
-    created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now = True)
+    created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now_add = True)
     created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='community_created_user',default=None,blank=True,null=True)
     updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',auto_now = True)
-    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='community_updated_user',default=None,blank=True,null=True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='community_updated_user',default=None,blank=True,null=True)
 
     def __str__(self):
         return self.name
 
     class Meta:
         ordering = ['name','province','created_on']
-        verbose_name = 'Cộng đoàn, nhóm'
-        verbose_name_plural = 'Cộng đoàn, nhóm'
+        verbose_name = 'Master-Group-Cộng đoàn, nhóm'
+        verbose_name_plural = 'Master-Group-Cộng đoàn, nhóm'
     
     def save(self, *args, **kwargs):
         if not self.id:
@@ -249,18 +254,18 @@ class RepresentativeResponsibility(models.Model):
     name = models.CharField('Tên',max_length=100)
     slug = models.CharField('Slug',max_length=100)
     is_active = models.BooleanField('Hoat dong',default=True, blank=True)
-    created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now = True)
+    created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now_add = True)
     created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='representative_resp_created_user',default=None,blank=True,null=True)
     updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',auto_now = True)
-    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='representative_resp_updated_user',default=None,blank=True,null=True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='representative_resp_updated_user',default=None,blank=True,null=True)
 
     def __str__(self):
         return self.name
 
     class Meta:
         ordering = ['name']
-        verbose_name = 'Representative responsibility'
-        verbose_name_plural = 'Representative responsibilities'
+        verbose_name = 'Master-Representative responsibility'
+        verbose_name_plural = 'Master-Representative responsibilities'
 
 class Representative(models.Model):
     id = models.CharField(max_length = 40, default = uuid4, primary_key = True, editable = False)
@@ -271,14 +276,14 @@ class Representative(models.Model):
     province = models.ForeignKey(Province,verbose_name='Tỉnh',default=None,blank=True,on_delete=models.CASCADE)
     phone_number = models.CharField('Số điện thoại',default='',blank=True, null=True,max_length=12)
     account_confimred = models.BooleanField('Xác minh',blank=True, null=True,default=False)
-    created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now = True)
+    created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now_add = True, editable=False)
     created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='representative_created_user',default=None,blank=True,null=True)
     updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',auto_now = True)
-    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='representative_updated_user',default=None,blank=True,null=True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='representative_updated_user',default=None,blank=True,null=True)
 
     class Meta:
-        verbose_name = 'Representative'
-        verbose_name_plural = 'Representatives'
+        verbose_name = 'Master-User-Representative'
+        verbose_name_plural = 'Master-Representatives'
         ordering = ('-created_on',)
 
     def __str__(self):
@@ -292,15 +297,38 @@ class RepresentativeAndCommunity(models.Model):
     from_date = models.DateField('Từ ngày',blank=True, null=True,auto_now = True)
     to_date = models.DateField('Đến ngày',blank=True, null=True,auto_now = True)
     is_active = models.BooleanField('Còn phụ trách',blank=True, null=True,default=False)
-    created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now = True)
-    created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='representative_comm_created_user',default=None,blank=True,null=True)
+    created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now_add = True)
+    created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='representative_comm_created_user',default=None,blank=True,null=True,editable=False)
     updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',auto_now = True)
-    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='representative_comm_updated_user',default=None,blank=True,null=True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='representative_comm_updated_user',default=None,blank=True,null=True,)
 
     class Meta:
-        verbose_name = 'Communnity and representative'
-        verbose_name_plural = 'Communnity and representatives'
+        verbose_name = 'Master-Communnity and representative'
+        verbose_name_plural = 'Master-Communnity and representatives'
         ordering = ('is_active','community','responsibility','representative','-from_date','-to_date')
 
     def __str__(self):
-        return f'{self.leader.user.full_name} : {self.community.name}'
+        return f'{self.representative.user.full_name} : {self.community.name}'
+
+class UserProfile(models.Model):
+    id = models.CharField(max_length = 40, default = uuid4, primary_key = True, editable = False)
+    user = models.OneToOneField(CustomUserModel,verbose_name='Tài khoản', on_delete=models.CASCADE)
+    facebook = models.CharField('Link facebook', null=True,default=None,blank=True,max_length=400)
+    province = models.ForeignKey(Province,verbose_name='Tỉnh', null=True,default=None,blank=True,on_delete=models.CASCADE,related_name='user_profile_province')
+    community = models.ForeignKey(Community,verbose_name='Cộng đoàn, Nhóm', null=True,default=None,blank=True,on_delete=models.CASCADE,related_name='user_profile_community')
+    address = models.CharField('Địa chỉ', null=True,default=None,blank=True,max_length=300)
+    phone_number = models.CharField('Số điện thoại',default='',blank=True, null=True,max_length=12)
+    is_active = models.BooleanField('Còn phụ trách',blank=True, null=True,default=False)
+    account_confimred = models.BooleanField('Xác minh',blank=True, null=True,default=False)
+    code = models.CharField('Mã xác nhận',default='', null=True,blank=True,max_length=20)
+    code_created_time = models.DateTimeField('Thời gian tạo mã',blank=True, null=True,auto_now_add = True)
+    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',auto_now = True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='profile_updated_user',default=None,blank=True,null=True)
+
+    class Meta:
+        verbose_name = "Master-User-User profile"
+        verbose_name_plural = "Master-User-User profiles"
+        ordering = ('user__username','user__email',)
+
+    def __str__(self):
+        return f'{self.user.username} : {self.user.full_name}'
