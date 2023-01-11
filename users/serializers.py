@@ -36,7 +36,6 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'full_name',
             'image',
         ]
-        valid = {'required': False}
     
     def create(self, validated_data):
         user = CustomUserModel.objects.create_user(

@@ -312,7 +312,7 @@ class RepresentativeAndCommunity(models.Model):
 
 class UserProfile(models.Model):
     id = models.CharField(max_length = 40, default = uuid4, primary_key = True, editable = False)
-    user = models.OneToOneField(CustomUserModel,verbose_name='Tài khoản', on_delete=models.CASCADE)
+    user = models.OneToOneField(CustomUserModel,verbose_name='Tài khoản', on_delete=models.CASCADE,related_name='profile_user')
     facebook = models.CharField('Link facebook', null=True,default=None,blank=True,max_length=400)
     province = models.ForeignKey(Province,verbose_name='Tỉnh', null=True,default=None,blank=True,on_delete=models.CASCADE,related_name='user_profile_province')
     community = models.ForeignKey(Community,verbose_name='Cộng đoàn, Nhóm', null=True,default=None,blank=True,on_delete=models.CASCADE,related_name='user_profile_community')
