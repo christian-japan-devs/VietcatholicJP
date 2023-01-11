@@ -43,8 +43,8 @@ class Event(models.Model):
 
     class Meta:
         ordering = ['event_date','-created_on','title']
-        verbose_name = 'Sự kiện-0-sự kiện'
-        verbose_name_plural = 'Sự kiện-0-sự kiện'
+        verbose_name = '0-sự kiện'
+        verbose_name_plural = '0-sự kiện'
 
 class EventProgramDetail(models.Model):
     event = models.ForeignKey(Event,verbose_name='Sự kiện',related_name='event_program_detail',on_delete=models.CASCADE)
@@ -64,8 +64,8 @@ class EventProgramDetail(models.Model):
 
     class Meta:
         ordering = ['event','event_date','-from_time','title']
-        verbose_name = 'Sự kiện-1-chương trình'
-        verbose_name_plural = 'Sự kiện-1-chương trình'
+        verbose_name = '1-chương trình'
+        verbose_name_plural = '1-chương trình'
 
 
 class EventRuleContent(models.Model):
@@ -87,8 +87,8 @@ class EventRuleContent(models.Model):
 
     class Meta:
         ordering = ['event','title','sequence','-created_on']
-        verbose_name = 'Sự kiện-2-quy định'
-        verbose_name_plural = 'Sự kiện-2-quy định'
+        verbose_name = '2-quy định'
+        verbose_name_plural = '2-quy định'
 
 class Registration(models.Model):
     date_time = models.DateTimeField('Ngày đăng ký',blank=True, null=True,auto_now = True)
@@ -106,8 +106,8 @@ class Registration(models.Model):
 
     class Meta:
         ordering = ['event','-date_time','user']
-        verbose_name = 'Sự kiện-4-đăng ký'
-        verbose_name_plural = 'Sự kiện-3-đăng ký'
+        verbose_name = '4-đăng ký'
+        verbose_name_plural = '3-đăng ký'
 
     def __str__(self):
         return f'{self.user.full_name}' #: {self.userseat}'
@@ -130,8 +130,8 @@ class EventBoard(models.Model):
 
     class Meta:
         ordering = ['event','title','is_active','created_on']
-        verbose_name = 'Sự kiện-5-các Ban'
-        verbose_name_plural = 'Sự kiện-5-các Ban'
+        verbose_name = '5-các Ban'
+        verbose_name_plural = '5-các Ban'
 
 class EventBoardAndMember(models.Model):
     member = models.ForeignKey(CustomUserModel,verbose_name='Thành viên',related_name='event_board_member_leaders', on_delete=models.CASCADE)
@@ -145,8 +145,8 @@ class EventBoardAndMember(models.Model):
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='event_board_member_updated_user',default=None,blank=True,null=True)
 
     class Meta:
-        verbose_name = 'Sự kiện-5-các Ban-thành viên'
-        verbose_name_plural = 'Sự kiện-5-các Ban-thành viên'
+        verbose_name = '5-các Ban-thành viên'
+        verbose_name_plural = '5-các Ban-thành viên'
         ordering = ('is_active','event_board','member','member_type',)
 
     def __str__(self):
@@ -170,8 +170,8 @@ class EventBoardTask(models.Model):
  
     class Meta:
         ordering = ['board','from_date_time','to_date_time','status','is_active']
-        verbose_name = 'Sự kiện-5-các Ban-nhiệm vụ'
-        verbose_name_plural = 'Sự kiện-5-các Ban-nhiệm vụ'
+        verbose_name = '5-các Ban-nhiệm vụ'
+        verbose_name_plural = '5-các Ban-nhiệm vụ'
     
     def __str__(self):
         return f'{self.board.name}-{self.title}'
@@ -195,8 +195,8 @@ class EventGroup(models.Model):
 
     class Meta:
         ordering = ['event','name','is_active','created_on']
-        verbose_name = 'Sự kiện-6-Đội'
-        verbose_name_plural = 'Sự kiện-6-Đội'
+        verbose_name = '6-Đội'
+        verbose_name_plural = '6-Đội'
     
     def save(self, *args, **kwargs):
         if not self.id:
@@ -216,8 +216,8 @@ class UserAndEventGroup(models.Model):
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='user_and_event_updated_user',default=None,blank=True,null=True)
 
     class Meta:
-        verbose_name = 'Sự kiện-6-Đội-thành viên'
-        verbose_name_plural = 'Sự kiện-6-Đội-thành viên'
+        verbose_name = '6-Đội-thành viên'
+        verbose_name_plural = '6-Đội-thành viên'
         ordering = ('event_group','member','member_type','created_on')
 
     def __str__(self):
@@ -239,8 +239,8 @@ class EventGroupScoreType(models.Model):
 
     class Meta:
         ordering = ['title','is_active','created_on']
-        verbose_name = 'Sự kiện-7-chấm điểm phân loại'
-        verbose_name_plural = 'Sự kiện-7-chấm điểm phân loại'
+        verbose_name = '7-chấm điểm phân loại'
+        verbose_name_plural = '7-chấm điểm phân loại'
 
 class EventGroupScore(models.Model):
     event_group = models.ForeignKey(EventGroup,verbose_name='Tên nhóm',related_name='event_group_score',on_delete=models.CASCADE)
@@ -260,8 +260,8 @@ class EventGroupScore(models.Model):
 
     class Meta:
         ordering = ['event_group','on_account','-date','-score_amount']
-        verbose_name = 'Sự kiện-7-nhóm-chấm điểm'
-        verbose_name_plural = 'Sự kiện-7-nhóm-chấm điểm'
+        verbose_name = '7-Đội-chấm điểm'
+        verbose_name_plural = '7-Đội-chấm điểm'
 
 class EventTransactionAccount(models.Model):
     title = models.CharField('Tên mục',max_length=200)
@@ -278,8 +278,8 @@ class EventTransactionAccount(models.Model):
 
     class Meta:
         ordering = ['title','created_on']
-        verbose_name = 'Sự kiện-8-giao dịch phân loại'
-        verbose_name_plural = 'Sự kiện-8-giao dịch phân loại'
+        verbose_name = '8-giao dịch phân loại'
+        verbose_name_plural = '8-giao dịch phân loại'
 
 class EventTransaction(models.Model):
     event = models.ForeignKey(Event,verbose_name='Sự kiện',related_name='event_transaction_detail',on_delete=models.CASCADE)
@@ -299,5 +299,5 @@ class EventTransaction(models.Model):
 
     class Meta:
         ordering = ['event','on_board','transaction_amount','transaction_type']
-        verbose_name = 'Sự kiện-8-giao dịch'
-        verbose_name_plural = 'Sự kiện-8-giao dịch'
+        verbose_name = '8-giao dịch'
+        verbose_name_plural = '8-giao dịch'
