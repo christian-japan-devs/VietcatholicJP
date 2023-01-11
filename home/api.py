@@ -12,30 +12,9 @@ from .serializers import (LetterShortSerializer,LetterContentSerializer,LetterSl
     YoutubeVideoSerializer, PostSlugSerializer, PostSerializer, PostContentSerializer
 )
 
-from django import forms
 from .models import Letter,Announcement,YoutubeVideo,PostType, Post, PostContent
 from lib.error_messages import *
-# Create your views here.
 
-def home(request):
-    return render(request, 'main/home.html')
-
-class UserLoginForm(AuthenticationForm):
-    def __init__(self, *args, **kwargs):
-        super(UserLoginForm, self).__init__(*args, **kwargs)
-
-    username = UsernameField(widget=forms.TextInput(
-        attrs={'class': 'input input-bordered','type':'text', 'placeholder': 'username', 'id': 'username'}))
-    password = forms.CharField(widget=forms.PasswordInput(
-        attrs={
-            'class': 'input input-bordered',
-            'type':'password',
-            'placeholder': 'password',
-            'id': 'password',
-        }
-))
-
-'''
 # api
 class LetterListViewSet(viewsets.ViewSet):
     permission_classes = (AllowAny,)
@@ -90,7 +69,6 @@ class MassScheduleViewSet(viewsets.ViewSet):
             'message': ''
         }
         try:
-            get_type = request.GET.get('type','home')
             from .models import MassDateSchedule, MassTimeSchedule
             from .serializers import MassDateScheduleSerializer
             mass_schedule = MassDateSchedule.objects.filter(date__gte=timezone.now()).order_by('date').first()
@@ -276,5 +254,3 @@ class PostListViewSet(viewsets.ViewSet):
             res['message'] = SYSTEM_ERROR_0001
             print(sys.exc_info())
             return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-'''
