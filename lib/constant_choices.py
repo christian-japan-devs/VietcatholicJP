@@ -1,4 +1,8 @@
 from django.utils.translation import gettext_lazy as _
+from lib.constants import (REGISTRED,NOT_PAIED,NOT_CONFIRM,ABSENT,PRESENTED,
+    MEMBER,LEADER,VICE_LEADER,PLUS,MINUS,INCOME,OUTCOME,NOT_YET
+    ,DOING,FINISHED,DELAY,CANCEL)
+
 # Booking status
 status_choice = (
     ('W', 'Waiting'),
@@ -33,6 +37,39 @@ priority_choice = (
     ('1', 'Thấp')
 )
 
+task_statuses = (
+    (NOT_YET, 'Chưa làm'),
+    (DOING, 'Đang làm'),
+    (FINISHED, 'Hoàn thành'),
+    (DELAY, 'Dời lịch'),
+    (CANCEL, 'Huỷ')
+)
+
+event_status_choice = (
+    (REGISTRED,'Đã đăng ký'),
+    (NOT_PAIED,'Chưa thanh toán'),
+    (NOT_CONFIRM,'Chưa xác nhận'),
+    (ABSENT,'Vắng mặt'),
+    (PRESENTED,'Đã tham dự'),
+)
+
+
+membership_type = (
+    (LEADER,'Nhóm trưởng'),
+    (VICE_LEADER,'Nhóm phó'),
+    (MEMBER,'Thành viên'),
+)
+
+score_type = (
+    (PLUS,'Cộng'),
+    (MINUS,'Trừ')
+)
+
+trasaction_type = (
+    (INCOME,'Thu'),
+    (OUTCOME,'Chi')
+)
+
 sequence_choise = (
     ('0', '1'),
     ('1', '2'),
@@ -41,6 +78,10 @@ sequence_choise = (
     ('4', '5'),
     ('5', '6'),
     ('6', '7'),
+    ('7', '8'),
+    ('8', '9'),
+    ('9', '10'),
+    ('10', '11'),
 )
 
 week_day_choice = (

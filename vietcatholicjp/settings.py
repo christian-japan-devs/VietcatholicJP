@@ -57,7 +57,8 @@ INSTALLED_APPS = [
     # local app
     'kanri.apps.KanriConfig',
     'home.apps.HomeConfig',
-    'users.apps.UsersConfig'
+    'users.apps.UsersConfig',
+    'event.apps.EventConfig'
 ]
 
 MIDDLEWARE = [

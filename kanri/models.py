@@ -1,23 +1,13 @@
 from django.db import models
 from tinymce.models import HTMLField
 from django.utils import timezone
-import sys
-from PIL import Image
-from io import BytesIO
-from django.core.files.uploadedfile import InMemoryUploadedFile
 from uuid import uuid4
 from users.models import CustomUserModel
 from lib.constant_choices import (group_type_choice,language_choice)
+from lib.help import compressImage
 
 # Create your models here.
-#image compression method
-def compressImage(input_image):
-    imageTemproary = Image.open(input_image)
-    outputIoStream = BytesIO()
-    imageTemproary.save(outputIoStream , format='JPEG', quality=80)
-    outputIoStream.seek(0)
-    input_image = InMemoryUploadedFile(outputIoStream,'ImageField', '%s.jpg' % input_image.name.split('.')[0], 'image/jpg', sys.getsizeof(outputIoStream), None)
-    return input_image
+
 
 class Language(models.Model):
     language_name = models.CharField('Tên Ngôn ngữ',help_text='Ngôn ngữ của Quốc gia',max_length=50)

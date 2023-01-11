@@ -1,23 +1,10 @@
 from django.db import models
 from django.utils import timezone
-from django.utils.translation import gettext_lazy as _
-import sys
-from PIL import Image
-from io import BytesIO
-from django.core.files.uploadedfile import InMemoryUploadedFile
 from tinymce.models import HTMLField
 from users.models import CustomUserModel
-from lib.constant_choices import (jp_region_choices,sequence_choise,priority_choice)
+from lib.constant_choices import (sequence_choise,priority_choice)
+from lib.help import compressImage
 from kanri.models import Province, Church, Father
-
-#image compression method
-def compressImage(input_image):
-    imageTemproary = Image.open(input_image)
-    outputIoStream = BytesIO()
-    imageTemproary.save(outputIoStream , format='JPEG', quality=80)
-    outputIoStream.seek(0)
-    input_image = InMemoryUploadedFile(outputIoStream,'ImageField', '%s.jpg' % input_image.name.split('.')[0], 'image/jpg', sys.getsizeof(outputIoStream), None)
-    return input_image
 
 # Create your models here.
 class YoutubeVideo(models.Model):
@@ -192,15 +179,15 @@ class Announcement(models.Model):
         super(Announcement, self).save(*args, **kwargs)
 
 class GospelRandom(models.Model):
-    word = models.CharField(_('Câu nói'),default='',blank=True,max_length=500,help_text=_('Câu lời chúa'))
-    content = models.TextField(_('Nội dung'),default='',max_length=2000,blank=True,help_text=_('Ý nghĩa câu Lời Chúa'))
-    image_vertical = models.CharField(_('Hình ảnh dọc'),default='',max_length=200,help_text=_('Link driver, hình cho điện thoại'))
-    image_horizontal = models.CharField(_('Hình ảnh khổ ngang'),default='',max_length=200,help_text=_('Link driver hình khổ ngang'))
+    word = models.CharField('Câu nói',default='',blank=True,max_length=500,help_text='Câu lời chúa')
+    content = models.TextField('Nội dung',default='',max_length=2000,blank=True,help_text='Ý nghĩa câu Lời Chúa')
+    image_vertical = models.CharField('Hình ảnh dọc',default='',max_length=200,help_text='Link driver, hình cho điện thoại')
+    image_horizontal = models.CharField('Hình ảnh khổ ngang',default='',max_length=200,help_text='Link driver hình khổ ngang')
     number_readed = models.SmallIntegerField('Số lượt đọc',default=0,blank=True,null=True,help_text='Số lượt đọc')
     number_shared = models.SmallIntegerField('Số lượt chia sẻ',default=0,blank=True,null=True,help_text='Số lượt chia sẻ')
-    number_downloaded = models.SmallIntegerField(_('Số lượt tải về'),default=0,blank=True,null=True,help_text=_('Số lượt đã tải về'))
-    is_active = models.BooleanField(_('Công khai'),help_text=_('Trạng thái công khai'),default=True,blank=True)
-    image_url = models.ImageField(_('Hình ảnh'),help_text=_('Hình ảnh hiển thị trên trang web'),null=True,blank=True,upload_to='gospel_img')
+    number_downloaded = models.SmallIntegerField('Số lượt tải về',default=0,blank=True,null=True,help_text='Số lượt đã tải về')
+    is_active = models.BooleanField('Công khai',help_text='Trạng thái công khai',default=True,blank=True)
+    image_url = models.ImageField('Hình ảnh',help_text='Hình ảnh hiển thị trên trang web',null=True,blank=True,upload_to='gospel_img')
     created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,default=None,blank=True,null=True,related_name='gospel_random_created_user')
     created_on = models.DateTimeField('Created on',blank=True, null=True,auto_now_add = True)
     updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',blank=True, null=True,auto_now = True)
