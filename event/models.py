@@ -11,13 +11,14 @@ from lib.help import compressImage
 
 # Create your models here.
 class Event(models.Model):
-    title = models.CharField('Chủ đề',max_length=100)
+    name = models.CharField('Tên',max_length=200)
     slug = models.CharField('Slug',max_length=100)
+    title = models.CharField('Câu chủ đề',max_length=300,null=True,blank=True,default='')
     excerpt = models.TextField('Tóm tắt',null=True,blank=True,default='',help_text='Không quá 500 ký tự',max_length=500)
     image_url = models.ImageField('Hình ảnh',null=True,blank=True,upload_to='images/event')
     event_date = models.DateTimeField('Ngày',blank=True, null=True,auto_now_add = True)
-    from_time= models.TimeField('Thời gian bắt đầu',blank=True, null=True, default=timezone.now)
-    to_time= models.TimeField('Thời gian kết thúc',blank=True, null=True, default=timezone.now)
+    from_time = models.DateTimeField('Thời gian bắt đầu',blank=True, null=True, default=timezone.now)
+    to_time = models.DateTimeField('Thời gian kết thúc',blank=True, null=True, default=timezone.now)
     province = models.ForeignKey(Province,verbose_name='Tỉnh',default=None,blank=True,null=True,related_name='event_province',on_delete=models.CASCADE)
     address = models.CharField('Địa chỉ hiện tại',default='',blank=True,max_length=300)
     google_map_link = models.CharField('googlemap link',max_length=500)
@@ -37,14 +38,14 @@ class Event(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            if self.image:
-                self.image = compressImage(self.image)
+            if self.image_url:
+                self.image_url = compressImage(self.image_url)
         super(Event, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ['event_date','-created_on','title']
-        verbose_name = '0-sự kiện'
-        verbose_name_plural = '0-sự kiện'
+        verbose_name = '0-Sự kiện'
+        verbose_name_plural = '0-Sự kiện'
 
 class EventProgramDetail(models.Model):
     event = models.ForeignKey(Event,verbose_name='Sự kiện',related_name='event_program_detail',on_delete=models.CASCADE)
@@ -64,8 +65,8 @@ class EventProgramDetail(models.Model):
 
     class Meta:
         ordering = ['event','event_date','-from_time','title']
-        verbose_name = '1-chương trình'
-        verbose_name_plural = '1-chương trình'
+        verbose_name = '1-Chương trình'
+        verbose_name_plural = '1-Chương trình'
 
 
 class EventRuleContent(models.Model):
@@ -87,8 +88,8 @@ class EventRuleContent(models.Model):
 
     class Meta:
         ordering = ['event','title','sequence','-created_on']
-        verbose_name = '2-quy định'
-        verbose_name_plural = '2-quy định'
+        verbose_name = '2-Quy định'
+        verbose_name_plural = '2-Quy định'
 
 class Registration(models.Model):
     date_time = models.DateTimeField('Ngày đăng ký',blank=True, null=True,auto_now = True)
@@ -106,8 +107,8 @@ class Registration(models.Model):
 
     class Meta:
         ordering = ['event','-date_time','user']
-        verbose_name = '4-đăng ký'
-        verbose_name_plural = '3-đăng ký'
+        verbose_name = '4-Đăng ký'
+        verbose_name_plural = '3-Đăng ký'
 
     def __str__(self):
         return f'{self.user.full_name}' #: {self.userseat}'
@@ -130,8 +131,8 @@ class EventBoard(models.Model):
 
     class Meta:
         ordering = ['event','title','is_active','created_on']
-        verbose_name = '5-các Ban'
-        verbose_name_plural = '5-các Ban'
+        verbose_name = '5-Các Ban'
+        verbose_name_plural = '5-Các Ban'
 
 class EventBoardAndMember(models.Model):
     member = models.ForeignKey(CustomUserModel,verbose_name='Thành viên',related_name='event_board_member_leaders', on_delete=models.CASCADE)
@@ -145,8 +146,8 @@ class EventBoardAndMember(models.Model):
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='event_board_member_updated_user',default=None,blank=True,null=True)
 
     class Meta:
-        verbose_name = '5-các Ban-thành viên'
-        verbose_name_plural = '5-các Ban-thành viên'
+        verbose_name = '5-Các Ban-thành viên'
+        verbose_name_plural = '5-Các Ban-thành viên'
         ordering = ('is_active','event_board','member','member_type',)
 
     def __str__(self):
@@ -156,8 +157,8 @@ class EventBoardTask(models.Model):
     title = models.CharField('Tiêu đề',blank=True, null=True,default='',max_length=300)
     slug = models.CharField('slug',blank=True, null=True,default='',max_length=400)
     sequence = models.CharField('Ưu tiên',default='2',choices=priority_choice,max_length=4)
-    from_date_time= models.DateTimeField('Bắt đầu từ', default=timezone.now)
-    to_date_time= models.DateTimeField('Đến khi', default=timezone.now)
+    from_date_time = models.DateTimeField('Bắt đầu từ', default=timezone.now)
+    to_date_time = models.DateTimeField('Đến khi', default=timezone.now)
     board = models.ForeignKey(EventBoard,verbose_name='Ban',on_delete=models.CASCADE,default=None,blank=True,null=True,related_name='event_board_task')
     board_member = models.ForeignKey(EventBoardAndMember,verbose_name='Đảm nhận',on_delete=models.CASCADE,default=None,blank=True,null=True,related_name='event_board_task_member')
     note = models.CharField('Ghi chú',max_length=500,blank=True,default='')
@@ -170,12 +171,11 @@ class EventBoardTask(models.Model):
  
     class Meta:
         ordering = ['board','from_date_time','to_date_time','status','is_active']
-        verbose_name = '5-các Ban-nhiệm vụ'
-        verbose_name_plural = '5-các Ban-nhiệm vụ'
+        verbose_name = '5-Các Ban-nhiệm vụ'
+        verbose_name_plural = '5-Các Ban-nhiệm vụ'
     
     def __str__(self):
         return f'{self.board.name}-{self.title}'
-
 
 class EventGroup(models.Model):
     event = models.ForeignKey(Event,verbose_name='Sự kiện',related_name='event_group_event',on_delete=models.CASCADE)
@@ -223,7 +223,6 @@ class UserAndEventGroup(models.Model):
     def __str__(self):
         return f'{self.event_group.name} : {self.member.full_name}'
 
-
 class EventGroupScoreType(models.Model):
     title = models.CharField('Tên mục',max_length=200)
     slug = models.CharField('Slug',max_length=100)
@@ -239,8 +238,8 @@ class EventGroupScoreType(models.Model):
 
     class Meta:
         ordering = ['title','is_active','created_on']
-        verbose_name = '7-chấm điểm phân loại'
-        verbose_name_plural = '7-chấm điểm phân loại'
+        verbose_name = '7-Chấm điểm phân loại'
+        verbose_name_plural = '7-Chấm điểm phân loại'
 
 class EventGroupScore(models.Model):
     event_group = models.ForeignKey(EventGroup,verbose_name='Tên nhóm',related_name='event_group_score',on_delete=models.CASCADE)
@@ -278,8 +277,8 @@ class EventTransactionAccount(models.Model):
 
     class Meta:
         ordering = ['title','created_on']
-        verbose_name = '8-giao dịch phân loại'
-        verbose_name_plural = '8-giao dịch phân loại'
+        verbose_name = '8-Giao dịch phân loại'
+        verbose_name_plural = '8-Giao dịch phân loại'
 
 class EventTransaction(models.Model):
     event = models.ForeignKey(Event,verbose_name='Sự kiện',related_name='event_transaction_detail',on_delete=models.CASCADE)
@@ -299,5 +298,5 @@ class EventTransaction(models.Model):
 
     class Meta:
         ordering = ['event','on_board','transaction_amount','transaction_type']
-        verbose_name = '8-giao dịch'
-        verbose_name_plural = '8-giao dịch'
+        verbose_name = '8-Giao dịch'
+        verbose_name_plural = '8-Giao dịch'

@@ -6,10 +6,10 @@ from .models import (Event,EventProgramDetail,EventRuleContent,Registration,
 
 # Register your models here.
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('title','event_date','event_fee','number_of_registered_ticket','number_of_confirmed_ticket','is_active','created_user','created_on','updated_user','updated_on')
+    list_display = ('name','title','event_date','event_fee','number_of_registered_ticket','number_of_confirmed_ticket','is_active','created_user','created_on','updated_user','updated_on')
     list_filter = ('is_active','province',)
-    search_fields = ['title', 'excerpt']
-    prepopulated_fields = {'slug': ('title',)}
+    search_fields = ['name', 'excerpt',]
+    prepopulated_fields = {'slug': ('name',)}
     exclude = ('number_of_registered_ticket','number_of_confirmed_ticket','created_on','created_user','updated_user','updated_on',)
     list_per_page = 30
 

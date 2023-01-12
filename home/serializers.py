@@ -11,24 +11,18 @@ class LetterShortSerializer(serializers.ModelSerializer):
     author = UserDetailSerializer()
     class Meta:
         model = Letter
-        fields = (
-            'id', 'title', 'slug', 'image_url', 'excerpt', 'author','created_on','number_readed'
-        )
+        fields = ('id', 'title', 'slug', 'image_url', 'excerpt', 'author','created_on','number_readed')
 
 class LetterContentSerializer(serializers.ModelSerializer):
     author = UserDetailSerializer()
     class Meta:
         model = Letter
-        fields = (
-            'id', 'title', 'slug', 'image_url','excerpt','content', 'author','number_readed','number_shared','created_on'
-        )
+        fields = ('id', 'title', 'slug', 'image_url','excerpt','content', 'author','number_readed','number_shared','created_on')
 
 class LetterSlugSerializer(serializers.ModelSerializer):
     class Meta:
         model = Letter
-        fields = (
-            'id','title', 'slug'
-        )
+        fields = ('id','title', 'slug')
 
 class MassDateScheduleSerializer(serializers.ModelSerializer):
     class Meta:
@@ -56,51 +50,37 @@ class AnnouncementShortSerializer(serializers.ModelSerializer):
     author = UserDetailSerializer()
     class Meta:
         model = Announcement
-        fields = (
-            'id', 'title', 'slug', 'image_url', 'excerpt', 'author','created_on'
-        )
+        fields = ('id', 'title', 'slug', 'image_url', 'excerpt', 'author','created_on')
 
 class AnnouncementContentSerializer(serializers.ModelSerializer):
     author = UserDetailSerializer()
     class Meta:
         model = Announcement
-        fields = (
-            'id', 'title', 'slug', 'image_url','excerpt','content', 'author','created_on','number_shared','number_readed','google_map_link','register_link','event_date_time'
-        )
+        fields = ('id', 'title', 'slug', 'image_url','excerpt','content', 'author','created_on','number_shared','number_readed','google_map_link','register_link','event_date_time')
 
 class AnnouncementSlugSerializer(serializers.ModelSerializer):
     class Meta:
         model = Announcement
-        fields = (
-            'id','title', 'slug'
-        )
+        fields = ('id','title', 'slug')
 
 class YoutubeVideoSerializer(serializers.ModelSerializer):
     created_user = UserDetailSerializer()
     class Meta:
         model = YoutubeVideo
-        fields = (
-            'id', 'title', 'slug', 'youtube_url','excerpt','created_user'
-        )
+        fields = ('id', 'title', 'slug', 'youtube_url','excerpt','created_user')
 
 class PostSlugSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostType
-        fields = (
-            'id','name', 'slug'
-        )
+        fields = ('id','name', 'slug')
 
 class PostSerializer(serializers.ModelSerializer):
     author = UserDetailSerializer()
     class Meta:
         model = Post
-        fields = (
-            'id', 'title', 'slug','audio_link', 'image_url', 'excerpt', 'author','created_on','number_readed','number_shared'
-        )
+        fields = ('id', 'title', 'slug','audio_link', 'image_url', 'excerpt', 'author','created_on','number_readed','number_shared')
 
 class PostContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostContent
-        fields = (
-            'id', 'chapter_title', 'slug', 'image_url', 'content','chapter_summary'
-        )
+        fields = ('id', 'chapter_title', 'slug', 'image_url', 'content','chapter_summary')

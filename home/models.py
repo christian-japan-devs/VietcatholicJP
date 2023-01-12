@@ -233,7 +233,6 @@ class Gospel(models.Model):
         if not self.id:
             if self.image_url:
                 self.image_url = compressImage(self.image_url)
-
         super(Gospel, self).save(*args, **kwargs)
 
 class GospelContent(models.Model):
