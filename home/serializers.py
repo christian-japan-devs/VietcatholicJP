@@ -2,7 +2,9 @@ from django.db import models
 from rest_framework import serializers
 from users.models import CustomUserModel
 from users.serializers import UserDetailSerializer
-from .models import YoutubeVideo, Letter, MassDateSchedule, MassTimeSchedule, Announcement, PostType, Post, PostContent
+from .models import (YoutubeVideo, Letter, MassDateSchedule, MassTimeSchedule, 
+                    Announcement, PostType, Post, PostContent,
+                    Gospel,GospelContent,GospelReflection)
 from kanri.models import Father, Province, Church
 from kanri.serializers import FatherContactSerializer, ChurchContactSerializer,ProvinceSerializer
 
@@ -84,3 +86,29 @@ class PostContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostContent
         fields = ('id', 'chapter_title', 'slug', 'image_url', 'content','chapter_summary')
+
+class GospelSlugSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Gospel
+        fields = ('id','title', 'slug')
+
+class GospelShortSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Gospel
+        fields = ('id','title', 'slug','image_url', 'excerpt','date')
+
+class GospelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Gospel
+        fields = ('id', 'title', 'slug','date','audio_link', 'image_url', 'excerpt','number_readed','number_shared')
+
+class GospelContentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GospelContent
+        fields = ('id', 'chapter_title', 'slug', 'content','chapter_reference')
+
+class GospelReflectionSerializer(serializers.ModelSerializer):
+    author = UserDetailSerializer()
+    class Meta:
+        model = GospelReflection
+        fields = ('id', 'title', 'slug','audio_link','author','image_url', 'content','number_readed','number_shared')

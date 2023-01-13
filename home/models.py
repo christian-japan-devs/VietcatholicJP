@@ -221,7 +221,6 @@ class Gospel(models.Model):
     number_readed = models.SmallIntegerField('Số lượt đọc',default=0,blank=True,null=True,help_text='Số lượt đọc')
     number_listened = models.SmallIntegerField('Số lượt nghe',default=0,blank=True,null=True,help_text='Số lượt nghe')
     number_shared = models.SmallIntegerField('Số lượt chia sẻ',default=0,blank=True,null=True,help_text='Số lượt chia sẻ')
-    author = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='gospel_author', default=None, blank=True, null=True)
     created_on = models.DateTimeField('Created on',blank=True, null=True,auto_now_add = True)
     created_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='gospel_created_user', default=None, blank=True, null=True)
     updated_on = models.DateTimeField('Updated',help_text='Lần cuối cập nhật',blank=True, null=True,auto_now = True)
@@ -242,7 +241,7 @@ class Gospel(models.Model):
         super(Gospel, self).save(*args, **kwargs)
 
 class GospelContent(models.Model):
-    gospel = models.ForeignKey(Gospel,verbose_name='Lời Chúa tiêu đề',on_delete=models.CASCADE,related_name='content_gospel')
+    gospel = models.ForeignKey(Gospel,verbose_name='Lời Chúa',on_delete=models.CASCADE,related_name='content_gospel')
     sequence = models.CharField('Thứ tự',default='0',choices=sequence_choise,max_length=4)
     chapter_title = models.CharField('Tiêu đề',default='',max_length=300)
     slug = models.CharField('slug',default='',max_length=400)
@@ -267,6 +266,7 @@ class GospelReflection(models.Model):
     slug = models.CharField('slug',default='',max_length=400)
     audio_link = models.CharField('Audio Link',null=True, blank=True,default='',max_length=400)
     excerpt = models.TextField('Tóm tắt',help_text='Không quá 300 ký tự',default='',max_length=300)
+    image_url = models.ImageField('Hình ảnh',null=True, blank=True, upload_to='web_images/gospel')
     content = HTMLField('Nội dung')
     number_readed = models.SmallIntegerField('Số lượt đọc',default=0,blank=True,null=True,help_text='Số lượt đọc')
     number_listened = models.SmallIntegerField('Số lượt nghe',default=0,blank=True,null=True,help_text='Số lượt nghe')
@@ -284,6 +284,12 @@ class GospelReflection(models.Model):
         ordering = ['gospel','-created_on']
         verbose_name = 'Lời Chúa suy niệm'
         verbose_name_plural = 'Lời Chúa suy niệm'
+    
+    def save(self, *args, **kwargs):
+        if not self.id:
+            if self.image_url:
+                self.image_url = compressImage(self.image_url)
+        super(GospelReflection, self).save(*args, **kwargs)
 
 class MassDateSchedule(models.Model):
     date = models.DateField('Ngày')
@@ -345,7 +351,6 @@ class ConfessSchedule(models.Model):
     def __str__(self):
         return f'{self.from_date_time}-{self.to_date_time}'
 
-
 class LessonType(models.Model):
     name = models.CharField('Tên',max_length=100)
     slug = models.CharField('Slug',max_length=100)
@@ -374,7 +379,7 @@ class Lesson(models.Model):
     is_active = models.BooleanField('Công khai',default=True, blank=True)
     number_readed = models.SmallIntegerField('Số lượt đọc',default=0,blank=True,null=True,help_text='Số lượt đọc')
     number_shared = models.SmallIntegerField('Số lượt chia sẻ',default=0,blank=True,null=True,help_text='Số lượt chia sẻ')
-    author = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='post_author', default=None, blank=True, null=True)
+    author = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='lesson_author', default=None, blank=True, null=True)
     created_on = models.DateTimeField('Created',blank=True, null=True,auto_now_add = True)
     created_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='lesson_created_user', default=None, blank=True, null=True)
     updated_on = models.DateTimeField('Updated',blank=True, null=True,auto_now = True)
@@ -392,11 +397,11 @@ class Lesson(models.Model):
         if not self.id:
             if self.image_url:
                 self.image_url = compressImage(self.image_url)
-        super(Post, self).save(*args, **kwargs)
+        super(Lesson, self).save(*args, **kwargs)
 
 class LessonChapter(models.Model):
     lesson = models.ForeignKey(Lesson,verbose_name='Bài',on_delete=models.CASCADE)
-    chapter_title = models.CharField('Tên chuong',max_length=200)
+    chapter_title = models.CharField('Tên chương',max_length=200)
     slug = models.CharField('Slug',max_length=100)
     sequence = models.CharField('Thứ tự',default='0',choices=sequence_choise,max_length=4)
     image_url = models.ImageField('Hình ảnh',null=True, blank=True, upload_to='web_images/post')
@@ -404,7 +409,7 @@ class LessonChapter(models.Model):
     content = HTMLField('Nội dung')
     author = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='lesson_content_author', default=None, blank=True, null=True)
     created_on = models.DateTimeField('Created',blank=True, null=True,auto_now_add = True)
-    created_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='lesson_created_user', default=None, blank=True, null=True)
+    created_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='lesson_content_created_user', default=None, blank=True, null=True)
     updated_on = models.DateTimeField('Updated',blank=True, null=True,auto_now = True)
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='lesson_content_updated_user',default=None,blank=True,null=True)
 
@@ -413,7 +418,14 @@ class LessonChapter(models.Model):
         verbose_name = 'Bài viết-nội dung'
         verbose_name_plural = 'Bài viết-nội dung'
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            if self.image_url:
+                self.image_url = compressImage(self.image_url)
+        super(LessonChapter, self).save(*args, **kwargs)
+
 class LessonChapterQA(models.Model):
     chapter = models.ForeignKey(LessonChapter,verbose_name='Bài',on_delete=models.CASCADE)
-    question = models.TextField('Cau hoi',max_length=500)
-    answer = models.TextField('Cau tra loi',max_length=1000)
+    question_no =  models.SmallIntegerField('Câu hỏi số',default=0)
+    question = models.TextField('Câu hỏi',max_length=500)
+    answer = models.TextField('Câu trả lời',max_length=1000)

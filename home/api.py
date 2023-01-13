@@ -77,10 +77,10 @@ class MassScheduleViewSet(viewsets.ViewSet):
                 serializer = MassDateScheduleSerializer(mass_schedule_details, many=True)
                 res['status'] = 'ok'
                 res['mass_schedules'] = {
-                    "title": mass_schedule.title,
-                    "date": mass_schedule.date,
-                    "audio_link": mass_schedule.gospel.audio_link, #TODO: chage to metadata
-                    "time_schedule":serializer.data
+                    'title': mass_schedule.title,
+                    'date': mass_schedule.date,
+                    'audio_link': mass_schedule.gospel.audio_link, #TODO: chage to metadata
+                    'time_schedule':serializer.data
                 }
             else:
                 res['status'] = 'ok'
@@ -212,8 +212,8 @@ class PostListViewSet(viewsets.ViewSet):
                     recent_post = Post.objects.filter(is_active=True).exclude(id=post.id).order_by('-created_on')[:10]
                     recent_post_serializer = PostSerializer(recent_post,many=True)
                     res['post'] = {
-                        "post_meta":post_serializer.data,
-                        "content":post_content_serializer.data
+                        'post_meta':post_serializer.data,
+                        'content':post_content_serializer.data
                     }
                     res['recent_posts'] = recent_post_serializer.data
                 res['status'] = 'ok'
@@ -248,6 +248,97 @@ class PostListViewSet(viewsets.ViewSet):
             letter1 = Letter.objects.filter(is_active=True).exclude(id=letter.id).order_by('-created_on')[:10]
             serializer1 = LetterShortSerializer(letter1, many=True)
             res['recentlyPostedLetter'] = serializer1.data
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            res['status'] = 'error'
+            res['message'] = SYSTEM_ERROR_0001
+            print(sys.exc_info())
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class GospelListViewSet(viewsets.ViewSet):
+    permission_classes = (AllowAny,)
+
+    # /api/gospel/getthisweek/
+    def get_this_week(self, request):
+        res = {
+            'status': 'error',
+            'gospel': {
+                'meta_data':{},
+                'content':{}
+            },
+            'reflection':{},
+            'next':[],
+            'message': ''
+        }
+        try:
+            from .models import Gospel, GospelContent,GospelReflection
+            from .serializers import GospelSerializer,GospelShortSerializer, GospelContentSerializer, GospelReflectionSerializer
+            gospels = Gospel.objects.filter(date__gte=timezone.now()).order_by('date')
+            if gospels:
+                gospel_serializer = GospelSerializer(gospels[0])
+                res['gospel']['meta_data'] = gospel_serializer.data
+                gospels_serializer = GospelShortSerializer(gospels[1:],many=True)
+                res['next'] = gospels_serializer.data
+                gospel_content = GospelContent.objects.filter(gospel = gospels[0]).order_by('sequence')
+                if gospel_content:
+                    gospel_content_serializer = GospelContentSerializer(gospel_content, many = True)
+                    res['gospel']['content'] = gospel_content_serializer.data
+                    gospel_reflection = GospelReflection.objects.get(gospel = gospels[0])
+                    if gospel_reflection:
+                        gospel_reflection_serializer = GospelReflectionSerializer(gospel_reflection)
+                        res['reflection'] = gospel_reflection_serializer.data
+                res['status'] = 'ok'
+                return Response(res, status=status.HTTP_202_ACCEPTED)
+            res['status'] = 'warning'
+            res['message'] = 'no-data'
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            print(sys.exc_info())
+            res['message'] = sys.exc_info()
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    # /api/gospel/?date=
+    def get_by_date(self, request):
+        res = {
+            'status': 'error',
+            'gospel': {
+                'meta_data':{},
+                'content':{}
+            },
+            'reflection':{},
+            'next':[],
+            'message': ''
+        }
+        try:
+            from .models import Gospel, GospelContent,GospelReflection
+            from .serializers import GospelSerializer,GospelShortSerializer, GospelContentSerializer, GospelReflectionSerializer
+            get_date = request.GET.get('date','')
+            get_type_slug = request.GET.get('post_type_slug','all')
+            if get_date != '':
+                res['status'] = 'ok'
+            else:
+                res['status'] = 'ok'
+                return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            print(sys.exc_info())
+            res['message'] = sys.exc_info()
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    # /api/letter/<str:slug>/ for more detail.
+    def retrieve(self, request, slug=None):
+        res = {
+            'status': 'error',
+            'gospel': {
+                'meta_data':{},
+                'content':{}
+            },
+            'reflection':{},
+            'next':[],
+            'message': ''
+        }
+        try:
+            from .models import Gospel, GospelContent,GospelReflection
+            from .serializers import GospelSerializer,GospelShortSerializer, GospelContentSerializer, GospelReflectionSerializer
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
             res['status'] = 'error'

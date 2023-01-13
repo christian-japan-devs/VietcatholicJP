@@ -23,16 +23,16 @@ class YoutubeVideoAdmin(admin.ModelAdmin):
         obj.save()
 
 class LetterAdmin(admin.ModelAdmin):
-    list_display = ('title','number_readed','number_shared', 'is_active','author','created_on','updated_user','updated_on')
-    list_filter = ('is_active','author')
+    list_display = ('title','number_readed','number_shared', 'is_active','created_user','created_on','updated_user','updated_on')
+    list_filter = ('is_active','created_user')
     search_fields = ['title', 'content']
     prepopulated_fields = {'slug': ('title',)}
-    exclude = ('created_on','author', 'updated_user','updated_on','number_readed','number_shared',)
+    exclude = ('created_on','created_user', 'updated_user','updated_on','number_readed','number_shared',)
     list_per_page = 30
 
     def save_model(self, request, obj, form, change):
-        if getattr(obj, 'author', None) is None:
-            obj.author = request.user
+        if getattr(obj, 'created_user', None) is None:
+            obj.created_user = request.user
         obj.updated_on = timezone.now
         obj.updated_user = request.user
         obj.save()
@@ -53,61 +53,61 @@ class PostTypeAdmin(admin.ModelAdmin):
         obj.save()
 
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('title','number_readed','number_shared','post_type','is_active','author','created_on','updated_user','updated_on')
-    list_filter = ('is_active','author',)
+    list_display = ('title','number_readed','number_shared','post_type','is_active','created_user','created_on','updated_user','updated_on')
+    list_filter = ('is_active','created_user',)
     search_fields = ['title', 'content']
     prepopulated_fields = {'slug': ('title',)}
-    exclude = ('created_on','author', 'updated_user','updated_on','number_readed','number_shared',)
+    exclude = ('created_on','created_user', 'updated_user','updated_on','number_readed','number_shared',)
     list_per_page = 50
 
     def save_model(self, request, obj, form, change):
-        if getattr(obj, 'author', None) is None:
-            obj.author = request.user
+        if getattr(obj, 'created_user', None) is None:
+            obj.created_user = request.user
         obj.updated_on = timezone.now
         obj.updated_user = request.user
         obj.save()
 
 class PostContentAdmin(admin.ModelAdmin):
-    list_display = ('post','chapter_title','author','created_on','updated_user','updated_on')
+    list_display = ('post','chapter_title','created_user','created_on','updated_user','updated_on')
     list_filter = ('post',)
     search_fields = ['chapter_title', 'content']
     prepopulated_fields = {'slug': ('chapter_title',)}
-    exclude = ('created_on','author', 'updated_user','updated_on',)
+    exclude = ('created_on','created_user', 'updated_user','updated_on',)
     list_per_page = 30
 
     def save_model(self, request, obj, form, change):
-        if getattr(obj, 'author', None) is None:
-            obj.author = request.user
+        if getattr(obj, 'created_user', None) is None:
+            obj.created_user = request.user
         obj.updated_on = timezone.now
         obj.updated_user = request.user
         obj.save()
 
 class AboutusAdmin(admin.ModelAdmin):
-    list_display = ('title','number_readed','number_shared', 'is_active','author','created_on','updated_user','updated_on')
+    list_display = ('title','number_readed','number_shared', 'is_active','created_user','created_on','updated_user','updated_on')
     list_filter = ('is_active',)
     search_fields = ['title', 'content']
     prepopulated_fields = {'slug': ('title',)}
-    exclude = ('created_on','author', 'updated_user','updated_on','number_readed','number_shared',)
+    exclude = ('created_on','created_user', 'updated_user','updated_on','number_readed','number_shared',)
     list_per_page = 50
 
     def save_model(self, request, obj, form, change):
-        if getattr(obj, 'author', None) is None:
-            obj.author = request.user
+        if getattr(obj, 'created_user', None) is None:
+            obj.created_user = request.user
         obj.updated_on = timezone.now
         obj.updated_user = request.user
         obj.save()
 
 class AnnouncementAdmin(admin.ModelAdmin):
-    list_display = ('title','number_readed','number_shared','from_date','to_date','author','created_on','updated_user','updated_on')
+    list_display = ('title','number_readed','number_shared','from_date','to_date','created_user','created_on','updated_user','updated_on')
     list_filter = ('is_active',)
     search_fields = ['title', 'content']
     prepopulated_fields = {'slug': ('title',)}
-    exclude = ('created_on','author', 'updated_user','updated_on','number_readed','number_shared',)
+    exclude = ('created_on','created_user', 'updated_user','updated_on','number_readed','number_shared',)
     list_per_page = 30
 
     def save_model(self, request, obj, form, change):
-        if getattr(obj, 'author', None) is None:
-            obj.author = request.user
+        if getattr(obj, 'created_user', None) is None:
+            obj.created_user = request.user
         obj.updated_on = timezone.now
         obj.updated_user = request.user
         obj.save()
@@ -127,15 +127,15 @@ class GospelRandomAdmin(admin.ModelAdmin):
         obj.save()
 
 class GospelAdmin(admin.ModelAdmin):
-    list_display = ('title','number_readed','number_shared','author','created_on','updated_user','updated_on')
+    list_display = ('title','number_readed','number_shared','created_user','created_on','updated_user','updated_on')
     search_fields = ['title', 'content']
     prepopulated_fields = {'slug': ('title',)}
-    exclude = ('created_on','author', 'updated_user','updated_on','number_readed','number_shared',)
+    exclude = ('created_on','created_user', 'updated_user','updated_on','number_readed','number_shared',)
     list_per_page = 30
 
     def save_model(self, request, obj, form, change):
-        if getattr(obj, 'author', None) is None:
-            obj.author = request.user
+        if getattr(obj, 'created_user', None) is None:
+            obj.created_user = request.user
         obj.updated_on = timezone.now
         obj.updated_user = request.user
         obj.save()
@@ -158,12 +158,12 @@ class GospelReflectionAdmin(admin.ModelAdmin):
     list_display = ('title','number_readed','number_shared','author','created_on','updated_user','updated_on')
     search_fields = ['title', 'content','chapter_reference']
     prepopulated_fields = {'slug': ('title',)}
-    exclude = ('created_on','author', 'updated_user','updated_on','number_readed','number_shared',)
+    exclude = ('created_on','created_user', 'updated_user','updated_on','number_readed','number_shared',)
     list_per_page = 30
 
     def save_model(self, request, obj, form, change):
         if getattr(obj, 'author', None) is None:
-            obj.author = request.user
+            obj.created_user = request.created_user
         obj.updated_on = timezone.now
         obj.updated_user = request.user
         obj.save()

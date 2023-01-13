@@ -11,7 +11,7 @@ from lib.help import compressImage
 
 # Create your models here.
 class Event(models.Model):
-    name = models.CharField('Tên',max_length=200)
+    name = models.CharField('Tên',max_length=200,default='')
     slug = models.CharField('Slug',max_length=100)
     title = models.CharField('Câu chủ đề',max_length=300,null=True,blank=True,default='')
     excerpt = models.TextField('Tóm tắt',null=True,blank=True,default='',help_text='Không quá 500 ký tự',max_length=500)
