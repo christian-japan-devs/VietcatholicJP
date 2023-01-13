@@ -4,7 +4,7 @@ from tinymce.models import HTMLField
 from users.models import CustomUserModel
 from lib.constant_choices import (sequence_choise,priority_choice)
 from lib.help import compressImage
-from kanri.models import Province, Church, Father
+from kanri.models import Province, Church, Father, Language
 
 # Create your models here.
 class YoutubeVideo(models.Model):
@@ -36,9 +36,10 @@ class Letter(models.Model):
     is_active = models.BooleanField('Công khai',default=True, blank=True)
     number_readed = models.SmallIntegerField('Số lượt đọc',default=0,blank=True,null=True,help_text='Số lượt đọc')
     number_shared = models.SmallIntegerField('Số lượt chia sẻ',default=0,blank=True,null=True,help_text='Số lượt chia sẻ')
-    created_on = models.DateTimeField('Created on',blank=True, null=True,auto_now_add = True)
     author = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='letter_author', default=None, blank=True, null=True)
-    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',blank=True, null=True,auto_now = True)
+    created_on = models.DateTimeField('Created',blank=True, null=True,auto_now_add = True)
+    created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='letter_created_user',default=None,blank=True,null=True)
+    updated_on = models.DateTimeField('Updated',blank=True, null=True,auto_now = True)
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='letter_updated_user',default=None,blank=True,null=True)
 
     def __str__(self):
@@ -81,9 +82,10 @@ class Post(models.Model):
     is_active = models.BooleanField('Công khai',default=True, blank=True)
     number_readed = models.SmallIntegerField('Số lượt đọc',default=0,blank=True,null=True,help_text='Số lượt đọc')
     number_shared = models.SmallIntegerField('Số lượt chia sẻ',default=0,blank=True,null=True,help_text='Số lượt chia sẻ')
-    created_on = models.DateTimeField('Created on',blank=True, null=True,auto_now_add = True)
     author = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='post_author', default=None, blank=True, null=True)
-    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',blank=True, null=True,auto_now = True)
+    created_on = models.DateTimeField('Created',blank=True, null=True,auto_now_add = True)
+    created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạot',on_delete=models.CASCADE,related_name='post_created_user',default=None,blank=True,null=True)
+    updated_on = models.DateTimeField('Updated',blank=True, null=True,auto_now = True)
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='post_updated_user',default=None,blank=True,null=True)
 
     def __str__(self):
@@ -108,9 +110,10 @@ class PostContent(models.Model):
     image_url = models.ImageField('Hình ảnh',null=True, blank=True, upload_to='web_images/post')
     chapter_summary = models.CharField('Tóm tắt',default='',null=True, blank=True,help_text='Không quá 500 ký tự',max_length=500)
     content = HTMLField('Nội dung')
-    created_on = models.DateTimeField('Created on',blank=True, null=True,auto_now_add = True)
     author = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='post_content_author', default=None, blank=True, null=True)
-    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',blank=True, null=True,auto_now = True)
+    created_on = models.DateTimeField('Created',blank=True, null=True,auto_now_add = True)
+    created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='post_content_created_user',default=None,blank=True,null=True)
+    updated_on = models.DateTimeField('Updated',blank=True, null=True,auto_now = True)
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='post_content_updated_user',default=None,blank=True,null=True)
 
     class Meta:
@@ -127,9 +130,10 @@ class Aboutus(models.Model):
     is_active = models.BooleanField('Công khai',default=True, blank=True)
     number_readed = models.SmallIntegerField('Số lượt đọc',default=0,blank=True,null=True,help_text='Số lượt đọc')
     number_shared = models.SmallIntegerField('Số lượt chia sẻ',default=0,blank=True,null=True,help_text='Số lượt chia sẻ')
-    created_on = models.DateTimeField('Created on',blank=True, null=True,auto_now_add = True)
     author = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='about_author', default=None, blank=True, null=True)
-    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',blank=True, null=True,auto_now = True)
+    created_on = models.DateTimeField('Created',blank=True, null=True,auto_now_add = True)
+    created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='about_created_user',default=None,blank=True,null=True)
+    updated_on = models.DateTimeField('Updated',blank=True, null=True,auto_now = True)
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='about_updated_user',default=None,blank=True,null=True)
 
     class Meta:
@@ -158,9 +162,10 @@ class Announcement(models.Model):
     register_link = models.CharField('Register Link',null=True, blank=True,default='',max_length=400)
     number_readed = models.SmallIntegerField('Số lượt đọc',default=0,blank=True,null=True,help_text='Số lượt đọc')
     number_shared = models.SmallIntegerField('Số lượt chia sẻ',default=0,blank=True,null=True,help_text='Số lượt chia sẻ')
-    created_on = models.DateTimeField('Created on',blank=True, null=True,auto_now_add = True)
     author = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='announ_author', default=None, blank=True, null=True)
-    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',blank=True, null=True,auto_now = True)
+    created_on = models.DateTimeField('Created',blank=True, null=True,auto_now_add = True)
+    created_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='announ_created_user', default=None, blank=True, null=True)
+    updated_on = models.DateTimeField('Updated',blank=True, null=True,auto_now = True)
     updated_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='announ_updated_user',default=None, blank=True, null=True)
 
     class Meta:
@@ -189,8 +194,8 @@ class GospelRandom(models.Model):
     is_active = models.BooleanField('Công khai',help_text='Trạng thái công khai',default=True,blank=True)
     image_url = models.ImageField('Hình ảnh',help_text='Hình ảnh hiển thị trên trang web',null=True,blank=True,upload_to='gospel_img')
     created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,default=None,blank=True,null=True,related_name='gospel_random_created_user')
-    created_on = models.DateTimeField('Created on',blank=True, null=True,auto_now_add = True)
-    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',blank=True, null=True,auto_now = True)
+    created_on = models.DateTimeField('Created',blank=True, null=True,auto_now_add = True)
+    updated_on = models.DateTimeField('Updated',blank=True, null=True,auto_now = True)
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='gospel_random_updated_user',default=None,blank=True,null=True)
 
     class Meta:
@@ -216,9 +221,10 @@ class Gospel(models.Model):
     number_readed = models.SmallIntegerField('Số lượt đọc',default=0,blank=True,null=True,help_text='Số lượt đọc')
     number_listened = models.SmallIntegerField('Số lượt nghe',default=0,blank=True,null=True,help_text='Số lượt nghe')
     number_shared = models.SmallIntegerField('Số lượt chia sẻ',default=0,blank=True,null=True,help_text='Số lượt chia sẻ')
-    created_on = models.DateTimeField('Created on',blank=True, null=True,auto_now_add = True)
     author = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='gospel_author', default=None, blank=True, null=True)
-    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',blank=True, null=True,auto_now = True)
+    created_on = models.DateTimeField('Created on',blank=True, null=True,auto_now_add = True)
+    created_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='gospel_created_user', default=None, blank=True, null=True)
+    updated_on = models.DateTimeField('Updated',help_text='Lần cuối cập nhật',blank=True, null=True,auto_now = True)
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='gospel_updated_user',default=None,blank=True,null=True)
 
     def __str__(self):
@@ -243,8 +249,8 @@ class GospelContent(models.Model):
     chapter_reference = models.CharField('Tác giả',default='',max_length=100)
     content = HTMLField('Nội dung')
     created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,default=None,blank=True,null=True,related_name='gospel_content_created_user')
-    created_on = models.DateTimeField('Created on',blank=True, null=True,auto_now_add = True)
-    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',blank=True, null=True,auto_now = True)
+    created_on = models.DateTimeField('Created',blank=True, null=True,auto_now_add = True)
+    updated_on = models.DateTimeField('Updated',blank=True, null=True,auto_now = True)
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='gospel_content_updated_user',default=None,blank=True,null=True)
 
     def __str__(self):
@@ -266,8 +272,9 @@ class GospelReflection(models.Model):
     number_listened = models.SmallIntegerField('Số lượt nghe',default=0,blank=True,null=True,help_text='Số lượt nghe')
     number_shared = models.SmallIntegerField('Số lượt chia sẻ',default=0,blank=True,null=True,help_text='Số lượt chia sẻ')
     author = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='reflection_author', default=None, blank=True, null=True)
-    created_on = models.DateTimeField('Created on',blank=True, null=True,auto_now_add = True)
-    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',blank=True, null=True,auto_now = True)
+    created_on = models.DateTimeField('Created',blank=True, null=True,auto_now_add = True)
+    created_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='gospel_reflection_created_user', default=None, blank=True, null=True)
+    updated_on = models.DateTimeField('Updated',blank=True, null=True,auto_now = True)
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='gospel_reflection_updated_user',default=None,blank=True,null=True)
 
     def __str__(self):
@@ -284,8 +291,8 @@ class MassDateSchedule(models.Model):
     slug = models.CharField('slug',blank=True, null=True,default='',max_length=400)
     gospel = models.ForeignKey(Gospel,verbose_name='Bài đọc',on_delete=models.CASCADE,related_name='mass_gospel',blank=True, null=True)
     created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,default=None,blank=True,null=True,related_name='mass_date_created_user')
-    created_on = models.DateTimeField('Created on',blank=True, null=True,auto_now_add = True)
-    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',blank=True, null=True,auto_now = True)
+    created_on = models.DateTimeField('Created',blank=True, null=True,auto_now_add = True)
+    updated_on = models.DateTimeField('Updated',blank=True, null=True,auto_now = True)
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='mass_date_updated_user',default=None,blank=True,null=True)
     
     def __str__(self):
@@ -304,8 +311,8 @@ class MassTimeSchedule(models.Model):
     province = models.ForeignKey(Province,verbose_name='Tỉnh',default=None,blank=True,null=True,on_delete=models.SET_NULL,related_name='mass_province')
     notes = HTMLField('Ghi chú',blank=True, null=True,default='')
     created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,default=None,blank=True,null=True,related_name='mass_time_created_user')
-    created_on = models.DateTimeField('Created on',blank=True, null=True,auto_now_add = True)
-    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',blank=True, null=True,auto_now = True)
+    created_on = models.DateTimeField('Created',blank=True, null=True,auto_now_add = True)
+    updated_on = models.DateTimeField('Updated',blank=True, null=True,auto_now = True)
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='mass_time_updated_user',default=None,blank=True,null=True)
  
     class Meta:
@@ -326,8 +333,8 @@ class ConfessSchedule(models.Model):
     church = models.ForeignKey(Church, on_delete=models.CASCADE,help_text='chọn Nhà thờ',blank=True,null=True,related_name='confess_church')
     publish= models.BooleanField('Công khai',default=True, blank=True)
     created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,default=None,blank=True,null=True,related_name='confession_time_created_user')
-    created_on = models.DateTimeField('Created on',blank=True, null=True,auto_now_add = True)
-    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',blank=True, null=True,auto_now = True)
+    created_on = models.DateTimeField('Created',blank=True, null=True,auto_now_add = True)
+    updated_on = models.DateTimeField('Updated',blank=True, null=True,auto_now = True)
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='confession_time_updated_user',default=None,blank=True,null=True)
  
     class Meta:
@@ -337,3 +344,76 @@ class ConfessSchedule(models.Model):
     
     def __str__(self):
         return f'{self.from_date_time}-{self.to_date_time}'
+
+
+class LessonType(models.Model):
+    name = models.CharField('Tên',max_length=100)
+    slug = models.CharField('Slug',max_length=100)
+    language = models.ForeignKey(Language,verbose_name='Ngon ngu',on_delete=models.CASCADE,default=None,blank=True,null=True,related_name='lesson_language')
+    is_active = models.BooleanField('Công khai',default=True, blank=True)
+    created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,default=None,blank=True,null=True,related_name='lesson_type_created_user')
+    created_on = models.DateTimeField('Created',blank=True, null=True,auto_now_add = True)
+    updated_on = models.DateTimeField('Updated',blank=True, null=True,auto_now = True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='lesson_type_updated_user',default=None,blank=True,null=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Bài hoc-phân loại'
+        verbose_name_plural = 'Bài hoc-phân loại'
+
+class Lesson(models.Model):
+    title = models.CharField('Chủ đề',max_length=300)
+    slug = models.CharField('Slug',max_length=100)
+    image_url = models.ImageField('Hình ảnh',null=True, blank=True, upload_to='web_images/post')
+    excerpt = models.TextField('Tóm tắt',help_text='Không quá 500 ký tự',max_length=500)
+    lesson_type = models.ForeignKey(LessonType,verbose_name='Phan loại',on_delete=models.CASCADE)
+    audio_link = models.CharField('Audio Link',null=True, blank=True,default='',max_length=400)
+    is_active = models.BooleanField('Công khai',default=True, blank=True)
+    number_readed = models.SmallIntegerField('Số lượt đọc',default=0,blank=True,null=True,help_text='Số lượt đọc')
+    number_shared = models.SmallIntegerField('Số lượt chia sẻ',default=0,blank=True,null=True,help_text='Số lượt chia sẻ')
+    author = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='post_author', default=None, blank=True, null=True)
+    created_on = models.DateTimeField('Created',blank=True, null=True,auto_now_add = True)
+    created_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='lesson_created_user', default=None, blank=True, null=True)
+    updated_on = models.DateTimeField('Updated',blank=True, null=True,auto_now = True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='lesson_updated_user',default=None,blank=True,null=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['-created_on']
+        verbose_name = 'Bài viết-chủ đề'
+        verbose_name_plural = 'Bài viết-chủ đề'
+    
+    def save(self, *args, **kwargs):
+        if not self.id:
+            if self.image_url:
+                self.image_url = compressImage(self.image_url)
+        super(Post, self).save(*args, **kwargs)
+
+class LessonChapter(models.Model):
+    lesson = models.ForeignKey(Lesson,verbose_name='Bài',on_delete=models.CASCADE)
+    chapter_title = models.CharField('Tên chuong',max_length=200)
+    slug = models.CharField('Slug',max_length=100)
+    sequence = models.CharField('Thứ tự',default='0',choices=sequence_choise,max_length=4)
+    image_url = models.ImageField('Hình ảnh',null=True, blank=True, upload_to='web_images/post')
+    chapter_summary = models.CharField('Tóm tắt',default='',null=True, blank=True,help_text='Không quá 500 ký tự',max_length=500)
+    content = HTMLField('Nội dung')
+    author = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='lesson_content_author', default=None, blank=True, null=True)
+    created_on = models.DateTimeField('Created',blank=True, null=True,auto_now_add = True)
+    created_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='lesson_created_user', default=None, blank=True, null=True)
+    updated_on = models.DateTimeField('Updated',blank=True, null=True,auto_now = True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='lesson_content_updated_user',default=None,blank=True,null=True)
+
+    class Meta:
+        ordering = ['lesson','sequence','-created_on']
+        verbose_name = 'Bài viết-nội dung'
+        verbose_name_plural = 'Bài viết-nội dung'
+
+class LessonChapterQA(models.Model):
+    chapter = models.ForeignKey(LessonChapter,verbose_name='Bài',on_delete=models.CASCADE)
+    question = models.CharField('Tên chuong',max_length=200)
+    answer = models.CharField('Tên chuong',max_length=200)
