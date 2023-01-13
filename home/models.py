@@ -415,5 +415,5 @@ class LessonChapter(models.Model):
 
 class LessonChapterQA(models.Model):
     chapter = models.ForeignKey(LessonChapter,verbose_name='Bài',on_delete=models.CASCADE)
-    question = models.CharField('Tên chuong',max_length=200)
-    answer = models.CharField('Tên chuong',max_length=200)
+    question = models.TextField('Cau hoi',max_length=500)
+    answer = models.TextField('Cau tra loi',max_length=1000)
