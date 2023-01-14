@@ -4,7 +4,8 @@ from django import forms
 # Register your models here.
 from .models import (YoutubeVideo,Letter, PostType,Post,PostContent,
                     Aboutus,Announcement,Gospel,GospelContent,
-                    GospelReflection, MassDateSchedule, MassTimeSchedule, ConfessSchedule)
+                    GospelReflection, MassDateSchedule, MassTimeSchedule, ConfessSchedule,
+                    LessonType,Lesson,LessonChapter,LessonChapterQA,PrayerType,Prayer,CommuintyPrayer)
 
 
 class YoutubeVideoAdmin(admin.ModelAdmin):
@@ -224,3 +225,10 @@ admin.site.register(GospelReflection,GospelReflectionAdmin)
 admin.site.register(MassDateSchedule,MassDateScheduleScheduleAdmin)
 admin.site.register(MassTimeSchedule,MassTimeScheduleAdmin)
 admin.site.register(ConfessSchedule,ConfessScheduleAdmin)
+admin.site.register(LessonType)
+admin.site.register(Lesson)
+admin.site.register(LessonChapter)
+admin.site.register(LessonChapterQA)
+admin.site.register(PrayerType)
+admin.site.register(Prayer)
+admin.site.register(CommuintyPrayer)

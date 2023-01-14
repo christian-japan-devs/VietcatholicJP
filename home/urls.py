@@ -35,4 +35,7 @@ urlpatterns = [
     path('api/gospel/getthisweek/', GospelListViewSet.as_view({
         'get': 'get_this_week',
     })),
+    path('api/gospel/<str:slug>/', GospelListViewSet.as_view({
+        'get': 'retrieve'
+    })),
 ]
