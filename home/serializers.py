@@ -4,7 +4,7 @@ from users.models import CustomUserModel
 from users.serializers import UserDetailSerializer
 from .models import (YoutubeVideo, Letter, MassDateSchedule, MassTimeSchedule, 
                     Announcement, PostType, Post, PostContent,
-                    Gospel,GospelContent,GospelReflection)
+                    Gospel,GospelContent,GospelReflection,CommuintyPrayer)
 from kanri.models import Father, Province, Church
 from kanri.serializers import FatherContactSerializer, ChurchContactSerializer,ProvinceSerializer
 
@@ -111,4 +111,9 @@ class GospelReflectionSerializer(serializers.ModelSerializer):
     author = UserDetailSerializer()
     class Meta:
         model = GospelReflection
-        fields = ('id', 'title', 'slug','audio_link','author','image_url', 'content','number_readed','number_shared')
+        fields = ('id', 'title', 'slug','audio_link','image_url', 'content','reference_link','author','number_readed','number_shared','created_on')
+
+class CommuintyPrayerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommuintyPrayer
+        fields = ('id', 'title', 'slug', 'content','reference_link','created_on')
