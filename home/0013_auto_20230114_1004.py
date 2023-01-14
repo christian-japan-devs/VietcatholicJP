@@ -16,31 +16,11 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='LessonType',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, verbose_name='Tên')),
-                ('slug', models.CharField(max_length=100, verbose_name='Slug')),
-                ('is_active', models.BooleanField(blank=True, default=True, verbose_name='Công khai')),
-                ('created_on', models.DateTimeField(auto_now_add=True, null=True, verbose_name='Created')),
-                ('updated_on', models.DateTimeField(auto_now=True, null=True, verbose_name='Updated')),
-                ('created_user', models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='lesson_type_created_user', to=settings.AUTH_USER_MODEL, verbose_name='Người tạo')),
-                ('language', models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='lesson_language', to='kanri.language', verbose_name='Ngon ngu')),
-                ('updated_user', models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='lesson_type_updated_user', to=settings.AUTH_USER_MODEL, verbose_name='Người cập nhật')),
-            ],
-            options={
-                'verbose_name': 'Bài hoc-phân loại',
-                'verbose_name_plural': 'Bài hoc-phân loại',
-                'ordering': ['name'],
-            },
-        ),
-        migrations.CreateModel(
             name='Lesson',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=300, verbose_name='Chủ đề')),
                 ('slug', models.CharField(max_length=100, verbose_name='Slug')),
-                ('lesson_type',models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='home.lessontype', verbose_name='Phan loại')),
                 ('image_url', models.ImageField(blank=True, null=True, upload_to='web_images/post', verbose_name='Hình ảnh')),
                 ('excerpt', models.TextField(help_text='Không quá 500 ký tự', max_length=500, verbose_name='Tóm tắt')),
                 ('audio_link', models.CharField(blank=True, default='', max_length=400, null=True, verbose_name='Audio Link')),
@@ -51,7 +31,6 @@ class Migration(migrations.Migration):
                 ('updated_on', models.DateTimeField(auto_now=True, null=True, verbose_name='Updated')),
                 ('author', models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='lesson_author', to=settings.AUTH_USER_MODEL)),
                 ('created_user', models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='lesson_created_user', to=settings.AUTH_USER_MODEL)),
-                ('updated_user',models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='lesson_updated_user', to=settings.AUTH_USER_MODEL, verbose_name='Người cập nhật'))
             ],
             options={
                 'verbose_name': 'Bài viết-chủ đề',
@@ -82,6 +61,189 @@ class Migration(migrations.Migration):
                 'ordering': ['lesson', 'sequence', '-created_on'],
             },
         ),
+        migrations.RemoveField(
+            model_name='gospel',
+            name='author',
+        ),
+        migrations.AddField(
+            model_name='aboutus',
+            name='created_user',
+            field=models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='about_created_user', to=settings.AUTH_USER_MODEL, verbose_name='Người tạo'),
+        ),
+        migrations.AddField(
+            model_name='announcement',
+            name='created_user',
+            field=models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='announ_created_user', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='gospel',
+            name='created_user',
+            field=models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='gospel_created_user', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='gospelreflection',
+            name='created_user',
+            field=models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='gospel_reflection_created_user', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='gospelreflection',
+            name='image_url',
+            field=models.ImageField(blank=True, null=True, upload_to='web_images/gospel', verbose_name='Hình ảnh'),
+        ),
+        migrations.AddField(
+            model_name='letter',
+            name='created_user',
+            field=models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='letter_created_user', to=settings.AUTH_USER_MODEL, verbose_name='Người tạo'),
+        ),
+        migrations.AddField(
+            model_name='post',
+            name='created_user',
+            field=models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='post_created_user', to=settings.AUTH_USER_MODEL, verbose_name='Người tạot'),
+        ),
+        migrations.AddField(
+            model_name='postcontent',
+            name='created_user',
+            field=models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='post_content_created_user', to=settings.AUTH_USER_MODEL, verbose_name='Người tạo'),
+        ),
+        migrations.AlterField(
+            model_name='aboutus',
+            name='created_on',
+            field=models.DateTimeField(auto_now_add=True, null=True, verbose_name='Created'),
+        ),
+        migrations.AlterField(
+            model_name='aboutus',
+            name='updated_on',
+            field=models.DateTimeField(auto_now=True, null=True, verbose_name='Updated'),
+        ),
+        migrations.AlterField(
+            model_name='announcement',
+            name='created_on',
+            field=models.DateTimeField(auto_now_add=True, null=True, verbose_name='Created'),
+        ),
+        migrations.AlterField(
+            model_name='announcement',
+            name='updated_on',
+            field=models.DateTimeField(auto_now=True, null=True, verbose_name='Updated'),
+        ),
+        migrations.AlterField(
+            model_name='confessschedule',
+            name='created_on',
+            field=models.DateTimeField(auto_now_add=True, null=True, verbose_name='Created'),
+        ),
+        migrations.AlterField(
+            model_name='confessschedule',
+            name='updated_on',
+            field=models.DateTimeField(auto_now=True, null=True, verbose_name='Updated'),
+        ),
+        migrations.AlterField(
+            model_name='gospel',
+            name='updated_on',
+            field=models.DateTimeField(auto_now=True, help_text='Lần cuối cập nhật', null=True, verbose_name='Updated'),
+        ),
+        migrations.AlterField(
+            model_name='gospelcontent',
+            name='created_on',
+            field=models.DateTimeField(auto_now_add=True, null=True, verbose_name='Created'),
+        ),
+        migrations.AlterField(
+            model_name='gospelcontent',
+            name='gospel',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='content_gospel', to='home.gospel', verbose_name='Lời Chúa'),
+        ),
+        migrations.AlterField(
+            model_name='gospelcontent',
+            name='updated_on',
+            field=models.DateTimeField(auto_now=True, null=True, verbose_name='Updated'),
+        ),
+        migrations.AlterField(
+            model_name='gospelrandom',
+            name='created_on',
+            field=models.DateTimeField(auto_now_add=True, null=True, verbose_name='Created'),
+        ),
+        migrations.AlterField(
+            model_name='gospelrandom',
+            name='updated_on',
+            field=models.DateTimeField(auto_now=True, null=True, verbose_name='Updated'),
+        ),
+        migrations.AlterField(
+            model_name='gospelreflection',
+            name='created_on',
+            field=models.DateTimeField(auto_now_add=True, null=True, verbose_name='Created'),
+        ),
+        migrations.AlterField(
+            model_name='gospelreflection',
+            name='updated_on',
+            field=models.DateTimeField(auto_now=True, null=True, verbose_name='Updated'),
+        ),
+        migrations.AlterField(
+            model_name='letter',
+            name='created_on',
+            field=models.DateTimeField(auto_now_add=True, null=True, verbose_name='Created'),
+        ),
+        migrations.AlterField(
+            model_name='letter',
+            name='updated_on',
+            field=models.DateTimeField(auto_now=True, null=True, verbose_name='Updated'),
+        ),
+        migrations.AlterField(
+            model_name='massdateschedule',
+            name='created_on',
+            field=models.DateTimeField(auto_now_add=True, null=True, verbose_name='Created'),
+        ),
+        migrations.AlterField(
+            model_name='massdateschedule',
+            name='updated_on',
+            field=models.DateTimeField(auto_now=True, null=True, verbose_name='Updated'),
+        ),
+        migrations.AlterField(
+            model_name='masstimeschedule',
+            name='created_on',
+            field=models.DateTimeField(auto_now_add=True, null=True, verbose_name='Created'),
+        ),
+        migrations.AlterField(
+            model_name='masstimeschedule',
+            name='updated_on',
+            field=models.DateTimeField(auto_now=True, null=True, verbose_name='Updated'),
+        ),
+        migrations.AlterField(
+            model_name='post',
+            name='created_on',
+            field=models.DateTimeField(auto_now_add=True, null=True, verbose_name='Created'),
+        ),
+        migrations.AlterField(
+            model_name='post',
+            name='updated_on',
+            field=models.DateTimeField(auto_now=True, null=True, verbose_name='Updated'),
+        ),
+        migrations.AlterField(
+            model_name='postcontent',
+            name='created_on',
+            field=models.DateTimeField(auto_now_add=True, null=True, verbose_name='Created'),
+        ),
+        migrations.AlterField(
+            model_name='postcontent',
+            name='updated_on',
+            field=models.DateTimeField(auto_now=True, null=True, verbose_name='Updated'),
+        ),
+        migrations.CreateModel(
+            name='LessonType',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('name', models.CharField(max_length=100, verbose_name='Tên')),
+                ('slug', models.CharField(max_length=100, verbose_name='Slug')),
+                ('is_active', models.BooleanField(blank=True, default=True, verbose_name='Công khai')),
+                ('created_on', models.DateTimeField(auto_now_add=True, null=True, verbose_name='Created')),
+                ('updated_on', models.DateTimeField(auto_now=True, null=True, verbose_name='Updated')),
+                ('created_user', models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='lesson_type_created_user', to=settings.AUTH_USER_MODEL, verbose_name='Người tạo')),
+                ('language', models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='lesson_language', to='kanri.language', verbose_name='Ngon ngu')),
+                ('updated_user', models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='lesson_type_updated_user', to=settings.AUTH_USER_MODEL, verbose_name='Người cập nhật')),
+            ],
+            options={
+                'verbose_name': 'Bài hoc-phân loại',
+                'verbose_name_plural': 'Bài hoc-phân loại',
+                'ordering': ['name'],
+            },
+        ),
         migrations.CreateModel(
             name='LessonChapterQA',
             fields=[
@@ -91,5 +253,15 @@ class Migration(migrations.Migration):
                 ('answer', models.TextField(max_length=1000, verbose_name='Câu trả lời')),
                 ('chapter', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='home.lessonchapter', verbose_name='Bài')),
             ],
+        ),
+        migrations.AddField(
+            model_name='lesson',
+            name='lesson_type',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='home.lessontype', verbose_name='Phan loại'),
+        ),
+        migrations.AddField(
+            model_name='lesson',
+            name='updated_user',
+            field=models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='lesson_updated_user', to=settings.AUTH_USER_MODEL, verbose_name='Người cập nhật'),
         ),
     ]
