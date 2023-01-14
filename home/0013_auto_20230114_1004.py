@@ -35,6 +35,54 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='Lesson',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('title', models.CharField(max_length=300, verbose_name='Chủ đề')),
+                ('slug', models.CharField(max_length=100, verbose_name='Slug')),
+                ('lesson_type',models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='home.lessontype', verbose_name='Phan loại')),
+                ('image_url', models.ImageField(blank=True, null=True, upload_to='web_images/post', verbose_name='Hình ảnh')),
+                ('excerpt', models.TextField(help_text='Không quá 500 ký tự', max_length=500, verbose_name='Tóm tắt')),
+                ('audio_link', models.CharField(blank=True, default='', max_length=400, null=True, verbose_name='Audio Link')),
+                ('is_active', models.BooleanField(blank=True, default=True, verbose_name='Công khai')),
+                ('number_readed', models.SmallIntegerField(blank=True, default=0, help_text='Số lượt đọc', null=True, verbose_name='Số lượt đọc')),
+                ('number_shared', models.SmallIntegerField(blank=True, default=0, help_text='Số lượt chia sẻ', null=True, verbose_name='Số lượt chia sẻ')),
+                ('created_on', models.DateTimeField(auto_now_add=True, null=True, verbose_name='Created')),
+                ('updated_on', models.DateTimeField(auto_now=True, null=True, verbose_name='Updated')),
+                ('author', models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='lesson_author', to=settings.AUTH_USER_MODEL)),
+                ('created_user', models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='lesson_created_user', to=settings.AUTH_USER_MODEL)),
+                ('updated_user',models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='lesson_updated_user', to=settings.AUTH_USER_MODEL, verbose_name='Người cập nhật'))
+            ],
+            options={
+                'verbose_name': 'Bài viết-chủ đề',
+                'verbose_name_plural': 'Bài viết-chủ đề',
+                'ordering': ['-created_on'],
+            },
+        ),
+        migrations.CreateModel(
+            name='LessonChapter',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('chapter_title', models.CharField(max_length=200, verbose_name='Tên chương')),
+                ('slug', models.CharField(max_length=100, verbose_name='Slug')),
+                ('sequence', models.CharField(choices=[('0', '1'), ('1', '2'), ('2', '3'), ('3', '4'), ('4', '5'), ('5', '6'), ('6', '7'), ('7', '8'), ('8', '9'), ('9', '10'), ('10', '11')], default='0', max_length=4, verbose_name='Thứ tự')),
+                ('image_url', models.ImageField(blank=True, null=True, upload_to='web_images/post', verbose_name='Hình ảnh')),
+                ('chapter_summary', models.CharField(blank=True, default='', help_text='Không quá 500 ký tự', max_length=500, null=True, verbose_name='Tóm tắt')),
+                ('content', tinymce.models.HTMLField(verbose_name='Nội dung')),
+                ('created_on', models.DateTimeField(auto_now_add=True, null=True, verbose_name='Created')),
+                ('updated_on', models.DateTimeField(auto_now=True, null=True, verbose_name='Updated')),
+                ('author', models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='lesson_content_author', to=settings.AUTH_USER_MODEL)),
+                ('created_user', models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='lesson_content_created_user', to=settings.AUTH_USER_MODEL)),
+                ('lesson', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='home.lesson', verbose_name='Bài')),
+                ('updated_user', models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='lesson_content_updated_user', to=settings.AUTH_USER_MODEL, verbose_name='Người cập nhật')),
+            ],
+            options={
+                'verbose_name': 'Bài viết-nội dung',
+                'verbose_name_plural': 'Bài viết-nội dung',
+                'ordering': ['lesson', 'sequence', '-created_on'],
+            },
+        ),
+        migrations.CreateModel(
             name='LessonChapterQA',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -43,15 +91,5 @@ class Migration(migrations.Migration):
                 ('answer', models.TextField(max_length=1000, verbose_name='Câu trả lời')),
                 ('chapter', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='home.lessonchapter', verbose_name='Bài')),
             ],
-        ),
-        migrations.AddField(
-            model_name='lesson',
-            name='lesson_type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='home.lessontype', verbose_name='Phan loại'),
-        ),
-        migrations.AddField(
-            model_name='lesson',
-            name='updated_user',
-            field=models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='lesson_updated_user', to=settings.AUTH_USER_MODEL, verbose_name='Người cập nhật'),
         ),
     ]
