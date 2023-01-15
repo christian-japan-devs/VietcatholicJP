@@ -329,3 +329,22 @@ class UserProfile(models.Model):
     def __str__(self):
         return f'{self.user.username} : {self.user.full_name}'
 
+class ContactUs(models.Model):
+    id = models.CharField(max_length = 40, default = uuid4, primary_key = True, editable = False)
+    name = models.CharField('Tên',max_length=200)
+    email = models.CharField('Email',max_length=50)
+    province = models.ForeignKey(Province,verbose_name='Tỉnh', null=True,default=None,blank=True,on_delete=models.CASCADE,related_name='user_contact_province')
+    question = models.CharField('Câu hỏi',max_length=500)
+    answer = models.CharField('Câu trả lời',max_length=1000,null=True,default='',blank=True)
+    is_replied = models.BooleanField('Trả lời',default=False,null=True, blank=True)
+    created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now_add = True)
+    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',auto_now = True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='user_contact_updated_user',default=None,blank=True,null=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['-is_replied','created_on']
+        verbose_name = '30-0 Liên lạc hỗ trợ'
+        verbose_name_plural = '30-0 Liên lạc hỗ trợ'

@@ -4,8 +4,6 @@ from django.utils import timezone
 from datetime import datetime
 from django.utils.translation import ugettext_lazy as _
 from django.utils.crypto import get_random_string
-from django.core.mail import EmailMultiAlternatives
-from django.contrib.auth.models import User
 from kanri.models import UserProfile
 # Custom
 from lib.constants import (CODERANGE,APP_HOST_NAME,CC_EMAIL,APP_FACEBOOK_LINK_1,APP_FACEBOOK_LINK_2)
