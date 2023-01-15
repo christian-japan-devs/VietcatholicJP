@@ -31,6 +31,12 @@ language_choice = (
     ('vi', _('Tiếng Việt'))
 )
 
+year_choice = (
+    ('A', _('Năm A')),
+    ('B', _('Năm B')),
+    ('C', _('Năm C')),
+)
+
 priority_choice = (
     ('3', 'Cao'),
     ('2', 'Trung bình'),

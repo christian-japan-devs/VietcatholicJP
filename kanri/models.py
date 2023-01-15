@@ -89,14 +89,18 @@ class Facility(models.Model):
     region = models.ForeignKey(Region,verbose_name='Vùng',default=None,blank=True,null=True,on_delete=models.CASCADE)
     province = models.ForeignKey(Province,verbose_name='Tỉnh',default=None,blank=True,null=True,on_delete=models.CASCADE)
     address = models.CharField('Địa chỉ',help_text='Địa chỉ',max_length=255)
+    created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now = True)
+    created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,default=None,blank=True,null=True,related_name='facility_created_user')
+    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',auto_now = True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='facility_updated_user',default=None,blank=True,null=True)
 
     def __str__(self):
         return self.name
 
     class Meta:
         ordering = ['name']
-        verbose_name = 'Facility'
-        verbose_name_plural = 'Facilities'
+        verbose_name = '00- Nhà dòng'
+        verbose_name_plural = '00- Nhà dòng'
     
     def save(self, *args, **kwargs):
         if not self.id:
@@ -132,8 +136,8 @@ class Church(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = 'Nhà thờ'
-        verbose_name_plural = 'Nhà thờ'
+        verbose_name = '01- Nhà thờ'
+        verbose_name_plural = '01- Nhà thờ'
     
     def save(self, *args, **kwargs):
         if not self.id:
@@ -142,7 +146,7 @@ class Church(models.Model):
         super(Church, self).save(*args, **kwargs)
 
 class ChurchImages(models.Model):
-    title = models.CharField('Title',max_length=120)
+    title = models.TextField('Mô tả về bức hình',max_length=1000,default='',null=True,blank=True)
     image = models.ImageField('Image',null=True,blank=True,upload_to='images/church/')
     church = models.ForeignKey(Church, on_delete=models.CASCADE)
     created_on = models.DateTimeField('Ngày tạo',auto_now_add = True)
@@ -153,8 +157,8 @@ class ChurchImages(models.Model):
     
     class Meta:
         ordering = ['created_on']
-        verbose_name = 'Nhà thờ ảnh'
-        verbose_name_plural = 'Nhà thờ ảnh'
+        verbose_name = '01- Nhà thờ ảnh'
+        verbose_name_plural = '01- Nhà thờ ảnh'
     
     def save(self, *args, **kwargs):
         if not self.id:
@@ -177,8 +181,8 @@ class Father(models.Model):
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='father_updated_user',default=None,blank=True,null=True)
 
     class Meta:
-        verbose_name = 'User-Quý cha'
-        verbose_name_plural = 'User-Quý cha'
+        verbose_name = '10- Quý cha'
+        verbose_name_plural = '10- Quý cha'
         unique_together = ('user','address')
         ordering = ('created_on',)
 
@@ -198,8 +202,8 @@ class FatherAndChurch(models.Model):
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='father_and_church_updated_user',default=None,blank=True,null=True)
 
     class Meta:
-        verbose_name = 'Cha tại nhà thờ'
-        verbose_name_plural = 'Cha tại nhà thờ'
+        verbose_name = '10- Quý cha tại nhà thờ'
+        verbose_name_plural = '10- Quý cha tại nhà thờ'
         ordering = ('is_active','father','church__name',)
 
     def __str__(self):
@@ -233,8 +237,8 @@ class Community(models.Model):
 
     class Meta:
         ordering = ['name','province','created_on']
-        verbose_name = 'Cộng đoàn, nhóm'
-        verbose_name_plural = 'Cộng đoàn, nhóm'
+        verbose_name = '20- Cộng đoàn, nhóm'
+        verbose_name_plural = '20- Cộng đoàn, nhóm'
     
     def save(self, *args, **kwargs):
         if not self.id:
@@ -256,8 +260,8 @@ class RepresentativeResponsibility(models.Model):
 
     class Meta:
         ordering = ['name']
-        verbose_name = 'Master-Representative responsibility'
-        verbose_name_plural = 'Master-Representative responsibilities'
+        verbose_name = '20-0 Ban đại diện chức vụ'
+        verbose_name_plural = '20-0 Ban đại diện chức vụ'
 
 class Representative(models.Model):
     id = models.CharField(max_length = 40, default = uuid4, primary_key = True, editable = False)
@@ -274,8 +278,8 @@ class Representative(models.Model):
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='representative_updated_user',default=None,blank=True,null=True)
 
     class Meta:
-        verbose_name = 'User-Representative'
-        verbose_name_plural = 'User-Representatives'
+        verbose_name = '20-1 Ban đại diện'
+        verbose_name_plural = '20-1 Ban đại diện'
         ordering = ('-created_on',)
 
     def __str__(self):
@@ -295,8 +299,8 @@ class RepresentativeAndCommunity(models.Model):
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='representative_comm_updated_user',default=None,blank=True,null=True,)
 
     class Meta:
-        verbose_name = 'Communnity and representative'
-        verbose_name_plural = 'Master-Communnity and representatives'
+        verbose_name = '20-2 Ban đại diện nhóm, cộng đoàn'
+        verbose_name_plural = '20-2 Ban đại diện nhóm, cộng đoàn'
         ordering = ('is_active','community','responsibility','representative','-from_date','-to_date')
 
     def __str__(self):
