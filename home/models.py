@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from tinymce.models import HTMLField
 from users.models import CustomUserModel
-from lib.constant_choices import (sequence_choise,priority_choice,language_choice)
+from lib.constant_choices import (sequence_choise,priority_choice,language_choice,year_choice)
 from lib.help import compressImage
 from kanri.models import Province, Church, Father, Language
 
@@ -84,6 +84,7 @@ class Post(models.Model):
     number_readed = models.SmallIntegerField('Số lượt đọc',default=0,blank=True,null=True,help_text='Số lượt đọc')
     number_shared = models.SmallIntegerField('Số lượt chia sẻ',default=0,blank=True,null=True,help_text='Số lượt chia sẻ')
     author = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='post_author', default=None, blank=True, null=True)
+    reference_link = models.CharField('Nguồn tham khảo Link',null=True, blank=True,default='',max_length=5000,help_text='Nếu có nhiều nguồn vui lòng thêm dấu ";" để phân cách các nguồn tham khảo.')
     created_on = models.DateTimeField('Created',blank=True, null=True,auto_now_add = True)
     created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='post_created_user',default=None,blank=True,null=True)
     updated_on = models.DateTimeField('Updated',blank=True, null=True,auto_now = True)
@@ -194,6 +195,7 @@ class GospelRandom(models.Model):
     word = models.CharField('Câu nói',default='',blank=True,max_length=500,help_text='Câu lời chúa')
     language = models.CharField('Ngôn ngữ',max_length=50,choices=language_choice,default='vi')
     content = models.TextField('Nội dung',default='',max_length=2000,blank=True,help_text='Ý nghĩa câu Lời Chúa')
+    reference_link = models.CharField('Nguồn tham khảo Link',null=True, blank=True,default='',max_length=5000,help_text='Nếu có nhiều nguồn vui lòng thêm dấu ";" để phân cách các nguồn tham khảo.')
     image_vertical = models.CharField('Hình ảnh dọc',default='',max_length=200,help_text='Link driver, hình cho điện thoại')
     image_horizontal = models.CharField('Hình ảnh khổ ngang',default='',max_length=200,help_text='Link driver hình khổ ngang')
     number_readed = models.SmallIntegerField('Số lượt đọc',default=0,blank=True,null=True,help_text='Số lượt đọc')
@@ -223,11 +225,11 @@ class GospelRandom(models.Model):
 
 class Gospel(models.Model):
     date = models.DateField('Ngày')
+    year_type = models.CharField('Năm phụng vụ',choices=year_choice,default='A',max_length=2)
     title = models.CharField('Chủ đề',default='',max_length=300,help_text='Dài không quá 300 ký tự')
     title_jp = models.CharField('Chủ đề tiếng Nhật',null=True, blank=True,default='',max_length=300,help_text='Dài không quá 300 ký tự')
     title_en = models.CharField('Chủ đề tiếng Anh',null=True, blank=True,default='',max_length=300,help_text='Dài không quá 300 ký tự')
     slug = models.CharField('Slug',max_length=300,default='',help_text='Vui lòng chỉnh lại phần tự sinh ra cho giống với title, * không dấu')
-    language = models.CharField('Ngôn ngữ',max_length=50,choices=language_choice,default='vi')
     image_url = models.ImageField('Hình ảnh',null=True, blank=True, upload_to='web_images/gospel')
     excerpt = models.TextField('Tóm tắt',help_text='Không quá 500 ký tự',default='',max_length=500)
     excerpt_jp = models.TextField('Tóm tắt tiếng Nhật',help_text='Không quá 500 ký tự',null=True, blank=True,default='',max_length=500)
@@ -238,6 +240,7 @@ class Gospel(models.Model):
     number_readed = models.SmallIntegerField('Số lượt đọc',default=0,blank=True,null=True,help_text='Số lượt đọc')
     number_listened = models.SmallIntegerField('Số lượt nghe',default=0,blank=True,null=True,help_text='Số lượt nghe')
     number_shared = models.SmallIntegerField('Số lượt chia sẻ',default=0,blank=True,null=True,help_text='Số lượt chia sẻ')
+    reference_link = models.CharField('Nguồn tham khảo Link',null=True, blank=True,default='',max_length=5000,help_text='Nếu có nhiều nguồn vui lòng thêm dấu ";" để phân cách các nguồn tham khảo.')
     created_on = models.DateTimeField('Created on',blank=True, null=True,auto_now_add = True)
     created_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='gospel_created_user', default=None, blank=True, null=True)
     updated_on = models.DateTimeField('Updated',help_text='Lần cuối cập nhật',blank=True, null=True,auto_now = True)
@@ -247,7 +250,7 @@ class Gospel(models.Model):
         return f'{self.date}: {self.title}'
 
     class Meta:
-        ordering = ['-date','-created_on']
+        ordering = ['-date','year_type','-created_on']
         verbose_name = '11-Lời Chúa-01-chủ đề'
         verbose_name_plural = '11-Lời Chúa-01-chủ đề'
     
@@ -264,9 +267,9 @@ class GospelContent(models.Model):
     chapter_title_jp = models.CharField('Tiêu đề tiếng Nhật',null=True, blank=True,default='',max_length=300,help_text='Dài không quá 300 ký tự')
     chapter_title_en = models.CharField('Tiêu đề tiếng Anh',null=True, blank=True,default='',max_length=300,help_text='Dài không quá 300 ký tự')
     slug = models.CharField('Slug',max_length=300,help_text='Vui lòng chỉnh lại phần tự sinh ra cho giống với title, * không dấu')
-    chapter_reference = models.CharField('Tác giả',default='',max_length=100)
-    chapter_reference_jp = models.CharField('Tác giả tiếng Nhật',default='',max_length=100)
-    chapter_reference_en = models.CharField('Tác giả tiếng Anh',default='',max_length=100)
+    chapter_reference = models.CharField('Tác giả',null=True, blank=True,default='',max_length=100)
+    chapter_reference_jp = models.CharField('Tác giả tiếng Nhật',null=True, blank=True,default='',max_length=100)
+    chapter_reference_en = models.CharField('Tác giả tiếng Anh',null=True, blank=True,default='',max_length=100)
     content = HTMLField('Nội dung')
     content_jp = HTMLField('Nội dung tiếng Nhật',null=True, blank=True,default='')
     content_en = HTMLField('Nội dung tiếng Anh',null=True, blank=True,default='')
@@ -292,7 +295,7 @@ class CommuintyPrayer(models.Model):
     content = HTMLField('Nội dung')
     content_jp = HTMLField('Nội dung tiếng Nhật',null=True, blank=True,default='')
     content_en = HTMLField('Nội dung tiếng Anh',null=True, blank=True,default='')
-    reference_link = models.CharField('Nguồn tham khảo Link',null=True, blank=True,default='',max_length=400)
+    reference_link = models.CharField('Nguồn tham khảo Link',null=True, blank=True,default='',max_length=5000,help_text='Nếu có nhiều nguồn vui lòng thêm dấu ";" để phân cách các nguồn tham khảo.')
     created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,default=None,blank=True,null=True,related_name='community_prayer_created_user')
     created_on = models.DateTimeField('Created',blank=True, null=True,auto_now_add = True)
     updated_on = models.DateTimeField('Updated',blank=True, null=True,auto_now = True)
@@ -323,7 +326,7 @@ class GospelReflection(models.Model):
     content = HTMLField('Nội dung')
     content_jp = HTMLField('Nội dung tiếng Nhật',null=True, blank=True,default='')
     content_en = HTMLField('Nội dung tiếng Anh',null=True, blank=True,default='')
-    reference_link = models.CharField('Nguồn tham khảo Link',null=True, blank=True,default='',max_length=400)
+    reference_link = models.CharField('Nguồn tham khảo Link',null=True, blank=True,default='',max_length=5000,help_text='Nếu có nhiều nguồn vui lòng thêm dấu ";" để phân cách các nguồn tham khảo.')
     number_readed = models.SmallIntegerField('Số lượt đọc',default=0,blank=True,null=True,help_text='Số lượt đọc')
     number_listened = models.SmallIntegerField('Số lượt nghe',default=0,blank=True,null=True,help_text='Số lượt nghe')
     number_shared = models.SmallIntegerField('Số lượt chia sẻ',default=0,blank=True,null=True,help_text='Số lượt chia sẻ')
@@ -369,7 +372,7 @@ class LessonType(models.Model):
 class Lesson(models.Model):
     lesson_type = models.ForeignKey(LessonType,verbose_name='Phân loại',on_delete=models.CASCADE)
     lesson_no =  models.SmallIntegerField('Bài số',default=0)
-    title = models.CharField('Chủ đề',max_length=300,help_text='Dài không quá 300 ký tự')
+    title = models.CharField('Chủ đề tên bài',max_length=300,help_text='Dài không quá 300 ký tự')
     title_jp = models.CharField('Chủ đề tiếng Nhật',null=True, blank=True,default='',max_length=300,help_text='Dài không quá 300 ký tự')
     title_en = models.CharField('Chủ đề tiếng Anh',null=True, blank=True,default='',max_length=300,help_text='Dài không quá 300 ký tự')
     slug = models.CharField('Slug',max_length=200,help_text='Vui lòng chỉnh lại phần tự sinh ra cho giống với title, * không dấu')
@@ -378,7 +381,7 @@ class Lesson(models.Model):
     excerpt = models.TextField('Tóm tắt tiếng Nhật',null=True, blank=True,default='',help_text='Không quá 500 ký tự',max_length=500)
     excerpt = models.TextField('Tóm tắt tiếng Anh',null=True, blank=True,default='',help_text='Không quá 500 ký tự',max_length=500)
     audio_link = models.CharField('Audio Link',null=True, blank=True,default='',max_length=400)
-    reference_link = models.CharField('Nguồn tham khảo Link',null=True, blank=True,default='',max_length=400)
+    reference_link = models.CharField('Nguồn tham khảo Link',null=True, blank=True,default='',max_length=5000,help_text='Nếu có nhiều nguồn vui lòng thêm dấu ";" để phân cách các nguồn tham khảo.')
     is_active = models.BooleanField('Công khai',default=True, blank=True)
     number_readed = models.SmallIntegerField('Số lượt đọc',default=0,blank=True,null=True,help_text='Số lượt đọc')
     number_shared = models.SmallIntegerField('Số lượt chia sẻ',default=0,blank=True,null=True,help_text='Số lượt chia sẻ')
@@ -391,7 +394,7 @@ class Lesson(models.Model):
         return self.title
 
     class Meta:
-        ordering = ['-created_on']
+        ordering = ['lesson_type','lesson_no','-created_on']
         verbose_name = '20-Giáo lý-02 chủ đề'
         verbose_name_plural = '20-Giáo lý-02 chủ đề'
     
@@ -443,8 +446,8 @@ class LessonChapterQA(models.Model):
 
     class Meta:
         ordering = ['chapter','question_no','-created_on']
-        verbose_name = '20-Giáo lý-03 chương câu hỏi'
-        verbose_name_plural = '20-Giáo lý-03 chương câu hỏi'
+        verbose_name = '20-Giáo lý-04 chương câu hỏi'
+        verbose_name_plural = '20-Giáo lý-04 chương câu hỏi'
 
 class LessonQA(models.Model):
     lesson = models.ForeignKey(Lesson,verbose_name='Bài',on_delete=models.CASCADE)
@@ -459,15 +462,19 @@ class LessonQA(models.Model):
     number_correct = models.SmallIntegerField('Số lượt làm đúng',default=0,blank=True,null=True)
     number_readed = models.SmallIntegerField('Số lượt đọc',default=0,blank=True,null=True,help_text='Số lượt đọc')
     number_shared = models.SmallIntegerField('Số lượt chia sẻ',default=0,blank=True,null=True,help_text='Số lượt chia sẻ')
+    is_active = models.BooleanField('Công khai',default=True, blank=True)
     created_on = models.DateTimeField('Created',blank=True, null=True,auto_now_add = True)
     created_user = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='lesson_qa_created_user', default=None, blank=True, null=True)
     updated_on = models.DateTimeField('Updated',blank=True, null=True,auto_now = True)
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='lesson_qa_updated_user',default=None,blank=True,null=True)
 
+    def __str__(self):
+        return f'{self.lesson}- câu số {self.question_no}'
+
     class Meta:
         ordering = ['lesson','question_no','-created_on']
-        verbose_name = '20-Giáo lý-03 chương câu hỏi'
-        verbose_name_plural = '20-Giáo lý-03 chương câu hỏi'
+        verbose_name = '20-Giáo lý-04 Bài câu hỏi'
+        verbose_name_plural = '20-Giáo lý-04 Bài câu hỏi'
 
 ''' End Caterism'''
 ''' Start Prayer'''
@@ -488,21 +495,21 @@ class PrayerType(models.Model):
     class Meta:
         ordering = ['name']
         verbose_name = '25-Kinh đọc-01-phân loại'
-        verbose_name_plural = '02-Kinh đọc-01-phân loại'
+        verbose_name_plural = '25-Kinh đọc-01-phân loại'
 
 class Prayer(models.Model):
+    prayer_type = models.ForeignKey(PrayerType,default=None,verbose_name='Loại',on_delete=models.CASCADE)
     name = models.CharField('Tên',max_length=300,help_text='Dài không quá 300 ký tự')
     name_jp = models.CharField('Tên tiếng Nhật',null=True, blank=True,default='',max_length=300,help_text='Dài không quá 300 ký tự')
     name_en = models.CharField('Tên tiếng Anh',null=True, blank=True,default='',max_length=300,help_text='Dài không quá 300 ký tự')
     slug = models.CharField('Slug',max_length=300,help_text='Chỉnh lại phần tự sinh ra cho giống với title, * không dấu')
-    post_type = models.ForeignKey(PostType,verbose_name='Loại',on_delete=models.CASCADE)
     audio_link = models.CharField('Audio Link',null=True, blank=True,default='',max_length=400)
     audio_link_jp = models.CharField('Audio Link tiếng Nhật',null=True, blank=True,default='',max_length=400)
     audio_link_en = models.CharField('Audio Link tiếng Nhật',null=True, blank=True,default='',max_length=400)
     content = HTMLField('Nội dung')
     content_jp = HTMLField('Nội dung tiếng Nhật',null=True, blank=True,default='')
     content_en = HTMLField('Nội dung tiếng Anh',null=True, blank=True,default='')
-    reference_link = models.CharField('Nguồn tham khảo Link',null=True, blank=True,default='',max_length=400)
+    reference_link = models.CharField('Nguồn tham khảo Link',null=True, blank=True,default='',max_length=5000,help_text='Nếu có nhiều nguồn vui lòng thêm dấu ";" để phân cách các nguồn tham khảo.')
     is_active = models.BooleanField('Công khai',default=True, blank=True)
     number_readed = models.SmallIntegerField('Số lượt đọc',default=0,blank=True,null=True,help_text='Số lượt đọc')
     number_shared = models.SmallIntegerField('Số lượt chia sẻ',default=0,blank=True,null=True,help_text='Số lượt chia sẻ')
@@ -512,12 +519,62 @@ class Prayer(models.Model):
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='prayer_updated_user',default=None,blank=True,null=True)
 
     def __str__(self):
-        return self.title
+        return self.name
+
+    class Meta:
+        ordering = ['prayer_type','name','-created_on']
+        verbose_name = '25-Kinh đọc-02 nội dung'
+        verbose_name_plural = '25-Kinh đọc-02 nội dung'
+
+""""""
+
+class CeremonyType(models.Model):
+    name = models.CharField('Tên',max_length=300,help_text='Dài không quá 300 ký tự')
+    name_jp = models.CharField('Tên tiếng Nhật',null=True, blank=True,default='',max_length=300,help_text='Dài không quá 300 ký tự')
+    name_en = models.CharField('Tên tiếng Anh',null=True, blank=True,default='',max_length=300,help_text='Dài không quá 300 ký tự')
+    slug = models.CharField('Slug',max_length=300)
+    is_active = models.BooleanField('Công khai',default=True, blank=True)
+    created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,default=None,blank=True,null=True,related_name='ceremony_type_created_user')
+    created_on = models.DateTimeField('Created on',blank=True, null=True,auto_now_add = True)
+    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',blank=True, null=True,auto_now = True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='ceremony_type_updated_user',default=None,blank=True,null=True)
+
+    def __str__(self):
+        return f'{self.name}-{self.name_jp}'
 
     class Meta:
         ordering = ['-created_on']
-        verbose_name = '25-Kinh đọc-02 nội dung'
-        verbose_name_plural = '25-Kinh đọc-02 nội dung'
+        verbose_name = '30-Nghi thức-01 phân loại'
+        verbose_name_plural = '30-Nghi thức-01 phân loại'
+
+class Ceremony(models.Model):
+    type = models.ForeignKey(CeremonyType,default=None,verbose_name='Loại',on_delete=models.CASCADE)
+    name = models.CharField('Tên',max_length=300,help_text='Dài không quá 300 ký tự')
+    name_jp = models.CharField('Tên tiếng Nhật',null=True, blank=True,default='',max_length=300,help_text='Dài không quá 300 ký tự')
+    name_en = models.CharField('Tên tiếng Anh',null=True, blank=True,default='',max_length=300,help_text='Dài không quá 300 ký tự')
+    slug = models.CharField('Slug',max_length=300,help_text='Chỉnh lại phần tự sinh ra cho giống với title, * không dấu')
+    audio_link = models.CharField('Audio Link',null=True, blank=True,default='',max_length=400)
+    audio_link_jp = models.CharField('Audio Link tiếng Nhật',null=True, blank=True,default='',max_length=400)
+    audio_link_en = models.CharField('Audio Link tiếng Nhật',null=True, blank=True,default='',max_length=400)
+    content = HTMLField('Nội dung')
+    content_jp = HTMLField('Nội dung tiếng Nhật',null=True, blank=True,default='')
+    content_en = HTMLField('Nội dung tiếng Anh',null=True, blank=True,default='')
+    reference_link = models.CharField('Nguồn tham khảo Link',null=True, blank=True,default='',max_length=5000,help_text='Nếu có nhiều nguồn vui lòng thêm dấu ";" để phân cách các nguồn tham khảo.')
+    is_active = models.BooleanField('Công khai',default=True, blank=True)
+    number_readed = models.SmallIntegerField('Số lượt đọc',default=0,blank=True,null=True,help_text='Số lượt đọc')
+    number_shared = models.SmallIntegerField('Số lượt chia sẻ',default=0,blank=True,null=True,help_text='Số lượt chia sẻ')
+    created_on = models.DateTimeField('Created',blank=True, null=True,auto_now_add = True)
+    created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='ceremony_created_user',default=None,blank=True,null=True)
+    updated_on = models.DateTimeField('Updated',blank=True, null=True,auto_now = True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='ceremony_updated_user',default=None,blank=True,null=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['type','name','-created_on']
+        verbose_name = '30-Nghi thức-02 nội dung'
+        verbose_name_plural = '30-Nghi thức-02 nội dung'
 
 class MassDateSchedule(models.Model):
     date = models.DateField('Ngày')
@@ -534,8 +591,8 @@ class MassDateSchedule(models.Model):
 
     class Meta:
         ordering = ['-date','-created_on']
-        verbose_name = '30-Lịch Lễ-01 ngày'
-        verbose_name_plural = '30-Lịch Lễ-01 ngày'
+        verbose_name = '40-Lịch Lễ-01 ngày'
+        verbose_name_plural = '40-Lịch Lễ-01 ngày'
 
 class MassTimeSchedule(models.Model):
     date_schedule = models.ForeignKey(MassDateSchedule,verbose_name='Thánh Lễ',on_delete=models.CASCADE)
@@ -552,8 +609,8 @@ class MassTimeSchedule(models.Model):
  
     class Meta:
         ordering = ['-date_schedule']
-        verbose_name = '30-Lịch Lễ-02 giờ chi tiết'
-        verbose_name_plural = '30-Lịch Lễ-02 giờ chi tiết'
+        verbose_name = '40-Lịch Lễ-02 giờ chi tiết'
+        verbose_name_plural = '40-Lịch Lễ-02 giờ chi tiết'
     
     def __str__(self):
         return f'{self.date_schedule}-{self.time}'
@@ -574,8 +631,8 @@ class ConfessSchedule(models.Model):
  
     class Meta:
         ordering = ['-from_date_time']
-        verbose_name = '31-Lịch giải tội'
-        verbose_name_plural = '31-Lịch giải tội'
+        verbose_name = '41-Lịch giải tội'
+        verbose_name_plural = '41-Lịch giải tội'
     
     def __str__(self):
         return f'{self.from_date_time}-{self.to_date_time}'
