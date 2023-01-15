@@ -74,9 +74,10 @@ class MassScheduleViewSet(viewsets.ViewSet):
             get_type = request.GET.get('type','index')
             mass_schedules = MassDateSchedule.objects.filter(date__gte=timezone.now()).order_by('date')[:10]
             if mass_schedules:
+                res['status'] = 'ok'
                 if get_type == 'home':
                     serializer = MassDateFullScheduleSerializer(mass_schedules[0])
-                    res['mass_schedules'] = serializer.data
+                    res['mass_schedules'] = [serializer.data,]
                 else:
                     serializer = MassDateFullScheduleSerializer(mass_schedules, many=True)
                     res['mass_schedules'] = serializer.data
