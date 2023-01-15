@@ -20,19 +20,22 @@ class EventDetailSerializer(serializers.ModelSerializer):
         fields = ('id','title','slug','excerpt','image_url','event_date','from_time','to_time','number_of_ticket','event_fee','province','address','url','','google_map_link','created_on','created_user')
 
 class EventProgramDetailSerializer(serializers.ModelSerializer):
+    created_user = UserDetailSerializer()
     class Meta:
         model = EventProgramDetail
-        fields = ('id','event','title','content','event_date','from_time','to_time','is_active')
+        fields = ('id','event','title','content','event_date','from_time','to_time','is_active','created_on','created_user')
 
 class EventRuleContentSerializer(serializers.ModelSerializer):
+    created_user = UserDetailSerializer()
     class Meta:
         model = EventRuleContent
-        fields = ('id','', '')
+        fields = ('id','event', 'title','sequence','image_url','chapter_summary','content','is_active','created_on','created_user')
 
 class RegistrationSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = Registration
-        fields = ('id','', '')
+        fields = ('id','date_time', 'user')
 
 class EventBoardSerializer(serializers.ModelSerializer):
     class Meta:

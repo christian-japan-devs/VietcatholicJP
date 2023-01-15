@@ -3,7 +3,7 @@ from rest_framework import serializers
 from users.models import CustomUserModel
 from users.serializers import UserDetailSerializer
 from .models import (Father, Province, Church, Region, Community,
-      RepresentativeResponsibility, Representative, RepresentativeAndCommunity)
+      RepresentativeResponsibility, Representative, RepresentativeAndCommunity,ContactUs)
 
 class FatherContactSerializer(serializers.ModelSerializer):
     user = UserDetailSerializer()
@@ -51,3 +51,16 @@ class CommunityDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Community
         fields = ('id','slug','name','name_jp','image','type','introduction','url','province','church')
+
+class ContactUsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactUs
+        fields = ('id','name','email','province','question','answer','is_replied')
+
+    def create(self, validated_data):
+        return ContactUs(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.answer = validated_data.get('answer', instance.answer)
+        instance.save()
+        return instance
