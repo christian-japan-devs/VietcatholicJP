@@ -5,7 +5,7 @@ from django.utils import timezone
 from .models import (Language, Country, Region, Province, 
         Facility, Church, ChurchImages, Father, FatherAndChurch,Community,
         RepresentativeResponsibility, Representative, RepresentativeAndCommunity
-        ,UserProfile)
+        ,UserProfile,ContactUs)
 
 class FacilityAdmin(admin.ModelAdmin):
     list_display = ('kanji','name','phone','email','province','created_on','created_user', 'updated_user')
@@ -145,6 +145,17 @@ class UserProfileAdmin(admin.ModelAdmin):
         obj.updated_user = request.user
         obj.save()
 
+class ContactUsAdmin(admin.ModelAdmin):
+    list_display = ('name','email','province','question','is_replied','created_on','updated_user','updated_on')
+    list_filter = ('is_replied','province')
+    exclude = ('name','email','province','question','is_replied','created_on','updated_on', 'updated_user',)
+    list_per_page = 20
+
+    def save_model(self, request, obj, form, change):
+        obj.updated_on = timezone.now
+        obj.updated_user = request.user
+        obj.save()
+
 # Register your models here. 
 admin.site.register(Language)
 admin.site.register(Country)
@@ -160,3 +171,4 @@ admin.site.register(RepresentativeResponsibility,RepresentativeResponsibilityAdm
 admin.site.register(Representative,RepresentativeAdmin)
 admin.site.register(RepresentativeAndCommunity,RepresentativeAndCommunityAdmin)
 admin.site.register(UserProfile,UserProfileAdmin)
+admin.site.register(ContactUs,ContactUsAdmin)
