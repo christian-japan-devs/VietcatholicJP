@@ -26,11 +26,32 @@ class LetterSlugSerializer(serializers.ModelSerializer):
         model = Letter
         fields = ('id','title', 'slug')
 
-class MassDateScheduleSerializer(serializers.ModelSerializer):
+class MassDateSlugSerializer(serializers.ModelSerializer):
     class Meta:
         model = MassDateSchedule
         fields = ('id','date','title','slug','gospel')
 
+class GospelLinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Gospel
+        fields = ('id','title', 'slug','audio_link')
+
+class MassDateTimeScheduleSerializer(serializers.ModelSerializer):
+    father = FatherContactSerializer()
+    church = ChurchContactSerializer()
+    province = ProvinceSerializer()
+    class Meta:
+        model = MassTimeSchedule
+        fields = ('id','time','father','church','province','notes')
+
+class MassDateFullScheduleSerializer(serializers.ModelSerializer):
+    gospel = GospelLinkSerializer()
+    time_schedule = MassDateTimeScheduleSerializer(many=True, read_only=True)
+    class Meta:
+        model = MassDateSchedule
+        fields = ('id','date','title','slug','gospel','time_schedule')
+
+'''
 class MassDateScheduleSerializer(serializers.ModelSerializer):
     father = FatherContactSerializer()
     church = ChurchContactSerializer()
@@ -47,6 +68,7 @@ class MassDateScheduleFullSerializer(serializers.ModelSerializer):
     class Meta:
         model = MassTimeSchedule
         fields = ('id','time','date_schedule','father','church','province','notes')
+'''
 
 class AnnouncementShortSerializer(serializers.ModelSerializer):
     author = UserDetailSerializer()

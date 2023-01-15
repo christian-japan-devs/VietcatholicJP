@@ -148,7 +148,7 @@ class UserProfileAdmin(admin.ModelAdmin):
 class ContactUsAdmin(admin.ModelAdmin):
     list_display = ('name','email','province','question','is_replied','created_on','updated_user','updated_on')
     list_filter = ('is_replied','province')
-    exclude = ('name','email','province','question','is_replied','created_on','updated_on', 'updated_user',)
+    exclude = ('is_replied','created_on','updated_on', 'updated_user',)
     list_per_page = 20
 
     def save_model(self, request, obj, form, change):

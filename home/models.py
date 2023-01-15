@@ -595,7 +595,7 @@ class MassDateSchedule(models.Model):
         verbose_name_plural = '40-Lịch Lễ-01 ngày'
 
 class MassTimeSchedule(models.Model):
-    date_schedule = models.ForeignKey(MassDateSchedule,verbose_name='Thánh Lễ',on_delete=models.CASCADE)
+    date_schedule = models.ForeignKey(MassDateSchedule,verbose_name='Thánh Lễ',related_name='time_schedule',on_delete=models.CASCADE)
     time = models.TimeField('Giờ',default='',max_length=300)
     language = models.CharField('Ngôn ngữ',max_length=50,choices=language_choice,default='vi')
     father = models.ForeignKey(Father,verbose_name='Cha', on_delete=models.CASCADE,related_name='mass_father')
