@@ -334,8 +334,8 @@ class ContactUs(models.Model):
     name = models.CharField('Tên',max_length=200)
     email = models.CharField('Email',max_length=50)
     province = models.ForeignKey(Province,verbose_name='Tỉnh', null=True,default=None,blank=True,on_delete=models.CASCADE,related_name='user_contact_province')
-    question = models.CharField('Câu hỏi',max_length=500)
-    answer = models.CharField('Câu trả lời',max_length=1000,null=True,default='',blank=True)
+    question = models.TextField('Câu hỏi',max_length=500)
+    answer = models.TextField('Câu trả lời',max_length=1000,null=True,default='',blank=True)
     is_replied = models.BooleanField('Trả lời',default=False,null=True, blank=True)
     created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now_add = True)
     updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',auto_now = True)
@@ -345,6 +345,6 @@ class ContactUs(models.Model):
         return self.name
 
     class Meta:
-        ordering = ['-is_replied','created_on']
+        ordering = ['is_replied','-created_on']
         verbose_name = '30-0 Liên lạc hỗ trợ'
         verbose_name_plural = '30-0 Liên lạc hỗ trợ'

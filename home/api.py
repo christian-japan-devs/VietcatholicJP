@@ -69,23 +69,18 @@ class MassScheduleViewSet(viewsets.ViewSet):
             'message': ''
         }
         try:
-            from .models import MassDateSchedule, MassTimeSchedule
-            from .serializers import MassDateScheduleSerializer
-            mass_schedule = MassDateSchedule.objects.filter(date__gte=timezone.now()).order_by('date').first()
-            if mass_schedule:
-                mass_schedule_details = MassTimeSchedule.objects.filter(date_schedule=mass_schedule).order_by('time')
-                serializer = MassDateScheduleSerializer(mass_schedule_details, many=True)
-                res['status'] = 'ok'
-                res['mass_schedules'] = {
-                    'title': mass_schedule.title,
-                    'date': mass_schedule.date,
-                    'audio_link': mass_schedule.gospel.audio_link, #TODO: chage to metadata
-                    'time_schedule':serializer.data
-                }
-            else:
-                res['status'] = 'ok'
-                res['mass_schedules'] = {
-                }
+            from .models import MassDateSchedule
+            from .serializers import MassDateFullScheduleSerializer
+            get_type = request.GET.get('type','index')
+            mass_schedules = MassDateSchedule.objects.filter(date__gte=timezone.now()).order_by('date')[:10]
+            if mass_schedules:
+                if get_type == 'home':
+                    serializer = MassDateFullScheduleSerializer(mass_schedules[0])
+                    res['mass_schedules'] = serializer.data
+                else:
+                    serializer = MassDateFullScheduleSerializer(mass_schedules, many=True)
+                    res['mass_schedules'] = serializer.data
+
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
             res['status'] = 'error'
