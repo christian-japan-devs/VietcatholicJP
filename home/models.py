@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from tinymce.models import HTMLField
 from users.models import CustomUserModel
-from lib.constant_choices import (sequence_choise,priority_choice,language_choice,year_choice)
+from lib.constant_choices import (sequence_choise,priority_choice,language_choice,year_choice,aboutus_types)
 from lib.help import compressImage
 from kanri.models import Province, Church, Father, Language
 
@@ -124,6 +124,7 @@ class PostContent(models.Model):
         verbose_name_plural = '02-Bài viết-03-nội dung'
 
 class Aboutus(models.Model):
+    type = models.CharField('Phan loai',choices=aboutus_types,default='vcj',max_length=300,help_text='Phan loai')
     title = models.CharField('Chủ đề',max_length=300,help_text='Dài không quá 300 ký tự')
     title_jp = models.CharField('Chủ đề tiếng Nhật',default='',blank=True,null=True,max_length=300,help_text='Dài không quá 300 ký tự')
     title_en = models.CharField('Chủ đề tiếng Anh',default='',blank=True,null=True,max_length=300,help_text='Dài không quá 300 ký tự')
@@ -193,6 +194,8 @@ class Announcement(models.Model):
 
 class GospelRandom(models.Model):
     word = models.CharField('Câu nói',default='',blank=True,max_length=500,help_text='Câu lời chúa')
+    word_jp = models.CharField('Câu nói Japanese',default='',blank=True,max_length=500,help_text='Câu lời chúa')
+    word_en = models.CharField('Câu nói English',default='',blank=True,max_length=500,help_text='Câu lời chúa')
     language = models.CharField('Ngôn ngữ',max_length=50,choices=language_choice,default='vi')
     content = models.TextField('Nội dung',default='',max_length=2000,blank=True,help_text='Ý nghĩa câu Lời Chúa')
     reference_link = models.CharField('Nguồn tham khảo Link',null=True, blank=True,default='',max_length=5000,help_text='Nếu có nhiều nguồn vui lòng thêm dấu ";" để phân cách các nguồn tham khảo.')

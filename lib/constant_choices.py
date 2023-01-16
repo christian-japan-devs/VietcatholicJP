@@ -31,6 +31,10 @@ language_choice = (
     ('vi', _('Tiếng Việt'))
 )
 
+aboutus_types = (
+    ('vcj','Giao-doan'),
+    ('vcj','Cha tuyen uy')
+)
 year_choice = (
     ('A', _('Năm A')),
     ('B', _('Năm B')),
