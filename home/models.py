@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from tinymce.models import HTMLField
 from users.models import CustomUserModel
-from lib.constant_choices import (sequence_choise,priority_choice,language_choice,year_choice)
+from lib.constant_choices import (sequence_choise,priority_choice,language_choice,year_choice,aboutus_types)
 from lib.help import compressImage
 from kanri.models import Province, Church, Father, Language
 
@@ -124,6 +124,7 @@ class PostContent(models.Model):
         verbose_name_plural = '02-Bài viết-03-nội dung'
 
 class Aboutus(models.Model):
+    type = models.CharField('Phân loại',choices=aboutus_types,default='vcj',max_length=300,help_text='Phân loại chủ đề')
     title = models.CharField('Chủ đề',max_length=300,help_text='Dài không quá 300 ký tự')
     title_jp = models.CharField('Chủ đề tiếng Nhật',default='',blank=True,null=True,max_length=300,help_text='Dài không quá 300 ký tự')
     title_en = models.CharField('Chủ đề tiếng Anh',default='',blank=True,null=True,max_length=300,help_text='Dài không quá 300 ký tự')
@@ -192,17 +193,16 @@ class Announcement(models.Model):
         super(Announcement, self).save(*args, **kwargs)
 
 class GospelRandom(models.Model):
-    word = models.CharField('Câu nói',default='',blank=True,max_length=500,help_text='Câu lời chúa')
-    language = models.CharField('Ngôn ngữ',max_length=50,choices=language_choice,default='vi')
+    word = models.TextField('Câu nói',default='',blank=True,max_length=300,help_text='Dài không quá 300 ký tự')
+    word_jp = models.TextField('Câu nói Japanese',default='',blank=True,max_length=300,help_text='Dài không quá 300 ký tự')
+    word_en = models.TextField('Câu nói English',default='',blank=True,max_length=300,help_text='Dài không quá 300 ký tự')
+    image_url = models.ImageField('Hình ảnh',help_text='Hình ảnh hiển thị trên trang web',null=True,blank=True,upload_to='web_images/gospel_img')
     content = models.TextField('Nội dung',default='',max_length=2000,blank=True,help_text='Ý nghĩa câu Lời Chúa')
     reference_link = models.CharField('Nguồn tham khảo Link',null=True, blank=True,default='',max_length=5000,help_text='Nếu có nhiều nguồn vui lòng thêm dấu ";" để phân cách các nguồn tham khảo.')
-    image_vertical = models.CharField('Hình ảnh dọc',default='',max_length=200,help_text='Link driver, hình cho điện thoại')
-    image_horizontal = models.CharField('Hình ảnh khổ ngang',default='',max_length=200,help_text='Link driver hình khổ ngang')
-    number_readed = models.SmallIntegerField('Số lượt đọc',default=0,blank=True,null=True,help_text='Số lượt đọc')
-    number_shared = models.SmallIntegerField('Số lượt chia sẻ',default=0,blank=True,null=True,help_text='Số lượt chia sẻ')
+    image_vertical = models.CharField('Hình ảnh dọc',null=True, blank=True,default='',max_length=400,help_text='Link driver, hình cho điện thoại')
+    image_horizontal = models.CharField('Hình ảnh khổ ngang',null=True, blank=True,default='',max_length=400,help_text='Link driver hình khổ ngang')
     number_downloaded = models.SmallIntegerField('Số lượt tải về',default=0,blank=True,null=True,help_text='Số lượt đã tải về')
     is_active = models.BooleanField('Công khai',help_text='Trạng thái công khai',default=True,blank=True)
-    image_url = models.ImageField('Hình ảnh',help_text='Hình ảnh hiển thị trên trang web',null=True,blank=True,upload_to='gospel_img')
     created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,default=None,blank=True,null=True,related_name='gospel_random_created_user')
     created_on = models.DateTimeField('Created',blank=True, null=True,auto_now_add = True)
     updated_on = models.DateTimeField('Updated',blank=True, null=True,auto_now = True)
@@ -218,7 +218,8 @@ class GospelRandom(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            self.gospelrandom_img_url = compressImage(self.image_url)
+            if self.image_url:
+                self.image_url = compressImage(self.image_url)
         super(GospelRandom, self).save(*args, **kwargs)
 
 # Start Gospel

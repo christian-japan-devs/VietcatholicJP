@@ -88,6 +88,184 @@ class MassScheduleViewSet(viewsets.ViewSet):
             res['message'] = SYSTEM_ERROR_0001
             print(sys.exc_info())
             return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    # /api/massschedule/<str:slug>/ for more detail.
+    def retrieve(self, request, slug=None):
+        res = {
+            'status': 'error',
+            'mass_schedule': {},
+            'message': ''
+        }
+        try:
+            from .models import MassDateSchedule
+            from .serializers import MassDateFullScheduleSerializer
+            try:
+                mass_schedule = MassDateSchedule.objects.get(slug=slug)
+            except MassDateSchedule.DoesNotExist:
+                mass_schedule = None
+            if mass_schedule:
+                serializer = MassDateFullScheduleSerializer(mass_schedule)
+                res['mass_schedule'] = serializer.data
+                res['status'] = 'ok'
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            res['status'] = 'error'
+            res['message'] = SYSTEM_ERROR_0001
+            print(sys.exc_info())
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class AboutusViewSet(viewsets.ViewSet):
+    permission_classes = (AllowAny,)
+
+    # /api/about-us/?type=
+    def get_about_us(self, request):
+        res = {
+            'status': 'error',
+            'about_us': {},
+            'message': ''
+        }
+        try:
+            from .models import Aboutus
+            from .serializers import AboutusContentSerializer
+            get_type = request.GET.get('type','index')
+            if get_type == 'index':
+                about_us = Aboutus.objects.filter(is_active=True, type='community').first()
+                print(about_us)
+                if about_us:
+                    serializer = AboutusContentSerializer(about_us)
+                    res['about_us'] = serializer.data
+                    res['status'] = 'ok'
+            else:
+                about_uses = Aboutus.objects.filter(is_active=True).order_by('created_on')
+                if about_uses:
+                    serializer = AboutusContentSerializer(about_us,many=True)
+                    res['about_us'] = serializer.data
+                    res['status'] = 'ok'
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            res['status'] = 'error'
+            res['message'] = SYSTEM_ERROR_0001
+            print(sys.exc_info())
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    # /api/about-us/<str:slug>/ for more detail.
+    def retrieve(self, request, slug=None):
+        res = {
+            'status': 'error',
+            'about_us': {},
+            'message': ''
+        }
+        try:
+            from .models import Aboutus
+            from .serializers import AboutusContentSerializer
+            try:
+                about_us = Aboutus.objects.get(slug=slug)
+            except Aboutus.DoesNotExist:
+                about_us = None
+            if about_us:
+                serializer = AboutusContentSerializer(about_us)
+                res['about_us'] = serializer.data
+                res['status'] = 'ok'
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            res['status'] = 'error'
+            res['message'] = SYSTEM_ERROR_0001
+            print(sys.exc_info())
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class GospelRandomViewSet(viewsets.ViewSet):
+    permission_classes = (AllowAny,)
+
+    # /api/gospel-random/?type=
+    def get_gospel_random(self, request):
+        res = {
+            'status': 'error',
+            'gospel_random': {},
+            'message': ''
+        }
+        try:
+            from .models import GospelRandom
+            from .serializers import GospelRandomShortSerializer,GospelRandomSerializer
+            from random import randrange
+            get_type = request.GET.get('type','home')
+            if get_type == 'home':
+                try:
+                    random_id = randrange(4)+1
+                    res['random_id'] = random_id
+                    gospel_random = GospelRandom.objects.get(id=random_id)
+                except GospelRandom.DoesNotExist:
+                    gospel_random = None
+                if gospel_random:
+                    serializer = GospelRandomShortSerializer(gospel_random)
+                    res['gospel_random'] = serializer.data
+                    res['status'] = 'ok'
+            else:
+                try:
+                    random_id = randrange(100)
+                    gospel_random = GospelRandom.objects.get(id=random_id)
+                except GospelRandom.DoesNotExist:
+                    gospel_random = None
+                if gospel_random:
+                    serializer = GospelRandomSerializer(gospel_random)
+                    res['gospel_random'] = serializer.data
+                    res['status'] = 'ok'
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            res['status'] = 'error'
+            res['message'] = SYSTEM_ERROR_0001
+            print(sys.exc_info())
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+#TODO: copy this sample viewset to create new api
+class SampleViewSet(viewsets.ViewSet):
+    permission_classes = (AllowAny,)
+
+    # /api/massschedule/?type=
+    def get_(self, request):
+        res = {
+            'status': 'error',
+            'mass_schedules': {},
+            'message': ''
+        }
+        try:
+            from .models import MassDateSchedule
+            from .serializers import MassDateFullScheduleSerializer
+            get_type = request.GET.get('type','home')
+            if get_type == 'home':
+                pass;
+            else:
+                pass;
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            res['status'] = 'error'
+            res['message'] = SYSTEM_ERROR_0001
+            print(sys.exc_info())
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    # /api/massschedule/<str:slug>/ for more detail.
+    def retrieve(self, request, slug=None):
+        res = {
+            'status': 'error',
+            'mass_schedule': {},
+            'message': ''
+        }
+        try:
+            from .models import MassDateSchedule
+            from .serializers import MassDateFullScheduleSerializer
+            try:
+                mass_schedule = MassDateSchedule.objects.get(slug=slug)
+            except MassDateSchedule.DoesNotExist:
+                mass_schedule = None
+            if mass_schedule:
+                serializer = MassDateFullScheduleSerializer(mass_schedule)
+                res['mass_schedule'] = serializer.data
+                res['status'] = 'ok'
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            res['status'] = 'error'
+            res['message'] = SYSTEM_ERROR_0001
+            print(sys.exc_info())
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class AnnouncementListViewSet(viewsets.ViewSet):
     permission_classes = (AllowAny,)

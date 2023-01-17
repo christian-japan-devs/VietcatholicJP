@@ -31,6 +31,11 @@ language_choice = (
     ('vi', _('Tiếng Việt'))
 )
 
+aboutus_types = (
+    ('community','Giáo đoàn'),
+    ('father-community','Cha tuyên uý'),
+    ('father-youth','Cha đặc trách giới trẻ'),
+)
 year_choice = (
     ('A', _('Năm A')),
     ('B', _('Năm B')),

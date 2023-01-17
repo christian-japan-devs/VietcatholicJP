@@ -3,7 +3,7 @@ from django.contrib.auth import views
 from .views import (home,UserLoginForm)
 from .api import (LetterListViewSet, MassScheduleViewSet, 
     AnnouncementListViewSet,VideoLinksListViewSet,
-    PostListViewSet,GospelListViewSet
+    PostListViewSet,GospelListViewSet,AboutusViewSet,GospelRandomViewSet
 )
 
 urlpatterns = [
@@ -37,5 +37,14 @@ urlpatterns = [
     })),
     path('api/gospel/<str:slug>/', GospelListViewSet.as_view({
         'get': 'retrieve'
+    })),
+    path('api/about-us/', AboutusViewSet.as_view({
+        'get': 'get_about_us',
+    })),
+    path('api/about-us/<str:slug>/', AboutusViewSet.as_view({
+        'get': 'retrieve'
+    })),
+    path('api/gospel-random/', GospelRandomViewSet.as_view({
+        'get': 'get_gospel_random',
     })),
 ]

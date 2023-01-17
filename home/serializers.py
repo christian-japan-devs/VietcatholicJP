@@ -2,8 +2,8 @@ from django.db import models
 from rest_framework import serializers
 from users.models import CustomUserModel
 from users.serializers import UserDetailSerializer
-from .models import (YoutubeVideo, Letter, MassDateSchedule, MassTimeSchedule, 
-                    Announcement, PostType, Post, PostContent,
+from .models import (YoutubeVideo,Aboutus, Letter, MassDateSchedule, MassTimeSchedule, 
+                    Announcement, PostType, Post, PostContent, GospelRandom,
                     Gospel,GospelContent,GospelReflection,CommuintyPrayer)
 from kanri.models import Father, Province, Church
 from kanri.serializers import FatherContactSerializer, ChurchContactSerializer,ProvinceSerializer
@@ -87,6 +87,19 @@ class AnnouncementSlugSerializer(serializers.ModelSerializer):
         model = Announcement
         fields = ('id','title', 'slug')
 
+class AboutusShortSerializer(serializers.ModelSerializer):
+    author = UserDetailSerializer()
+    class Meta:
+        model = Aboutus
+        fields = ('id', 'title','title_jp', 'slug', 'image_url', 'excerpt', 'author','created_on')
+
+class AboutusContentSerializer(serializers.ModelSerializer):
+    author = UserDetailSerializer()
+    class Meta:
+        model = Aboutus
+        fields = ('id', 'title','title_jp', 'slug', 'image_url','excerpt','content', 'author','created_on','number_shared','number_readed')
+
+
 class YoutubeVideoSerializer(serializers.ModelSerializer):
     created_user = UserDetailSerializer()
     class Meta:
@@ -108,6 +121,16 @@ class PostContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostContent
         fields = ('id', 'chapter_title', 'slug', 'image_url', 'content','chapter_summary')
+
+class GospelRandomShortSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GospelRandom
+        fields = ('id', 'word','word_jp','word_en','image_url','image_vertical','image_horizontal')
+
+class GospelRandomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GospelRandom
+        fields = ('id', 'word','image_url','image_vertical','image_horizontal','number_downloaded')
 
 class GospelSlugSerializer(serializers.ModelSerializer):
     class Meta:
