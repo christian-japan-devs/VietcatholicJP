@@ -129,7 +129,8 @@ class AboutusViewSet(viewsets.ViewSet):
             from .serializers import AboutusContentSerializer
             get_type = request.GET.get('type','index')
             if get_type == 'index':
-                about_us = Aboutus.objects.filter(is_active=True, type='vcj')
+                about_us = Aboutus.objects.filter(is_active=True, type='community').first()
+                print(about_us)
                 if about_us:
                     serializer = AboutusContentSerializer(about_us)
                     res['about_us'] = serializer.data
@@ -189,7 +190,8 @@ class GospelRandomViewSet(viewsets.ViewSet):
             get_type = request.GET.get('type','home')
             if get_type == 'home':
                 try:
-                    random_id = randrange(100)
+                    random_id = randrange(4)+1
+                    res['random_id'] = random_id
                     gospel_random = GospelRandom.objects.get(id=random_id)
                 except GospelRandom.DoesNotExist:
                     gospel_random = None

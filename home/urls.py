@@ -39,7 +39,7 @@ urlpatterns = [
         'get': 'retrieve'
     })),
     path('api/about-us/', AboutusViewSet.as_view({
-        'get': 'get_this_week',
+        'get': 'get_about_us',
     })),
     path('api/about-us/<str:slug>/', AboutusViewSet.as_view({
         'get': 'retrieve'

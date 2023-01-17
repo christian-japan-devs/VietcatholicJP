@@ -91,13 +91,13 @@ class AboutusShortSerializer(serializers.ModelSerializer):
     author = UserDetailSerializer()
     class Meta:
         model = Aboutus
-        fields = ('id', 'title', 'slug', 'image_url', 'excerpt', 'author','created_on')
+        fields = ('id', 'title','title_jp', 'slug', 'image_url', 'excerpt', 'author','created_on')
 
 class AboutusContentSerializer(serializers.ModelSerializer):
     author = UserDetailSerializer()
     class Meta:
         model = Aboutus
-        fields = ('id', 'title', 'slug', 'image_url','excerpt','content', 'author','created_on','number_shared','number_readed')
+        fields = ('id', 'title','title_jp', 'slug', 'image_url','excerpt','content', 'author','created_on','number_shared','number_readed')
 
 
 class YoutubeVideoSerializer(serializers.ModelSerializer):
@@ -125,7 +125,7 @@ class PostContentSerializer(serializers.ModelSerializer):
 class GospelRandomShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = GospelRandom
-        fields = ('id', 'word','word_jp','word_en')
+        fields = ('id', 'word','word_jp','word_en','image_url','image_vertical','image_horizontal')
 
 class GospelRandomSerializer(serializers.ModelSerializer):
     class Meta:

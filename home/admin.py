@@ -3,7 +3,7 @@ from django.utils import timezone
 from django import forms
 # Register your models here.
 from .models import (YoutubeVideo,Letter, PostType,Post,PostContent,
-                    Aboutus,Announcement,Gospel,GospelContent,
+                    Aboutus,Announcement,GospelRandom,Gospel,GospelContent,
                     GospelReflection, MassDateSchedule, MassTimeSchedule, ConfessSchedule,
                     LessonType,Lesson,LessonQA,LessonChapter,LessonChapterQA,PrayerType,
                     Prayer,CommuintyPrayer,CeremonyType,Ceremony)
@@ -115,10 +115,10 @@ class AnnouncementAdmin(admin.ModelAdmin):
         obj.save()
 
 class GospelRandomAdmin(admin.ModelAdmin):
-    list_display = ('word','number_readed','number_downloaded','number_shared','created_user','created_on','updated_user','updated_on')
+    list_display = ('word','number_downloaded','created_user','created_on','updated_user','updated_on')
     list_filter = ('is_active',)
     search_fields = ['word', 'content']
-    exclude = ('created_on','created_user', 'updated_user','updated_on','number_readed','number_downloaded','number_shared',)
+    exclude = ('created_on','created_user', 'updated_user','updated_on','number_downloaded',)
     list_per_page = 50
 
     def save_model(self, request, obj, form, change):
@@ -367,6 +367,7 @@ admin.site.register(Post,PostAdmin)
 admin.site.register(PostContent,PostContentAdmin)
 admin.site.register(Aboutus,AboutusAdmin)
 admin.site.register(Announcement,AnnouncementAdmin)
+admin.site.register(GospelRandom,GospelRandomAdmin)
 admin.site.register(Gospel,GospelAdmin)
 admin.site.register(GospelContent,GospelContentAdmin)
 admin.site.register(GospelReflection,GospelReflectionAdmin)
