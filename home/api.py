@@ -376,7 +376,7 @@ class PostListViewSet(viewsets.ViewSet):
         try:
             from .models import PostType, Post, PostContent
             get_type = request.GET.get('type','home')
-            get_post_type_slug = request.GET.get('post_type_slug','all')
+            get_post_type_slug = request.GET.get('post_type','all')
             if get_type == 'home':
                 if get_post_type_slug == 'all':
                     post = Post.objects.filter(is_active=True).order_by('-created_on').first()
@@ -387,9 +387,12 @@ class PostListViewSet(viewsets.ViewSet):
                     post_serializer = PostSerializer(post)
                     post_content = PostContent.objects.filter(post=post).order_by('sequence')
                     post_content_serializer = PostContentSerializer(post_content, many=True)
-                    recent_post = Post.objects.filter(is_active=True).exclude(id=post.id).order_by('-created_on')[:10]
+                    if get_post_type_slug == 'all':
+                        recent_post = Post.objects.filter(is_active=True).exclude(id=post.id).order_by('-created_on')[:10]
+                    else:
+                        recent_post = Post.objects.filter(is_active=True,post_type=post_type).exclude(id=post.id).order_by('-created_on')[:10]
                     recent_post_serializer = PostSerializer(recent_post,many=True)
-                    res['post']['post_meta'] = post_serializer.data
+                    res['post']['meta_data'] = post_serializer.data
                     res['post']['content'] = post_content_serializer.data
                     res['recent_posts'] = recent_post_serializer.data
                 res['status'] = 'ok'
