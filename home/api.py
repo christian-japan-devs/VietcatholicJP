@@ -236,9 +236,9 @@ class SampleViewSet(viewsets.ViewSet):
             from .serializers import MassDateFullScheduleSerializer
             get_type = request.GET.get('type','home')
             if get_type == 'home':
-                pass;
+                pass
             else:
-                pass;
+                pass
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
             res['status'] = 'error'
@@ -562,6 +562,103 @@ class GospelListViewSet(viewsets.ViewSet):
                 return Response(res, status=status.HTTP_202_ACCEPTED)
             res['status'] = 'warning'
             res['message'] = 'no-data'
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            res['status'] = 'error'
+            res['message'] = SYSTEM_ERROR_0001
+            print(sys.exc_info())
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class PrayerViewSet(viewsets.ViewSet):
+    permission_classes = (AllowAny,)
+
+    # /api/prayer/?where=
+    def get_prayer(self, request):
+        res = {
+            'status': 'error',
+            'prayers': {},
+            'prayer_types':{},
+            'message': ''
+        }
+        try:
+            from .models import PrayerType,Prayer
+            from .serializers import PrayerSerializer,PrayerSlugSerializer,PrayerSlugSerializer,PrayerTypePrayerSerializer
+            get_where = request.GET.get('where','index')
+            get_type = request.GET.get('type','')
+            if get_type == '':
+                if get_where == 'index':
+                    prayer_types = PrayerType.objects.filter(is_active=True).order_by('-created_on')
+                    if prayer_types:
+                        prayer_serializer = PrayerTypePrayerSerializer(prayer_types, many = True)
+                        res['prayer_types'] = prayer_serializer.data
+                else:
+                    prayers = Prayer.objects.filter(is_active=True).order_by('-created_on')
+                    prayer_serializer = PrayerSlugSerializer(prayers, many = True)
+                    res['prayers'] = prayer_serializer.data
+                res['status'] = 'ok'
+                return Response(res, status=status.HTTP_202_ACCEPTED)
+            else:
+                try:
+                    prayer_type = PrayerType.objects.get(id=int(get_type))
+                    #prayers = Prayer.objects.filter(is_active=True,prayer_type=prayer_type).order_by('-created_on')
+                    prayer_serializer = PrayerTypePrayerSerializer(prayer_type)
+                    res['prayer_types'] = prayer_serializer.data
+                    res['status'] = 'ok'
+                    return Response(res, status=status.HTTP_202_ACCEPTED)
+                except PrayerType.DoesNotExist:
+                    return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except:
+            res['status'] = 'error'
+            res['message'] = SYSTEM_ERROR_0001
+            print(sys.exc_info())
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    # /api/prayer/<str:slug>/ for more detail.
+    def retrieve(self, request, slug=None):
+        res = {
+            'status': 'error',
+            'mass_schedule': {},
+            'message': ''
+        }
+        try:
+            from .models import MassDateSchedule
+            from .serializers import MassDateFullScheduleSerializer
+            try:
+                mass_schedule = MassDateSchedule.objects.get(slug=slug)
+            except MassDateSchedule.DoesNotExist:
+                mass_schedule = None
+            if mass_schedule:
+                serializer = MassDateFullScheduleSerializer(mass_schedule)
+                res['mass_schedule'] = serializer.data
+                res['status'] = 'ok'
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            res['status'] = 'error'
+            res['message'] = SYSTEM_ERROR_0001
+            print(sys.exc_info())
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class PrayerTypeViewSet(viewsets.ViewSet):
+    permission_classes = (AllowAny,)
+
+    # /api/prayer-type/?where=
+    def get_prayer(self, request):
+        res = {
+            'status': 'error',
+            'prayer_types':{},
+            'message': ''
+        }
+        try:
+            from .models import PrayerType
+            from .serializers import PrayerTypeSerializer
+            get_where = request.GET.get('where','index')
+            if get_where == 'index':
+                prayer_types = PrayerType.objects.filter(is_active=True).order_by('name')
+                prayer_types_serializer = PrayerTypeSerializer(prayer_types, many = True)
+                res['prayer_types'] = prayer_types_serializer.data
+                res['status'] = 'ok'
+            else:
+                pass
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
             res['status'] = 'error'
