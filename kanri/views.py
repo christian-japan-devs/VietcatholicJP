@@ -1,5 +1,3 @@
-from django.shortcuts import render
-from django.contrib.auth.forms import AuthenticationForm, UsernameField
 import sys
 from django.db.models import Q
 from django.utils import timezone
@@ -7,15 +5,13 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
-from .serializers import (CommunitySerializer)
-from .models import Community
 from lib.error_messages import *
 # Create your views here.
 
 class CommunityListViewSet(viewsets.ViewSet):
     permission_classes = (AllowAny,)
 
-    # /api/community/getall/
+    # /api/community/
     def getall(self, request):
         res = {
             'status': 'error',
@@ -23,7 +19,15 @@ class CommunityListViewSet(viewsets.ViewSet):
             'message': ''
         }
         try:
-            community = Community.objects.filter(is_active=True).order_by('name')
+            from .models import Community
+            from .serializers import CommunitySerializer
+            get_type = request.GET.get('type','home')
+            if get_type == 'home':
+                community = Community.objects.filter(is_active=True).order_by('created_on')[:10]
+            elif get_type == 'youth':
+                community = Community.objects.filter(is_active=True,type='group').order_by('created_on')
+            else:
+                community = Community.objects.filter(is_active=True,type='commu').order_by('created_on')
             if(community):
                 serializer = CommunitySerializer(community, many=True)
                 res['communities'] = serializer.data

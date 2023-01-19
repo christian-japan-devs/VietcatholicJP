@@ -4,6 +4,7 @@ from .views import (home,UserLoginForm)
 from .api import (LetterListViewSet, MassScheduleViewSet, 
     AnnouncementListViewSet,VideoLinksListViewSet,
     PostListViewSet,GospelListViewSet,AboutusViewSet,GospelRandomViewSet
+    ,PrayerViewSet
 )
 
 urlpatterns = [
@@ -39,12 +40,18 @@ urlpatterns = [
         'get': 'retrieve'
     })),
     path('api/about-us/', AboutusViewSet.as_view({
-        'get': 'get_this_week',
+        'get': 'get_about_us',
     })),
     path('api/about-us/<str:slug>/', AboutusViewSet.as_view({
         'get': 'retrieve'
     })),
     path('api/gospel-random/', GospelRandomViewSet.as_view({
         'get': 'get_gospel_random',
+    })),
+    path('api/prayer/', PrayerViewSet.as_view({
+        'get': 'get_prayer',
+    })),
+    path('api/prayer/<str:slug>/', PrayerViewSet.as_view({
+        'get': 'retrieve'
     })),
 ]

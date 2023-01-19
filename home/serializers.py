@@ -4,7 +4,7 @@ from users.models import CustomUserModel
 from users.serializers import UserDetailSerializer
 from .models import (YoutubeVideo,Aboutus, Letter, MassDateSchedule, MassTimeSchedule, 
                     Announcement, PostType, Post, PostContent, GospelRandom,
-                    Gospel,GospelContent,GospelReflection,CommuintyPrayer)
+                    Gospel,GospelContent,GospelReflection,CommuintyPrayer, PrayerType,Prayer)
 from kanri.models import Father, Province, Church
 from kanri.serializers import FatherContactSerializer, ChurchContactSerializer,ProvinceSerializer
 
@@ -91,13 +91,13 @@ class AboutusShortSerializer(serializers.ModelSerializer):
     author = UserDetailSerializer()
     class Meta:
         model = Aboutus
-        fields = ('id', 'title', 'slug', 'image_url', 'excerpt', 'author','created_on')
+        fields = ('id', 'title','title_jp', 'slug', 'image_url', 'excerpt', 'author','created_on')
 
 class AboutusContentSerializer(serializers.ModelSerializer):
     author = UserDetailSerializer()
     class Meta:
         model = Aboutus
-        fields = ('id', 'title', 'slug', 'image_url','excerpt','content', 'author','created_on','number_shared','number_readed')
+        fields = ('id', 'title','title_jp', 'slug', 'image_url','excerpt','content', 'author','created_on','number_shared','number_readed')
 
 
 class YoutubeVideoSerializer(serializers.ModelSerializer):
@@ -125,7 +125,7 @@ class PostContentSerializer(serializers.ModelSerializer):
 class GospelRandomShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = GospelRandom
-        fields = ('id', 'word','word_jp','word_en')
+        fields = ('id', 'word','word_jp','word_en','image_url','image_vertical','image_horizontal')
 
 class GospelRandomSerializer(serializers.ModelSerializer):
     class Meta:
@@ -157,6 +157,34 @@ class GospelReflectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = GospelReflection
         fields = ('id', 'title', 'slug','audio_link','image_url', 'content','reference_link','author','number_readed','number_shared','created_on')
+
+class PrayerTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PrayerType
+        fields = ('id','name', 'name_jp','name_en')
+
+class PrayerNoTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Prayer
+        fields = ('id', 'name','name_jp', 'name_en','audio_link','audio_link_jp','audio_link_en','content','content_jp','content_en')
+
+class PrayerTypePrayerSerializer(serializers.ModelSerializer):
+    prayer_type_prayer = PrayerNoTypeSerializer(many=True, read_only=True)
+    class Meta:
+        model = PrayerType
+        fields = ('id','name', 'name_jp','name_en','prayer_type_prayer')
+
+class PrayerSlugSerializer(serializers.ModelSerializer):
+    prayer_type = PrayerTypeSerializer()
+    class Meta:
+        model = Prayer
+        fields = ('id','prayer_type','name','name_jp','name_en')
+
+class PrayerSerializer(serializers.ModelSerializer):
+    prayer_type = PrayerTypeSerializer()
+    class Meta:
+        model = Prayer
+        fields = ('id','prayer_type', 'name','name_jp', 'name_en','audio_link','audio_link_jp','audio_link_en','content','content_jp','content_en')
 
 class CommuintyPrayerSerializer(serializers.ModelSerializer):
     class Meta:

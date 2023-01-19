@@ -32,8 +32,9 @@ language_choice = (
 )
 
 aboutus_types = (
-    ('vcj','Giao-doan'),
-    ('vcj','Cha tuyen uy')
+    ('community','Giáo đoàn'),
+    ('father-community','Cha tuyên uý'),
+    ('father-youth','Cha đặc trách giới trẻ'),
 )
 year_choice = (
     ('A', _('Năm A')),
