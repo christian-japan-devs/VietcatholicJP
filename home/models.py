@@ -499,7 +499,7 @@ class PrayerType(models.Model):
         verbose_name_plural = '25-Kinh đọc-01-phân loại'
 
 class Prayer(models.Model):
-    prayer_type = models.ForeignKey(PrayerType,default=None,verbose_name='Loại',on_delete=models.CASCADE)
+    prayer_type = models.ForeignKey(PrayerType,default=None,verbose_name='Loại',related_name='prayer_type_prayer',on_delete=models.CASCADE)
     name = models.CharField('Tên',max_length=300,help_text='Dài không quá 300 ký tự')
     name_jp = models.CharField('Tên tiếng Nhật',null=True, blank=True,default='',max_length=300,help_text='Dài không quá 300 ký tự')
     name_en = models.CharField('Tên tiếng Anh',null=True, blank=True,default='',max_length=300,help_text='Dài không quá 300 ký tự')
