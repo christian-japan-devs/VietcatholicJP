@@ -196,16 +196,20 @@ class GospelRandomViewSet(viewsets.ViewSet):
                 except GospelRandom.DoesNotExist:
                     gospel_random = None
                 if gospel_random:
+                    gospel_random.number_downloaded += 1
+                    gospel_random.save()
                     serializer = GospelRandomShortSerializer(gospel_random)
                     res['gospel_random'] = serializer.data
                     res['status'] = 'ok'
             else:
                 try:
-                    random_id = randrange(100)
+                    random_id = randrange(4)+1
                     gospel_random = GospelRandom.objects.get(id=random_id)
                 except GospelRandom.DoesNotExist:
                     gospel_random = None
                 if gospel_random:
+                    gospel_random.number_downloaded += 1
+                    gospel_random.save()
                     serializer = GospelRandomSerializer(gospel_random)
                     res['gospel_random'] = serializer.data
                     res['status'] = 'ok'
