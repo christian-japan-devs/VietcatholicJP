@@ -118,7 +118,7 @@ class GospelRandomAdmin(admin.ModelAdmin):
     list_display = ('word','number_downloaded','created_user','created_on','updated_user','updated_on')
     list_filter = ('is_active',)
     search_fields = ['word', 'content']
-    exclude = ('created_on','created_user', 'updated_user','updated_on','number_downloaded',)
+    exclude = ('created_on','created_user', 'updated_user','updated_on','number_downloaded','reference_link','content','word_en')
     list_per_page = 50
 
     def save_model(self, request, obj, form, change):
