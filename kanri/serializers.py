@@ -32,7 +32,7 @@ class ChurchContactSerializer(serializers.ModelSerializer):
     province = ProvinceSerializer()
     class Meta:
         model = Church
-        fields = ('id','name','phone','email','address','google_map_link')
+        fields = ('id','name','phone','email','province','address','google_map_link')
 
 class ChurchDetailSerializer(serializers.ModelSerializer):
     province = ProvinceSerializer()

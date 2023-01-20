@@ -6,6 +6,9 @@ from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from kanri.controller import updateAccessCount,updateGospelCount
+from lib.constants import (POST_READING,LETTER_READING,GOSPEL_LISTENING
+        ,GOSPEL_READING,PRAYER_READING,HOME_PAGE,MASS_SCHEDULE,GOSPEL_RANDOM)
 
 from .serializers import (LetterShortSerializer,LetterContentSerializer,LetterSlugSerializer,
     AnnouncementShortSerializer, AnnouncementContentSerializer, AnnouncementSlugSerializer,
@@ -25,6 +28,7 @@ class LetterListViewSet(viewsets.ViewSet):
         if get_type == 'home':
             letter = Letter.objects.filter(is_active=True).order_by('-created_on').first()
             serializer = LetterContentSerializer(letter)
+            updateAccessCount(HOME_PAGE)
             return Response(serializer.data)
         elif get_type == 'slug':
             letter = Letter.objects.filter(is_active=True).order_by('-created_on')[:10]
@@ -72,7 +76,7 @@ class MassScheduleViewSet(viewsets.ViewSet):
             from .models import MassDateSchedule
             from .serializers import MassDateFullScheduleSerializer
             get_type = request.GET.get('type','index')
-            mass_schedules = MassDateSchedule.objects.filter(date__gte=timezone.now()).order_by('date')[:10]
+            mass_schedules = MassDateSchedule.objects.filter(date__gte=timezone.now()).order_by('date')[:20]
             if mass_schedules:
                 res['status'] = 'ok'
                 if get_type == 'home':
@@ -81,6 +85,7 @@ class MassScheduleViewSet(viewsets.ViewSet):
                 else:
                     serializer = MassDateFullScheduleSerializer(mass_schedules, many=True)
                     res['mass_schedules'] = serializer.data
+                    updateAccessCount(MASS_SCHEDULE)
 
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
@@ -190,7 +195,7 @@ class GospelRandomViewSet(viewsets.ViewSet):
             get_type = request.GET.get('type','home')
             if get_type == 'home':
                 try:
-                    random_id = randrange(100)+1
+                    random_id = randrange(4)+1
                     res['random_id'] = random_id
                     gospel_random = GospelRandom.objects.get(id=random_id)
                 except GospelRandom.DoesNotExist:
@@ -201,9 +206,10 @@ class GospelRandomViewSet(viewsets.ViewSet):
                     serializer = GospelRandomShortSerializer(gospel_random)
                     res['gospel_random'] = serializer.data
                     res['status'] = 'ok'
+                    updateGospelCount(2023)
             else:
                 try:
-                    random_id = randrange(100)+1
+                    random_id = randrange(4)+1
                     gospel_random = GospelRandom.objects.get(id=random_id)
                 except GospelRandom.DoesNotExist:
                     gospel_random = None
@@ -213,6 +219,7 @@ class GospelRandomViewSet(viewsets.ViewSet):
                     serializer = GospelRandomSerializer(gospel_random)
                     res['gospel_random'] = serializer.data
                     res['status'] = 'ok'
+                    updateGospelCount(2023)
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
             res['status'] = 'error'

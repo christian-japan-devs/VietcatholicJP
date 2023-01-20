@@ -4,8 +4,9 @@ from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-
 from lib.error_messages import *
+from lib.constants import (COMMUNITY_CONTACT,FATHER_CONTACT,CHURCH_INFO,HOME_PAGE)
+from .controller import updateAccessCount
 # Create your views here.
 
 class CommunityListViewSet(viewsets.ViewSet):
@@ -22,15 +23,22 @@ class CommunityListViewSet(viewsets.ViewSet):
             from .models import Community
             from .serializers import CommunitySerializer
             get_type = request.GET.get('type','home')
+            group_type = request.GET.get('group','youth')
             if get_type == 'home':
                 community = Community.objects.filter(is_active=True).order_by('created_on')[:10]
-            elif get_type == 'youth':
+            else:
+                community = Community.objects.filter(is_active=True).order_by('created_on')[:30]
+            if group_type == 'youth':
                 community = Community.objects.filter(is_active=True,type='group').order_by('created_on')
             else:
                 community = Community.objects.filter(is_active=True,type='commu').order_by('created_on')
             if(community):
                 serializer = CommunitySerializer(community, many=True)
                 res['communities'] = serializer.data
+            if get_type == 'home':
+                updateAccessCount(HOME_PAGE)
+            else:
+                updateAccessCount(COMMUNITY_CONTACT)
             res['status'] = 'ok'
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
@@ -97,8 +105,8 @@ class ChurchViewSet(viewsets.ViewSet):
         try:
             from .models import Church
             from .serializers import RegionChurchSerializer,ProvinceChurchSerializer
-            get_type = request.GET.get('type','home')
-            if get_type == 'home':
+            get_type = request.GET.get('type','index')
+            if get_type == 'index':
                 churches = Church.objects.filter(is_active=True).order_by('region')
                 if churches:
                     serializer = RegionChurchSerializer(churches,many=True)
@@ -111,6 +119,7 @@ class ChurchViewSet(viewsets.ViewSet):
                     serializer = ProvinceChurchSerializer(churches,many=True)
                     res['churches'] = serializer.data
                     res['status'] = 'ok'
+            updateAccessCount(CHURCH_INFO)
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
             res['status'] = 'error'
@@ -156,8 +165,8 @@ class FatherViewSet(viewsets.ViewSet):
         try:
             from .models import Father
             from .serializers import FatherContactSerializer
-            get_type = request.GET.get('type','home')
-            if get_type == 'home':
+            get_type = request.GET.get('type','index')
+            if get_type == 'index':
                 fathers = Father.objects.filter(is_active=True).order_by('-created_on')
             elif get_type == 'search':
                 search_province = request.GET.get('province','all')
@@ -166,6 +175,7 @@ class FatherViewSet(viewsets.ViewSet):
                     serializer = FatherContactSerializer(fathers, many=True)
                     res['fathers'] = serializer.data
                     res['status'] = 'ok'
+            updateAccessCount(FATHER_CONTACT)
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
             res['status'] = 'error'
