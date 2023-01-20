@@ -354,7 +354,7 @@ class ContactUs(models.Model):
         verbose_name_plural = '30-0 Liên lạc hỗ trợ'
 
 class AccessCount(models.Model):
-    page = models.TextField('Trang',max_length=100)
+    page = models.CharField('Trang',max_length=100)
     date = models.DateField('Ngày',blank=True,null=True,default=date.today)
     count = models.IntegerField('Lượt truy cập',default=1,blank=True,null=True,)
 
