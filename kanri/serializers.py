@@ -58,18 +58,17 @@ class ChurchDetailSerializer(serializers.ModelSerializer):
         model = Church
         fields = ('id','name','image','url','phone','email','province','address','google_map_link')
 
-class RegionChurchSerializer(serializers.ModelSerializer):
-    church_region = ChurchDetailSerializer(many=True, read_only=True)
-    class Meta:
-        model = Region
-        fields = ('id','kanji','name','church_region')
-
 class ProvinceChurchSerializer(serializers.ModelSerializer):
-    region = RegionSerializer()
     church_province = ChurchContactSerializer(many=True, read_only=True)
     class Meta:
         model = Province
-        fields = ('id','kanji','name','region','church_province')
+        fields = ('id','kanji','name','church_province')
+
+class RegionChurchSerializer(serializers.ModelSerializer):
+    region_province = ProvinceChurchSerializer(many=True, read_only=True)
+    class Meta:
+        model = Region
+        fields = ('id','kanji','name','region_province')
 
 class CommunitySerializer(serializers.ModelSerializer):
     province = ProvinceSerializer()
