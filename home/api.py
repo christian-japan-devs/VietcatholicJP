@@ -624,19 +624,19 @@ class PrayerViewSet(viewsets.ViewSet):
     def retrieve(self, request, slug=None):
         res = {
             'status': 'error',
-            'mass_schedule': {},
+            'prayer': {},
             'message': ''
         }
         try:
-            from .models import MassDateSchedule
-            from .serializers import MassDateFullScheduleSerializer
+            from .models import Prayer
+            from .serializers import PrayerSerializer
             try:
-                mass_schedule = MassDateSchedule.objects.get(slug=slug)
-            except MassDateSchedule.DoesNotExist:
-                mass_schedule = None
-            if mass_schedule:
-                serializer = MassDateFullScheduleSerializer(mass_schedule)
-                res['mass_schedule'] = serializer.data
+                prayer = Prayer.objects.get(slug=slug)
+            except Prayer.DoesNotExist:
+                prayer = None
+            if prayer:
+                serializer = PrayerSerializer(prayer)
+                res['prayer'] = serializer.data
                 res['status'] = 'ok'
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
@@ -666,6 +666,75 @@ class PrayerTypeViewSet(viewsets.ViewSet):
                 res['status'] = 'ok'
             else:
                 pass
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            res['status'] = 'error'
+            res['message'] = SYSTEM_ERROR_0001
+            print(sys.exc_info())
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class CeremonyViewSet(viewsets.ViewSet):
+    permission_classes = (AllowAny,)
+
+    # /api/ceremony/?where=
+    def get_prayer(self, request):
+        res = {
+            'status': 'error',
+            'ceremonies': {},
+            'ceremony_types':{},
+            'message': ''
+        }
+        try:
+            from .models import CeremonyType,Ceremony
+            from .serializers import CeremonyTypePrayerSerializer,CeremonySlugSerializer
+            get_where = request.GET.get('where','index')
+            get_type = request.GET.get('type','')
+            if get_type == '':
+                if get_where == 'index':
+                    ceremony_types = CeremonyType.objects.filter(is_active=True).order_by('-created_on')
+                    if ceremony_types:
+                        ceremony_serializer = CeremonyTypePrayerSerializer(ceremony_types, many = True)
+                        res['ceremony_types'] = ceremony_serializer.data
+                else:
+                    ceremonies = Ceremony.objects.filter(is_active=True).order_by('-created_on')
+                    ceremony_serializer = CeremonySlugSerializer(ceremonies, many = True)
+                    res['ceremonies'] = ceremony_serializer.data
+                res['status'] = 'ok'
+                return Response(res, status=status.HTTP_202_ACCEPTED)
+            else:
+                try:
+                    ceremony_type = CeremonyType.objects.get(id=int(get_type))
+                    #prayers = Prayer.objects.filter(is_active=True,prayer_type=prayer_type).order_by('-created_on')
+                    ceremony_serializer = CeremonyTypePrayerSerializer(ceremony_type)
+                    res['ceremony_types'] = ceremony_serializer.data
+                    res['status'] = 'ok'
+                    return Response(res, status=status.HTTP_202_ACCEPTED)
+                except CeremonyType.DoesNotExist:
+                    return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except:
+            res['status'] = 'error'
+            res['message'] = SYSTEM_ERROR_0001
+            print(sys.exc_info())
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    # /api/ceremony/<str:slug>/ for more detail.
+    def retrieve(self, request, slug=None):
+        res = {
+            'status': 'error',
+            'ceremony': {},
+            'message': ''
+        }
+        try:
+            from .models import Ceremony
+            from .serializers import CeremonyNoTypeSerializer
+            try:
+                ceremony = Ceremony.objects.get(slug=slug)
+            except Ceremony.DoesNotExist:
+                ceremony = None
+            if ceremony:
+                serializer = CeremonyNoTypeSerializer(ceremony)
+                res['ceremony'] = serializer.data
+                res['status'] = 'ok'
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
             res['status'] = 'error'

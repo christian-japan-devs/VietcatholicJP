@@ -103,13 +103,14 @@ class ChurchViewSet(viewsets.ViewSet):
             'message': ''
         }
         try:
-            from .models import Church
+            from .models import Church,Region
             from .serializers import RegionChurchSerializer,ProvinceChurchSerializer
             get_type = request.GET.get('type','index')
             if get_type == 'index':
-                churches = Church.objects.filter(is_active=True).order_by('region')
-                if churches:
-                    serializer = RegionChurchSerializer(churches,many=True)
+                regions = Region.objects.all().order_by('name')
+                #churches = Church.objects.filter(is_active=True).order_by('region')
+                if regions:
+                    serializer = RegionChurchSerializer(regions,many=True)
                     res['churches'] = serializer.data
                     res['status'] = 'ok'
             elif get_type == 'search':

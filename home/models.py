@@ -549,7 +549,7 @@ class CeremonyType(models.Model):
         verbose_name_plural = '30-Nghi thức-01 phân loại'
 
 class Ceremony(models.Model):
-    type = models.ForeignKey(CeremonyType,default=None,verbose_name='Loại',on_delete=models.CASCADE)
+    type = models.ForeignKey(CeremonyType,default=None,verbose_name='Loại',related_name='ceremonies',on_delete=models.CASCADE)
     name = models.CharField('Tên',max_length=300,help_text='Dài không quá 300 ký tự')
     name_jp = models.CharField('Tên tiếng Nhật',null=True, blank=True,default='',max_length=300,help_text='Dài không quá 300 ký tự')
     name_en = models.CharField('Tên tiếng Anh',null=True, blank=True,default='',max_length=300,help_text='Dài không quá 300 ký tự')
