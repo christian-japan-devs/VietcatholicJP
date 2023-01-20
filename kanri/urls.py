@@ -1,6 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views
 from .views import (CommunityListViewSet,ContactViewSet,ContactUpdateViewSet
+            ,ChurchViewSet,FatherViewSet
 )
 
 urlpatterns = [
@@ -15,6 +16,18 @@ urlpatterns = [
     })),
     path('api/contact-us/update/', ContactUpdateViewSet.as_view({
         'post': 'update',
+    })),
+    path('api/church/', ChurchViewSet.as_view({
+        'get': 'get_all',
+    })),
+    path('api/church/<int:id>/', ChurchViewSet.as_view({
+        'get': 'retrieve',
+    })),
+    path('api/father/', FatherViewSet.as_view({
+        'get': 'get_all',
+    })),
+    path('api/father/<int:id>/', FatherViewSet.as_view({
+        'get': 'retrieve',
     })),
 
 ]

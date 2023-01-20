@@ -38,7 +38,27 @@ class CommunityListViewSet(viewsets.ViewSet):
             res['message'] = sys.exc_info()
             return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    
+    def search(self, request):
+        res = {
+            'status': 'error',
+            'communities': {},
+            'message': ''
+        }
+        try:
+            from .models import Community
+            from .serializers import CommunitySerializer
+            search_province = request.GET.get('province','all')
+            if search_province == 'all':
+                pass
+            else:
+                pass
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            res['status'] = 'error'
+            res['message'] = SYSTEM_ERROR_0001
+            print(sys.exc_info())
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     # /api/community/<str:slug>/ for more detail.
     def retrieve(self, request, slug=None):
         res = {
@@ -48,6 +68,8 @@ class CommunityListViewSet(viewsets.ViewSet):
             'message': ''
         }
         try:
+            from .models import Community
+            from .serializers import CommunitySerializer
             group = Community.objects.get(slug=slug)
             serializer = CommunitySerializer(group)
             res['status'] = 'ok'
@@ -55,6 +77,120 @@ class CommunityListViewSet(viewsets.ViewSet):
             communities = Community.objects.filter(is_active=True,region=group.region).exclude(id=group.id).order_by('-created_on')
             serializer1 = CommunitySerializer(communities, many=True)
             res['sameRegionGroups'] = serializer1.data
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            res['status'] = 'error'
+            res['message'] = SYSTEM_ERROR_0001
+            print(sys.exc_info())
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class ChurchViewSet(viewsets.ViewSet):
+    permission_classes = (AllowAny,)
+
+    # /api/church/?type=
+    def get_all(self, request):
+        res = {
+            'status': 'error',
+            'churches': {},
+            'message': ''
+        }
+        try:
+            from .models import Church
+            from .serializers import RegionChurchSerializer,ProvinceChurchSerializer
+            get_type = request.GET.get('type','home')
+            if get_type == 'home':
+                churches = Church.objects.filter(is_active=True).order_by('region')
+                if churches:
+                    serializer = RegionChurchSerializer(churches,many=True)
+                    res['churches'] = serializer.data
+                    res['status'] = 'ok'
+            elif get_type == 'search':
+                search_province = request.GET.get('province','all')
+                churches = Church.objects.filter(province=search_province,is_active=True).order_by('name')
+                if churches:
+                    serializer = ProvinceChurchSerializer(churches,many=True)
+                    res['churches'] = serializer.data
+                    res['status'] = 'ok'
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            res['status'] = 'error'
+            res['message'] = SYSTEM_ERROR_0001
+            print(sys.exc_info())
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    # /api/church/<str:slug>/ for more detail.
+    def retrieve(self, request, id=None):
+        res = {
+            'status': 'error',
+            'church': {},
+            'message': ''
+        }
+        try:
+            from .models import Church
+            from .serializers import ChurchDetailSerializer
+            try:
+                church = Church.objects.get(id=id)
+            except Church.DoesNotExist:
+                church = None
+            if church:
+                serializer = ChurchDetailSerializer(church)
+                res['church'] = serializer.data
+                res['status'] = 'ok'
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            res['status'] = 'error'
+            res['message'] = SYSTEM_ERROR_0001
+            print(sys.exc_info())
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class FatherViewSet(viewsets.ViewSet):
+    permission_classes = (AllowAny,)
+
+    # /api/father/?type=
+    def get_all(self, request):
+        res = {
+            'status': 'error',
+            'fathers': {},
+            'message': ''
+        }
+        try:
+            from .models import Father
+            from .serializers import FatherContactSerializer
+            get_type = request.GET.get('type','home')
+            if get_type == 'home':
+                fathers = Father.objects.filter(is_active=True).order_by('-created_on')
+            elif get_type == 'search':
+                search_province = request.GET.get('province','all')
+                fathers = Father.objects.filter(province=search_province,is_active=True).order_by('-created_on')
+            if fathers:
+                    serializer = FatherContactSerializer(fathers, many=True)
+                    res['fathers'] = serializer.data
+                    res['status'] = 'ok'
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            res['status'] = 'error'
+            res['message'] = SYSTEM_ERROR_0001
+            print(sys.exc_info())
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    # /api/father/<str:slug>/ for more detail.
+    def retrieve(self, request, id=None):
+        res = {
+            'status': 'error',
+            'father': {},
+            'message': ''
+        }
+        try:
+            from .models import Father
+            from .serializers import FatherContactSerializer
+            try:
+                father = Father.objects.get(id=id)
+            except Father.DoesNotExist:
+                father = None
+            if father:
+                serializer = FatherContactSerializer(father)
+                res['father'] = serializer.data
+                res['status'] = 'ok'
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
             res['status'] = 'error'
