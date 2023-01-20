@@ -5,7 +5,7 @@ from django.utils import timezone
 from .models import (Language, Country, Region, Province, 
         Facility, Church, ChurchImages, Father, FatherAndChurch,Community,
         RepresentativeResponsibility, Representative, RepresentativeAndCommunity
-        ,UserProfile,ContactUs)
+        ,UserProfile,ContactUs,AccessCount)
 
 class FacilityAdmin(admin.ModelAdmin):
     list_display = ('kanji','name','phone','email','province','created_on','created_user', 'updated_user')
@@ -156,6 +156,12 @@ class ContactUsAdmin(admin.ModelAdmin):
         obj.updated_user = request.user
         obj.save()
 
+class AccessCountAdmin(admin.ModelAdmin):
+    list_display = ('page','date','count',)
+    list_filter = ('page',)
+    exclude = ('count',)
+    list_per_page = 50
+
 # Register your models here. 
 admin.site.register(Language)
 admin.site.register(Country)
@@ -172,3 +178,4 @@ admin.site.register(Representative,RepresentativeAdmin)
 admin.site.register(RepresentativeAndCommunity,RepresentativeAndCommunityAdmin)
 admin.site.register(UserProfile,UserProfileAdmin)
 admin.site.register(ContactUs,ContactUsAdmin)
+admin.site.register(AccessCount,AccessCountAdmin)

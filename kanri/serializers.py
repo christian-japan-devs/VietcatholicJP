@@ -5,6 +5,17 @@ from users.serializers import UserDetailSerializer
 from .models import (Father, Province, Church, Region, Community,
       RepresentativeResponsibility, Representative, RepresentativeAndCommunity,ContactUs)
 
+class RegionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Region
+        fields = ('id','kanji','name','nation')
+
+class ProvinceSerializer(serializers.ModelSerializer):
+    region = RegionSerializer()
+    class Meta:
+        model = Province
+        fields = ('id','kanji','name','region')
+
 class FatherContactSerializer(serializers.ModelSerializer):
     user = UserDetailSerializer()
     class Meta:
@@ -18,25 +29,29 @@ class RepresentativeContactSerializer(serializers.ModelSerializer):
         fields = ('id','user','province','address','facebook','phone_number',)
 
 class ChurchContactSerializer(serializers.ModelSerializer):
+    province = ProvinceSerializer()
     class Meta:
         model = Church
-        fields = ('id','name','phone','email','address','google_map_link')
+        fields = ('id','name','phone','email','province','address','google_map_link')
 
 class ChurchDetailSerializer(serializers.ModelSerializer):
+    province = ProvinceSerializer()
     class Meta:
         model = Church
-        fields = ('id','name','phone','email','address','google_map_link')
+        fields = ('id','name','image','url','phone','email','province','address','google_map_link')
 
-class RegionSerializer(serializers.ModelSerializer):
+class RegionChurchSerializer(serializers.ModelSerializer):
+    church_region = ChurchDetailSerializer(many=True, read_only=True)
     class Meta:
         model = Region
-        fields = ('id','kanji','name','nation')
+        fields = ('id','kanji','name','church_region')
 
-class ProvinceSerializer(serializers.ModelSerializer):
+class ProvinceChurchSerializer(serializers.ModelSerializer):
     region = RegionSerializer()
+    church_province = ChurchContactSerializer(many=True, read_only=True)
     class Meta:
         model = Province
-        fields = ('id','kanji','name','region')
+        fields = ('id','kanji','name','region','church_province')
 
 class CommunitySerializer(serializers.ModelSerializer):
     province = ProvinceSerializer()

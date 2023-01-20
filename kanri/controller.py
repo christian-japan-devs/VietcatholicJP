@@ -1,11 +1,11 @@
 import sys
 from django.utils import timezone
-from datetime import datetime
+from datetime import date
 from django.utils.translation import ugettext_lazy as _
 from django.utils.crypto import get_random_string
-from kanri.models import UserProfile
+
 # Custom
-from lib.constants import (CODERANGE,APP_HOST_NAME,CC_EMAIL,APP_FACEBOOK_LINK_1,APP_FACEBOOK_LINK_2)
+from lib.constants import (CODERANGE,APP_HOST_NAME,CC_EMAIL,APP_FACEBOOK_LINK_1,APP_FACEBOOK_LINK_2,GOSPEL_RANDOM)
 from lib.email import (send_email_to)
 
 def reply_to_user_question(contact_us):
@@ -34,3 +34,21 @@ def reply_to_user_question(contact_us):
     except:
         print("reply_to_user_question error: ", sys.exc_info()[0])
         return False
+
+def updateAccessCount(page_name):
+    from .models import AccessCount
+    try:
+        accessCount = AccessCount.objects.get(page=page_name,date=date.today())
+    except AccessCount.DoesNotExist:
+        accessCount = AccessCount(page=page_name,count=0)
+    accessCount.count += 1
+    accessCount.save()
+
+def updateGospelCount(year):
+    from .models import AccessCount
+    try:
+        accessCount = AccessCount.objects.get(page=GOSPEL_RANDOM,date__year=year)
+    except AccessCount.DoesNotExist:
+        accessCount = AccessCount(page=GOSPEL_RANDOM,count=0)
+    accessCount.count += 1
+    accessCount.save()
