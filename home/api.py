@@ -195,7 +195,7 @@ class GospelRandomViewSet(viewsets.ViewSet):
             get_type = request.GET.get('type','home')
             if get_type == 'home':
                 try:
-                    random_id = randrange(4)+1
+                    random_id = randrange(100)+1
                     res['random_id'] = random_id
                     gospel_random = GospelRandom.objects.get(id=random_id)
                 except GospelRandom.DoesNotExist:
@@ -209,7 +209,7 @@ class GospelRandomViewSet(viewsets.ViewSet):
                     updateGospelCount(2023)
             else:
                 try:
-                    random_id = randrange(4)+1
+                    random_id = randrange(100)+1
                     gospel_random = GospelRandom.objects.get(id=random_id)
                 except GospelRandom.DoesNotExist:
                     gospel_random = None
