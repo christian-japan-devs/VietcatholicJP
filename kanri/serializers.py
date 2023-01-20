@@ -22,6 +22,24 @@ class FatherContactSerializer(serializers.ModelSerializer):
         model = Father
         fields = ('id','user','province','address','facebook','phone_number')
 
+class FatherSerializer(serializers.ModelSerializer):
+    user = UserDetailSerializer()
+    class Meta:
+        model = Father
+        fields = ('id','user','province','address','facebook','phone_number')
+
+class ProvinceFatherSerializer(serializers.ModelSerializer):
+    father_province = FatherSerializer(many=True, read_only=True)
+    class Meta:
+        model = Province
+        fields = ('id','kanji','name','father_province')
+
+class RegionFatherSerializer(serializers.ModelSerializer):
+    region_province = ProvinceFatherSerializer(many=True, read_only=True)
+    class Meta:
+        model = Region
+        fields = ('id','kanji','name','region_province')
+
 class RepresentativeContactSerializer(serializers.ModelSerializer):
     user = UserDetailSerializer()
     class Meta:

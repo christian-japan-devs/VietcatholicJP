@@ -163,19 +163,23 @@ class FatherViewSet(viewsets.ViewSet):
             'message': ''
         }
         try:
-            from .models import Father
-            from .serializers import FatherContactSerializer
+            from .models import Father, Province, Region
+            from .serializers import FatherContactSerializer,RegionFatherSerializer
             get_type = request.GET.get('type','index')
             if get_type == 'index':
                 fathers = Father.objects.filter(is_active=True).order_by('-created_on')
-            elif get_type == 'search':
-                search_province = request.GET.get('province','all')
-                fathers = Father.objects.filter(province=search_province,is_active=True).order_by('-created_on')
-            if fathers:
+                if fathers:
                     serializer = FatherContactSerializer(fathers, many=True)
                     res['fathers'] = serializer.data
                     res['status'] = 'ok'
-            updateAccessCount(FATHER_CONTACT)
+                    updateAccessCount(FATHER_CONTACT)
+            elif get_type == 'all':
+                regions = Region.objects.all().order_by('name')
+                if regions:
+                    serializer = RegionFatherSerializer(regions, many=True)
+                    res['regions'] = serializer.data
+                    res['status'] = 'ok'
+                    updateAccessCount(FATHER_CONTACT)
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
             res['status'] = 'error'
