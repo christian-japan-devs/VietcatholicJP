@@ -35,9 +35,8 @@ class CommunityListViewSet(viewsets.ViewSet):
             if(community):
                 serializer = CommunitySerializer(community, many=True)
                 res['communities'] = serializer.data
-            if get_type == 'home':
-                updateAccessCount(HOME_PAGE)
-            else:
+            if get_type != 'home':
+                #updateAccessCount(HOME_PAGE)
                 updateAccessCount(COMMUNITY_CONTACT)
             res['status'] = 'ok'
             return Response(res, status=status.HTTP_202_ACCEPTED)
