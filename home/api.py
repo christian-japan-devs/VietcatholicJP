@@ -190,12 +190,13 @@ class GospelRandomViewSet(viewsets.ViewSet):
         }
         try:
             from .models import GospelRandom
+            from lib.constants import (GOSPEL_RANDOM_TOTAL,GOSPEL_RANDOM_YEAR)
             from .serializers import GospelRandomShortSerializer,GospelRandomSerializer
             from random import randrange
             get_type = request.GET.get('type','home')
             if get_type == 'home':
                 try:
-                    random_id = randrange(100)+1
+                    random_id = randrange(1,GOSPEL_RANDOM_TOTAL)
                     res['random_id'] = random_id
                     gospel_random = GospelRandom.objects.get(id=random_id)
                 except GospelRandom.DoesNotExist:
@@ -206,10 +207,10 @@ class GospelRandomViewSet(viewsets.ViewSet):
                     serializer = GospelRandomShortSerializer(gospel_random)
                     res['gospel_random'] = serializer.data
                     res['status'] = 'ok'
-                    updateGospelCount(2023)
+                    updateGospelCount(GOSPEL_RANDOM_YEAR)
             else:
                 try:
-                    random_id = randrange(100)+1
+                    random_id = randrange(1,GOSPEL_RANDOM_TOTAL)
                     gospel_random = GospelRandom.objects.get(id=random_id)
                 except GospelRandom.DoesNotExist:
                     gospel_random = None
@@ -219,7 +220,7 @@ class GospelRandomViewSet(viewsets.ViewSet):
                     serializer = GospelRandomSerializer(gospel_random)
                     res['gospel_random'] = serializer.data
                     res['status'] = 'ok'
-                    updateGospelCount(2023)
+                    updateGospelCount(GOSPEL_RANDOM_YEAR)
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
             res['status'] = 'error'
