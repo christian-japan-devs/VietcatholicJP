@@ -27,11 +27,13 @@ class CommunityListViewSet(viewsets.ViewSet):
             if get_type == 'home':
                 community = Community.objects.filter(is_active=True).order_by('created_on')[:10]
             else:
-                community = Community.objects.filter(is_active=True).order_by('created_on')[:30]
+                community = Community.objects.filter(is_active=True).order_by('province')[:50]
+            '''
             if group_type == 'youth':
                 community = Community.objects.filter(is_active=True,type='group').order_by('created_on')
             else:
                 community = Community.objects.filter(is_active=True,type='commu').order_by('created_on')
+            '''
             if(community):
                 serializer = CommunitySerializer(community, many=True)
                 res['communities'] = serializer.data
