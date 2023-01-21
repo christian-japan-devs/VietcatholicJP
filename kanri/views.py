@@ -20,27 +20,32 @@ class CommunityListViewSet(viewsets.ViewSet):
             'message': ''
         }
         try:
-            from .models import Community
-            from .serializers import CommunitySerializer
+            from .models import Community,Region
+            from .serializers import CommunitySerializer,RegionCommunitySerializer
             get_type = request.GET.get('type','home')
             group_type = request.GET.get('group','youth')
             if get_type == 'home':
                 community = Community.objects.filter(is_active=True).order_by('created_on')[:10]
+                if(community):
+                    serializer = CommunitySerializer(community, many=True)
+                    res['communities'] = serializer.data
+                    res['status'] = 'ok'
             else:
+                regions = Region.objects.all().order_by('name')
+                #churches = Church.objects.filter(is_active=True).order_by('region')
+                if regions:
+                    serializer = RegionCommunitySerializer(regions,many=True)
+                    res['communities'] = serializer.data
+                    res['status'] = 'ok'
                 community = Community.objects.filter(is_active=True).order_by('province')[:50]
+
+                updateAccessCount(COMMUNITY_CONTACT)
             '''
             if group_type == 'youth':
                 community = Community.objects.filter(is_active=True,type='group').order_by('created_on')
             else:
                 community = Community.objects.filter(is_active=True,type='commu').order_by('created_on')
             '''
-            if(community):
-                serializer = CommunitySerializer(community, many=True)
-                res['communities'] = serializer.data
-            if get_type != 'home':
-                #updateAccessCount(HOME_PAGE)
-                updateAccessCount(COMMUNITY_CONTACT)
-            res['status'] = 'ok'
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
             print(sys.exc_info())

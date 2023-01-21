@@ -84,6 +84,18 @@ class CommunityDetailSerializer(serializers.ModelSerializer):
         model = Community
         fields = ('id','slug','name','name_jp','image','type','introduction','url','province','church')
 
+class ProvinceCommunitySerializer(serializers.ModelSerializer):
+    community_province = CommunitySerializer(many=True, read_only=True)
+    class Meta:
+        model = Province
+        fields = ('id','kanji','name','community_province')
+
+class RegionCommunitySerializer(serializers.ModelSerializer):
+    region_province = ProvinceCommunitySerializer(many=True, read_only=True)
+    class Meta:
+        model = Region
+        fields = ('id','kanji','name','region_province')
+
 class ContactUsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactUs
