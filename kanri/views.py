@@ -40,18 +40,12 @@ class CommunityListViewSet(viewsets.ViewSet):
                 community = Community.objects.filter(is_active=True).order_by('province')[:50]
 
                 updateAccessCount(COMMUNITY_CONTACT)
-            '''
-            if group_type == 'youth':
-                community = Community.objects.filter(is_active=True,type='group').order_by('created_on')
-            else:
-                community = Community.objects.filter(is_active=True,type='commu').order_by('created_on')
-            '''
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
             print(sys.exc_info())
             res['message'] = sys.exc_info()
             return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+    # /api/community/search/ for more detail.
     def search(self, request):
         res = {
             'status': 'error',
@@ -61,11 +55,14 @@ class CommunityListViewSet(viewsets.ViewSet):
         try:
             from .models import Community
             from .serializers import CommunitySerializer
-            search_province = request.GET.get('province','all')
-            if search_province == 'all':
-                pass
+            group_type = request.GET.get('type','all')
+            if group_type == 'youth':
+                community = Community.objects.filter(is_active=True,type='group').order_by('created_on')
             else:
-                pass
+                community = Community.objects.filter(is_active=True,type='commu').order_by('created_on')
+            serializer = CommunitySerializer(community, many=True)
+            res['communities'] = serializer.data
+            res['status'] = 'ok'
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
             res['status'] = 'error'
