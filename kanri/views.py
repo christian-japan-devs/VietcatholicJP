@@ -31,7 +31,7 @@ class CommunityListViewSet(viewsets.ViewSet):
                     res['communities'] = serializer.data
                     res['status'] = 'ok'
             else:
-                regions = Region.objects.all().order_by('name')
+                regions = Region.objects.all().order_by('sequence')
                 #churches = Church.objects.filter(is_active=True).order_by('region')
                 if regions:
                     serializer = RegionCommunitySerializer(regions,many=True)
@@ -110,7 +110,7 @@ class ChurchViewSet(viewsets.ViewSet):
             from .serializers import RegionChurchSerializer,ProvinceChurchSerializer
             get_type = request.GET.get('type','index')
             if get_type == 'index':
-                regions = Region.objects.all().order_by('name')
+                regions = Region.objects.all().order_by('sequence')
                 #churches = Church.objects.filter(is_active=True).order_by('region')
                 if regions:
                     serializer = RegionChurchSerializer(regions,many=True)
@@ -178,7 +178,7 @@ class FatherViewSet(viewsets.ViewSet):
                     res['status'] = 'ok'
                     updateAccessCount(FATHER_CONTACT)
             elif get_type == 'all':
-                regions = Region.objects.all().order_by('name')
+                regions = Region.objects.all().order_by('sequence')
                 if regions:
                     serializer = RegionFatherSerializer(regions, many=True)
                     res['regions'] = serializer.data

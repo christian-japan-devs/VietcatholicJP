@@ -43,13 +43,14 @@ class Region(models.Model):
     id = models.CharField(max_length = 50, primary_key = True, editable =  False)
     kanji = models.CharField('Tên Kanji',default='',max_length=50)
     name = models.CharField('Tên hiragana',max_length=50)
+    sequence = models.SmallIntegerField('Thứ tự',default=0,blank=True, null=True)
     nation = models.ForeignKey(Country,verbose_name='Quốc gia',on_delete=models.CASCADE)
     code = models.CharField('Mã',max_length=3,blank=True, null=True)
 
     class Meta:
         verbose_name = 'Master-Vùng'
         verbose_name_plural = 'Master-Vùng'
-        ordering = ('name',)
+        ordering = ('sequence',)
 
     def __str__(self):
         return self.name
