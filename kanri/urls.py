@@ -8,6 +8,9 @@ urlpatterns = [
     path('api/community/', CommunityListViewSet.as_view({
         'get': 'getall',
     })),
+    path('api/community/search/', CommunityListViewSet.as_view({
+        'get': 'search',
+    })),
     path('api/community/<str:slug>/', CommunityListViewSet.as_view({
         'get': 'retrieve',
     })),
