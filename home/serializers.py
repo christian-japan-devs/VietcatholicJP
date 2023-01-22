@@ -51,6 +51,16 @@ class MassDateFullScheduleSerializer(serializers.ModelSerializer):
         model = MassDateSchedule
         fields = ('id','date','title','slug','gospel','time_schedule')
 
+class MassDateFullScheduleSerializerNew(serializers.ModelSerializer):
+    gospel = GospelLinkSerializer()
+    time_schedule = MassDateTimeScheduleSerializer(many=True, read_only=True)
+    class Meta:
+        model = MassDateSchedule
+        fields = ('id','date','title','slug','gospel','time_schedule')
+    def get_time_schedule(self, instance):
+        massTimeSchedules = instance.time_schedule.all().order_by('-time')
+        return MassDateTimeScheduleSerializer(massTimeSchedules, many=True).data
+
 '''
 class MassDateScheduleSerializer(serializers.ModelSerializer):
     father = FatherContactSerializer()
