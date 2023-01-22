@@ -74,17 +74,18 @@ class MassScheduleViewSet(viewsets.ViewSet):
         }
         try:
             from .models import MassDateSchedule
-            from .serializers import MassDateFullScheduleSerializer
+            from .serializers import MassDateFullScheduleSerializer,MassDateFullScheduleSerializerNew
             get_type = request.GET.get('type','index')
             mass_schedules = MassDateSchedule.objects.filter(date__gte=timezone.now()).order_by('date')[:20]
             if mass_schedules:
-                res['status'] = 'ok'
                 if get_type == 'home':
                     serializer = MassDateFullScheduleSerializer(mass_schedules[0])
                     res['mass_schedules'] = [serializer.data,]
+                    res['status'] = 'ok'
                 else:
                     serializer = MassDateFullScheduleSerializer(mass_schedules, many=True)
                     res['mass_schedules'] = serializer.data
+                    res['status'] = 'ok'
                     updateAccessCount(MASS_SCHEDULE)
 
             return Response(res, status=status.HTTP_202_ACCEPTED)

@@ -609,7 +609,7 @@ class MassTimeSchedule(models.Model):
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='mass_time_updated_user',default=None,blank=True,null=True)
  
     class Meta:
-        ordering = ['date_schedule','-time']
+        ordering = ['date_schedule','time']
         verbose_name = '40-Lịch Lễ-02 giờ chi tiết'
         verbose_name_plural = '40-Lịch Lễ-02 giờ chi tiết'
     
