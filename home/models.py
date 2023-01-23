@@ -106,7 +106,7 @@ class Post(models.Model):
 
 class PostContent(models.Model):
     post = models.ForeignKey(Post,verbose_name='Bài',on_delete=models.CASCADE)
-    chapter_title = models.CharField('Tên mục',max_length=300,help_text='Dài không quá 300 ký tự')
+    title = models.CharField('Tên mục',max_length=300,help_text='Dài không quá 300 ký tự')
     slug = models.CharField('Slug',max_length=200,help_text='Chỉnh lại phần tự sinh ra cho giống với title, * không dấu')
     sequence = models.CharField('Thứ tự',default='0',choices=sequence_choise,max_length=4)
     image_url = models.ImageField('Hình ảnh',null=True, blank=True, upload_to='web_images/post')
@@ -122,6 +122,9 @@ class PostContent(models.Model):
         ordering = ['post','sequence','-created_on']
         verbose_name = '02-Bài viết-03-nội dung'
         verbose_name_plural = '02-Bài viết-03-nội dung'
+    
+    def __str__(self):
+        return self.title
 
 class ManualType(models.Model):
     title = models.CharField('Tên loại',max_length=300,help_text='Dài không quá 300 ký tự')
@@ -428,7 +431,9 @@ class Lesson(models.Model):
 class LessonChapter(models.Model):
     lesson = models.ForeignKey(Lesson,verbose_name='Bài',on_delete=models.CASCADE)
     chapter_no =  models.SmallIntegerField('Chương số',default=0)
-    chapter_title = models.CharField('Tên chương',max_length=200,help_text='Dài không quá 200 ký tự')
+    title = models.CharField('Tên chương',max_length=200,help_text='Dài không quá 200 ký tự')
+    title_jp = models.CharField('Tên chương tiếng Nhật',null=True, blank=True,default='',max_length=300,help_text='Dài không quá 300 ký tự')
+    title_en = models.CharField('Tên chương tiếng Anh',null=True, blank=True,default='',max_length=300,help_text='Dài không quá 300 ký tự')
     slug = models.CharField('Slug',max_length=200,help_text='Vui lòng chỉnh lại phần tự sinh ra cho giống với title, * không dấu')
     sequence = models.CharField('Thứ tự',default='0',choices=sequence_choise,max_length=4)
     image_url = models.ImageField('Hình ảnh',null=True, blank=True, upload_to='web_images/post')
@@ -441,7 +446,7 @@ class LessonChapter(models.Model):
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='lesson_content_updated_user',default=None,blank=True,null=True)
 
     def __str__(self):
-        return f'{self.lesson.title}-{self.chapter_title}'
+        return f'{self.lesson.title}-{self.title}'
 
     class Meta:
         ordering = ['lesson','sequence','-created_on']
