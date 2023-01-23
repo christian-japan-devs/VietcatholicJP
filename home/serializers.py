@@ -4,7 +4,7 @@ from users.models import CustomUserModel
 from users.serializers import UserDetailSerializer
 from .models import (YoutubeVideo,Aboutus, Letter, MassDateSchedule, MassTimeSchedule, 
                     Announcement, PostType, Post, PostContent, GospelRandom,
-                    Gospel,GospelContent,GospelReflection,CommuintyPrayer, PrayerType,Prayer)
+                    Gospel,GospelContent,GospelReflection,CommuintyPrayer, PrayerType,Prayer,CeremonyType,Ceremony)
 from kanri.models import Father, Province, Church
 from kanri.serializers import FatherContactSerializer, ChurchContactSerializer,ProvinceSerializer
 
@@ -50,6 +50,16 @@ class MassDateFullScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = MassDateSchedule
         fields = ('id','date','title','slug','gospel','time_schedule')
+
+class MassDateFullScheduleSerializerNew(serializers.ModelSerializer):
+    gospel = GospelLinkSerializer()
+    time_schedule = MassDateTimeScheduleSerializer(many=True, read_only=True)
+    class Meta:
+        model = MassDateSchedule
+        fields = ('id','date','title','slug','gospel','time_schedule')
+    def get_time_schedule(self, instance):
+        massTimeSchedules = instance.time_schedule.all().order_by('-time')
+        return MassDateTimeScheduleSerializer(massTimeSchedules, many=True).data
 
 '''
 class MassDateScheduleSerializer(serializers.ModelSerializer):
@@ -190,3 +200,26 @@ class CommuintyPrayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = CommuintyPrayer
         fields = ('id', 'title', 'slug', 'content','reference_link','created_on')
+
+
+class CeremonyTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CeremonyType
+        fields = ('id','name', 'name_jp','name_en')
+
+class CeremonyNoTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ceremony
+        fields = ('id', 'name','name_jp', 'name_en','audio_link','audio_link_jp','audio_link_en','content','content_jp','content_en')
+
+class CeremonyTypePrayerSerializer(serializers.ModelSerializer):
+    ceremonies = CeremonyNoTypeSerializer(many=True, read_only=True)
+    class Meta:
+        model = CeremonyType
+        fields = ('id','name', 'name_jp','name_en','ceremonies')
+
+class CeremonySlugSerializer(serializers.ModelSerializer):
+    type = CeremonyTypeSerializer()
+    class Meta:
+        model = Ceremony
+        fields = ('id','type','name','name_jp','name_en')

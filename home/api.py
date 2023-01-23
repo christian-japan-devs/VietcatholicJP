@@ -6,6 +6,9 @@ from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
+from kanri.controller import updateAccessCount,updateGospelCount
+from lib.constants import (POST_READING,LETTER_READING,GOSPEL_LISTENING
+        ,GOSPEL_READING,PRAYER_READING,HOME_PAGE,MASS_SCHEDULE,GOSPEL_RANDOM)
 
 from .serializers import (LetterShortSerializer,LetterContentSerializer,LetterSlugSerializer,
     AnnouncementShortSerializer, AnnouncementContentSerializer, AnnouncementSlugSerializer,
@@ -25,6 +28,7 @@ class LetterListViewSet(viewsets.ViewSet):
         if get_type == 'home':
             letter = Letter.objects.filter(is_active=True).order_by('-created_on').first()
             serializer = LetterContentSerializer(letter)
+            updateAccessCount(HOME_PAGE)
             return Response(serializer.data)
         elif get_type == 'slug':
             letter = Letter.objects.filter(is_active=True).order_by('-created_on')[:10]
@@ -70,17 +74,19 @@ class MassScheduleViewSet(viewsets.ViewSet):
         }
         try:
             from .models import MassDateSchedule
-            from .serializers import MassDateFullScheduleSerializer
+            from .serializers import MassDateFullScheduleSerializer,MassDateFullScheduleSerializerNew
             get_type = request.GET.get('type','index')
-            mass_schedules = MassDateSchedule.objects.filter(date__gte=timezone.now()).order_by('date')[:10]
+            mass_schedules = MassDateSchedule.objects.filter(date__gte=timezone.now()).order_by('date')[:20]
             if mass_schedules:
-                res['status'] = 'ok'
                 if get_type == 'home':
                     serializer = MassDateFullScheduleSerializer(mass_schedules[0])
                     res['mass_schedules'] = [serializer.data,]
+                    res['status'] = 'ok'
                 else:
                     serializer = MassDateFullScheduleSerializer(mass_schedules, many=True)
                     res['mass_schedules'] = serializer.data
+                    res['status'] = 'ok'
+                    updateAccessCount(MASS_SCHEDULE)
 
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
@@ -185,12 +191,13 @@ class GospelRandomViewSet(viewsets.ViewSet):
         }
         try:
             from .models import GospelRandom
+            from lib.constants import (GOSPEL_RANDOM_TOTAL,GOSPEL_RANDOM_YEAR)
             from .serializers import GospelRandomShortSerializer,GospelRandomSerializer
             from random import randrange
             get_type = request.GET.get('type','home')
             if get_type == 'home':
                 try:
-                    random_id = randrange(100)+1
+                    random_id = randrange(1,GOSPEL_RANDOM_TOTAL)
                     res['random_id'] = random_id
                     gospel_random = GospelRandom.objects.get(id=random_id)
                 except GospelRandom.DoesNotExist:
@@ -201,9 +208,10 @@ class GospelRandomViewSet(viewsets.ViewSet):
                     serializer = GospelRandomShortSerializer(gospel_random)
                     res['gospel_random'] = serializer.data
                     res['status'] = 'ok'
+                    updateGospelCount(GOSPEL_RANDOM_YEAR)
             else:
                 try:
-                    random_id = randrange(100)+1
+                    random_id = randrange(1,GOSPEL_RANDOM_TOTAL)
                     gospel_random = GospelRandom.objects.get(id=random_id)
                 except GospelRandom.DoesNotExist:
                     gospel_random = None
@@ -213,6 +221,7 @@ class GospelRandomViewSet(viewsets.ViewSet):
                     serializer = GospelRandomSerializer(gospel_random)
                     res['gospel_random'] = serializer.data
                     res['status'] = 'ok'
+                    updateGospelCount(GOSPEL_RANDOM_YEAR)
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
             res['status'] = 'error'
@@ -617,19 +626,19 @@ class PrayerViewSet(viewsets.ViewSet):
     def retrieve(self, request, slug=None):
         res = {
             'status': 'error',
-            'mass_schedule': {},
+            'prayer': {},
             'message': ''
         }
         try:
-            from .models import MassDateSchedule
-            from .serializers import MassDateFullScheduleSerializer
+            from .models import Prayer
+            from .serializers import PrayerSerializer
             try:
-                mass_schedule = MassDateSchedule.objects.get(slug=slug)
-            except MassDateSchedule.DoesNotExist:
-                mass_schedule = None
-            if mass_schedule:
-                serializer = MassDateFullScheduleSerializer(mass_schedule)
-                res['mass_schedule'] = serializer.data
+                prayer = Prayer.objects.get(slug=slug)
+            except Prayer.DoesNotExist:
+                prayer = None
+            if prayer:
+                serializer = PrayerSerializer(prayer)
+                res['prayer'] = serializer.data
                 res['status'] = 'ok'
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
@@ -659,6 +668,75 @@ class PrayerTypeViewSet(viewsets.ViewSet):
                 res['status'] = 'ok'
             else:
                 pass
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            res['status'] = 'error'
+            res['message'] = SYSTEM_ERROR_0001
+            print(sys.exc_info())
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class CeremonyViewSet(viewsets.ViewSet):
+    permission_classes = (AllowAny,)
+
+    # /api/ceremony/?where=
+    def get_prayer(self, request):
+        res = {
+            'status': 'error',
+            'ceremonies': {},
+            'ceremony_types':{},
+            'message': ''
+        }
+        try:
+            from .models import CeremonyType,Ceremony
+            from .serializers import CeremonyTypePrayerSerializer,CeremonySlugSerializer
+            get_where = request.GET.get('where','index')
+            get_type = request.GET.get('type','')
+            if get_type == '':
+                if get_where == 'index':
+                    ceremony_types = CeremonyType.objects.filter(is_active=True).order_by('-created_on')
+                    if ceremony_types:
+                        ceremony_serializer = CeremonyTypePrayerSerializer(ceremony_types, many = True)
+                        res['ceremony_types'] = ceremony_serializer.data
+                else:
+                    ceremonies = Ceremony.objects.filter(is_active=True).order_by('-created_on')
+                    ceremony_serializer = CeremonySlugSerializer(ceremonies, many = True)
+                    res['ceremonies'] = ceremony_serializer.data
+                res['status'] = 'ok'
+                return Response(res, status=status.HTTP_202_ACCEPTED)
+            else:
+                try:
+                    ceremony_type = CeremonyType.objects.get(id=int(get_type))
+                    #prayers = Prayer.objects.filter(is_active=True,prayer_type=prayer_type).order_by('-created_on')
+                    ceremony_serializer = CeremonyTypePrayerSerializer(ceremony_type)
+                    res['ceremony_types'] = ceremony_serializer.data
+                    res['status'] = 'ok'
+                    return Response(res, status=status.HTTP_202_ACCEPTED)
+                except CeremonyType.DoesNotExist:
+                    return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except:
+            res['status'] = 'error'
+            res['message'] = SYSTEM_ERROR_0001
+            print(sys.exc_info())
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    # /api/ceremony/<str:slug>/ for more detail.
+    def retrieve(self, request, slug=None):
+        res = {
+            'status': 'error',
+            'ceremony': {},
+            'message': ''
+        }
+        try:
+            from .models import Ceremony
+            from .serializers import CeremonyNoTypeSerializer
+            try:
+                ceremony = Ceremony.objects.get(slug=slug)
+            except Ceremony.DoesNotExist:
+                ceremony = None
+            if ceremony:
+                serializer = CeremonyNoTypeSerializer(ceremony)
+                res['ceremony'] = serializer.data
+                res['status'] = 'ok'
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
             res['status'] = 'error'

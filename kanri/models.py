@@ -1,6 +1,7 @@
 from django.db import models
 from tinymce.models import HTMLField
 from django.utils import timezone
+from datetime import date
 from uuid import uuid4
 from users.models import CustomUserModel
 from lib.constant_choices import (group_type_choice,language_choice)
@@ -42,13 +43,14 @@ class Region(models.Model):
     id = models.CharField(max_length = 50, primary_key = True, editable =  False)
     kanji = models.CharField('Tên Kanji',default='',max_length=50)
     name = models.CharField('Tên hiragana',max_length=50)
+    sequence = models.SmallIntegerField('Thứ tự',default=0,blank=True, null=True)
     nation = models.ForeignKey(Country,verbose_name='Quốc gia',on_delete=models.CASCADE)
     code = models.CharField('Mã',max_length=3,blank=True, null=True)
 
     class Meta:
         verbose_name = 'Master-Vùng'
         verbose_name_plural = 'Master-Vùng'
-        ordering = ('name',)
+        ordering = ('sequence',)
 
     def __str__(self):
         return self.name
@@ -62,7 +64,7 @@ class Province(models.Model):
     id = models.CharField(max_length = 50, primary_key = True, editable = False)
     kanji = models.CharField('Tên Kanji',default='',max_length=50)
     name = models.CharField('Tên hiragana',max_length=50)
-    region = models.ForeignKey(Region,verbose_name='Vùng',on_delete=models.CASCADE)
+    region = models.ForeignKey(Region,verbose_name='Vùng',related_name='region_province',on_delete=models.CASCADE)
     code = models.CharField('Mã',max_length=3,blank=True, null=True)
 
     class Meta:
@@ -89,6 +91,7 @@ class Facility(models.Model):
     region = models.ForeignKey(Region,verbose_name='Vùng',default=None,blank=True,null=True,on_delete=models.CASCADE)
     province = models.ForeignKey(Province,verbose_name='Tỉnh',default=None,blank=True,null=True,on_delete=models.CASCADE)
     address = models.CharField('Địa chỉ',help_text='Địa chỉ',max_length=255)
+    is_active = models.BooleanField('Còn hoạt động',blank=True, null=True,default=True)
     created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now = True)
     created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,default=None,blank=True,null=True,related_name='facility_created_user')
     updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',auto_now = True)
@@ -126,6 +129,7 @@ class Church(models.Model):
     geo_lon = models.FloatField('Kinh độ',help_text='Kinh độ theo bản đồ Google',default=0.0,blank=True,null=True)
     geo_lat = models.FloatField('Vĩ độ',help_text='Vĩ độ theo bản đồ Google',default=0.0,blank=True,null=True)
     geo_hash = models.CharField('geo_hash',max_length=30, default='',blank=True)
+    is_active = models.BooleanField('Còn hoạt động',blank=True, null=True,default=True)
     created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now = True)
     created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,default=None,blank=True,null=True,related_name='church_created_user')
     updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',auto_now = True)
@@ -172,9 +176,10 @@ class Father(models.Model):
     introduction = HTMLField('Giới thiệu',default='',blank=True,null=True)
     facebook = models.CharField('Link facebook',default='',blank=True,null=True,max_length=400)
     address = models.CharField('Địa chỉ hiện tại',default='',blank=True,max_length=300)
-    province = models.ForeignKey(Province,verbose_name='Tỉnh',null=True,default=None,blank=True,on_delete=models.CASCADE)
+    province = models.ForeignKey(Province,verbose_name='Tỉnh',null=True,default=None,blank=True,related_name='father_province',on_delete=models.CASCADE)
     phone_number = models.CharField('Số điện thoại',default='',blank=True, null=True,max_length=12)
     account_confimred = models.BooleanField('Xác minh',blank=True, null=True,default=False)
+    is_active = models.BooleanField('Còn hoạt động',blank=True, null=True,default=True)
     created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now_add = True)
     created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='father_created_user',default=None,blank=True,null=True)
     updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',auto_now = True)
@@ -183,8 +188,7 @@ class Father(models.Model):
     class Meta:
         verbose_name = '10- Quý cha'
         verbose_name_plural = '10- Quý cha'
-        unique_together = ('user','address')
-        ordering = ('created_on',)
+        ordering = ('-created_on',)
 
     def __str__(self):
         return f'{self.user.full_name}'
@@ -272,6 +276,7 @@ class Representative(models.Model):
     province = models.ForeignKey(Province,verbose_name='Tỉnh',default=None,blank=True,on_delete=models.CASCADE)
     phone_number = models.CharField('Số điện thoại',default='',blank=True, null=True,max_length=12)
     account_confimred = models.BooleanField('Xác minh',blank=True, null=True,default=False)
+    is_active = models.BooleanField('Còn hoạt động',blank=True, null=True,default=True)
     created_on = models.DateTimeField('Ngày tạo',blank=True,null=True,auto_now_add = True, editable=False)
     created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='representative_created_user',default=None,blank=True,null=True)
     updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',auto_now = True)
@@ -348,3 +353,16 @@ class ContactUs(models.Model):
         ordering = ['is_replied','-created_on']
         verbose_name = '30-0 Liên lạc hỗ trợ'
         verbose_name_plural = '30-0 Liên lạc hỗ trợ'
+
+class AccessCount(models.Model):
+    page = models.CharField('Trang',max_length=100)
+    date = models.DateField('Ngày',blank=True,null=True,default=date.today)
+    count = models.IntegerField('Lượt truy cập',default=1,blank=True,null=True,)
+
+    def __str__(self):
+        return self.page
+
+    class Meta:
+        ordering = ['-count','-date','page']
+        verbose_name = '88 Lượng truy cập'
+        verbose_name_plural = '88 Lượng truy cập'
