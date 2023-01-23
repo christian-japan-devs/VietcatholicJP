@@ -144,9 +144,9 @@ class GospelAdmin(admin.ModelAdmin):
         obj.save()
 
 class GospelContentAdmin(admin.ModelAdmin):
-    list_display = ('gospel','chapter_title','created_user','created_on','updated_user','updated_on')
-    search_fields = ['chapter_title', 'content','chapter_reference']
-    prepopulated_fields = {'slug': ('chapter_title',)}
+    list_display = ('gospel','title','created_user','created_on','updated_user','updated_on')
+    search_fields = ['title', 'content','chapter_reference']
+    prepopulated_fields = {'slug': ('title',)}
     exclude = ('created_on','created_user', 'updated_user','updated_on',)
     list_per_page = 30
 

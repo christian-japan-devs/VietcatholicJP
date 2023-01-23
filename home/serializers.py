@@ -155,12 +155,12 @@ class GospelShortSerializer(serializers.ModelSerializer):
 class GospelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Gospel
-        fields = ('id', 'title', 'slug','date','audio_link', 'image_url', 'excerpt','number_readed','number_shared')
+        fields = ('id', 'title','title_jp','title_en', 'slug','date','audio_link', 'image_url', 'excerpt','number_readed','number_shared')
 
 class GospelContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = GospelContent
-        fields = ('id', 'chapter_title', 'slug', 'content','chapter_reference')
+        fields = ('id', 'title','title_jp','title_en', 'slug', 'content','content_jp','content_en','chapter_reference')
 
 class GospelReflectionSerializer(serializers.ModelSerializer):
     author = UserDetailSerializer()
