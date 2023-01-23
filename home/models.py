@@ -284,9 +284,9 @@ class Gospel(models.Model):
 class GospelContent(models.Model):
     gospel = models.ForeignKey(Gospel,verbose_name='Lời Chúa',on_delete=models.CASCADE,related_name='content_gospel')
     sequence = models.CharField('Thứ tự',default='0',choices=sequence_choise,max_length=4)
-    chapter_title = models.CharField('Tiêu đề',default='',max_length=300,help_text='Dài không quá 300 ký tự')
-    chapter_title_jp = models.CharField('Tiêu đề tiếng Nhật',null=True, blank=True,default='',max_length=300,help_text='Dài không quá 300 ký tự')
-    chapter_title_en = models.CharField('Tiêu đề tiếng Anh',null=True, blank=True,default='',max_length=300,help_text='Dài không quá 300 ký tự')
+    title = models.CharField('Tiêu đề',default='',max_length=300,help_text='Dài không quá 300 ký tự')
+    title_jp = models.CharField('Tiêu đề tiếng Nhật',null=True, blank=True,default='',max_length=300,help_text='Dài không quá 300 ký tự')
+    title_en = models.CharField('Tiêu đề tiếng Anh',null=True, blank=True,default='',max_length=300,help_text='Dài không quá 300 ký tự')
     slug = models.CharField('Slug',max_length=300,help_text='Vui lòng chỉnh lại phần tự sinh ra cho giống với title, * không dấu')
     chapter_reference = models.CharField('Tác giả',null=True, blank=True,default='',max_length=100)
     chapter_reference_jp = models.CharField('Tác giả tiếng Nhật',null=True, blank=True,default='',max_length=100)
@@ -300,7 +300,7 @@ class GospelContent(models.Model):
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='gospel_content_updated_user',default=None,blank=True,null=True)
 
     def __str__(self):
-        return f'{self.chapter_title}'
+        return f'{self.title}'
 
     class Meta:
         ordering = ['gospel','sequence','-created_on']
