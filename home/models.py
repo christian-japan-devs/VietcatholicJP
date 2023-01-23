@@ -129,10 +129,10 @@ class ManualType(models.Model):
     title_en = models.CharField('Tên loại tiếng Anh',default='',blank=True,null=True,max_length=300,help_text='Dài không quá 300 ký tự')
     slug = models.CharField('Slug',max_length=200)
     is_active = models.BooleanField('Công khai',default=True, blank=True)
-    created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,default=None,blank=True,null=True,related_name='post_type_created_user')
+    created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,default=None,blank=True,null=True,related_name='manual_type_created_user')
     created_on = models.DateTimeField('Created on',blank=True, null=True,auto_now_add = True)
     updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',blank=True, null=True,auto_now = True)
-    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='post_type_updated_user',default=None,blank=True,null=True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='manual_type_updated_user',default=None,blank=True,null=True)
 
     def __str__(self):
         return self.name
