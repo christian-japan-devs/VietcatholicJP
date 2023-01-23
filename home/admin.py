@@ -70,7 +70,7 @@ class PostAdmin(admin.ModelAdmin):
         obj.save()
 
 class PostContentAdmin(admin.ModelAdmin):
-    list_display = ('post','title','title_jp','title_en','created_user','created_on','updated_user','updated_on')
+    list_display = ('post','title','created_user','created_on','updated_user','updated_on')
     list_filter = ('post',)
     search_fields = ['title', 'content']
     prepopulated_fields = {'slug': ('title',)}
