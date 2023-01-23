@@ -70,10 +70,10 @@ class PostAdmin(admin.ModelAdmin):
         obj.save()
 
 class PostContentAdmin(admin.ModelAdmin):
-    list_display = ('post','chapter_title','created_user','created_on','updated_user','updated_on')
+    list_display = ('post','title','title_jp','title_en','created_user','created_on','updated_user','updated_on')
     list_filter = ('post',)
-    search_fields = ['chapter_title', 'content']
-    prepopulated_fields = {'slug': ('chapter_title',)}
+    search_fields = ['title', 'content']
+    prepopulated_fields = {'slug': ('title',)}
     exclude = ('created_on','created_user', 'updated_user','updated_on',)
     list_per_page = 30
 
@@ -245,9 +245,9 @@ class LessonAdmin(admin.ModelAdmin):
         obj.save()
 
 class LessonChapterAdmin(admin.ModelAdmin):
-    list_display = ('lesson','chapter_no','chapter_title','created_user','created_on','updated_user','updated_on')
-    search_fields = ['chapter_title']
-    prepopulated_fields = {'slug': ('chapter_title',)}
+    list_display = ('lesson','chapter_no','title','title_jp','title_en','created_user','created_on','updated_user','updated_on')
+    search_fields = ['title']
+    prepopulated_fields = {'slug': ('title',)}
     exclude = ('created_on','created_user', 'updated_user','updated_on',)
     list_per_page = 50
 
