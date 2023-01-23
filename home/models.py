@@ -123,6 +123,26 @@ class PostContent(models.Model):
         verbose_name = '02-Bài viết-03-nội dung'
         verbose_name_plural = '02-Bài viết-03-nội dung'
 
+class ManualType(models.Model):
+    title = models.CharField('Tên loại',max_length=300,help_text='Dài không quá 300 ký tự')
+    title_jp = models.CharField('Tên loại tiếng Nhật',default='',blank=True,null=True,max_length=300,help_text='Dài không quá 300 ký tự')
+    title_en = models.CharField('Tên loại tiếng Anh',default='',blank=True,null=True,max_length=300,help_text='Dài không quá 300 ký tự')
+    slug = models.CharField('Slug',max_length=200)
+    sequence = models.CharField('Thứ tự',default='0',choices=sequence_choise,max_length=4)
+    is_active = models.BooleanField('Công khai',default=True, blank=True)
+    created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,default=None,blank=True,null=True,related_name='manual_type_created_user')
+    created_on = models.DateTimeField('Created on',blank=True, null=True,auto_now_add = True)
+    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',blank=True, null=True,auto_now = True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='manual_type_updated_user',default=None,blank=True,null=True)
+
+    def __str__(self):
+        return f'{self.title}-{self.title_jp}'
+
+    class Meta:
+        ordering = ['sequence','title']
+        verbose_name = '02-Hướng dẫn-04-phân loại'
+        verbose_name_plural = '02-Hướng dẫn-04-phân loại'
+
 class Aboutus(models.Model):
     type = models.CharField('Phân loại',choices=aboutus_types,default='vcj',max_length=300,help_text='Phân loại chủ đề')
     title = models.CharField('Chủ đề',max_length=300,help_text='Dài không quá 300 ký tự')
