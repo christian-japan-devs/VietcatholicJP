@@ -130,7 +130,7 @@ class PostSerializer(serializers.ModelSerializer):
 class PostContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostContent
-        fields = ('id', 'chapter_title', 'slug', 'image_url', 'content','chapter_summary')
+        fields = ('id', 'title', 'slug', 'image_url', 'content','chapter_summary')
 
 class GospelRandomShortSerializer(serializers.ModelSerializer):
     class Meta:
