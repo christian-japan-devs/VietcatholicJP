@@ -317,7 +317,7 @@ class RegistrationTemp(models.Model):
     ticket = models.ImageField('ticket',default='ticket.png',null=True, blank = True, upload_to='images/tickets')
     present_status = models.CharField('Tình trạng tham dự',max_length=4,choices=event_status_choice,default=ABSENT,null=True,blank=True)
     updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',blank=True, null=True,auto_now = True)
-    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='registration_updated_user',default=None,blank=True,null=True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='registrationtmp_updated_user',default=None,blank=True,null=True)
 
     class Meta:
         ordering = ['full_name','-province','present_status']
