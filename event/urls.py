@@ -8,6 +8,6 @@ urlpatterns = [
         'get': 'getall',
     })),
     path('api/event/youthday/add-ticket', RegistrationListViewSet.as_view({
-        'get': 'create',
+        'post': 'create',
     })),
 ]
