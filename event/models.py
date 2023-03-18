@@ -326,4 +326,4 @@ class RegistrationTemp(models.Model):
         verbose_name_plural = '10-Đăng ký'
 
     def __str__(self):
-        return f'{self.user.full_name}' #: {self.userseat}'
+        return f'{self.full_name}' #: {self.userseat}'
