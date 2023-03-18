@@ -315,7 +315,7 @@ class RegistrationTemp(models.Model):
     go_together = models.CharField('Go toTeamer',max_length=10,default='',null=True,blank=True)
     team_no = models.CharField('Team',max_length=100,default='',null=True,blank=True)
     type = models.CharField('type',max_length=10,default='',null=True,blank=True)
-    ticket = models.ImageField('ticket',default='ticket.png',null=True, blank = True, upload_to='images/tickets')
+    ticket = models.ImageField('ticket',default='images/tickets/ticket.png',null=True, blank = True, upload_to='images/tickets')
     present_status = models.CharField('Tình trạng tham dự',max_length=4,choices=event_status_choice,default=ABSENT,null=True,blank=True)
     updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',blank=True, null=True,auto_now = True)
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='registrationtmp_updated_user',default=None,blank=True,null=True)
