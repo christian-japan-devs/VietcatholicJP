@@ -5,7 +5,7 @@ from users.serializers import UserDetailSerializer
 
 from .models import (Event,EventProgramDetail,EventRuleContent,Registration,
             EventBoard,EventBoardAndMember,EventBoardTask,EventGroup,UserAndEventGroup,EventGroupScoreType,EventGroupScore,
-            EventTransactionAccount,EventTransaction)
+            EventTransactionAccount,EventTransaction,RegistrationTemp)
 
 class EventSerializer(serializers.ModelSerializer):
     created_user = UserDetailSerializer()
@@ -76,3 +76,9 @@ class EventTransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = EventTransaction
         fields = ('id','', '')
+
+
+class RegistrationTempSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RegistrationTemp
+        fields = ('id','status', 'payment_code','ticket_code','email','saint_name','full_name','birth_year','group_name','ticket')

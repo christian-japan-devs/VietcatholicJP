@@ -300,3 +300,29 @@ class EventTransaction(models.Model):
         ordering = ['event','on_board','transaction_amount','transaction_type']
         verbose_name = '8-Giao dịch'
         verbose_name_plural = '8-Giao dịch'
+
+class RegistrationTemp(models.Model):
+    status = models.CharField('Tình trạng thanh toán',max_length=4,default=NOT_PAIED,null=True,blank=True)
+    payment_code = models.CharField('Mã vé',max_length=6,default='',null=True,blank=True)
+    ticket_code = models.CharField('Mã vé',max_length=6,default='',null=True,blank=True)
+    email = models.CharField('email',max_length=30,default='')
+    saint_name = models.CharField('Saint name',max_length=30,default='')
+    full_name = models.CharField('Name',max_length=200,default='')
+    gender = models.CharField('Name',max_length=10,default='',null=True,blank=True)
+    birth_year = models.CharField('Birth Year',max_length=5,default='',null=True,blank=True)
+    group_name = models.CharField('Group name',max_length=100,default='',null=True,blank=True)
+    province = models.CharField('Province',max_length=50,default='',null=True,blank=True)
+    go_together = models.CharField('Go together',max_length=10,default='',null=True,blank=True)
+    type = models.CharField('type',max_length=50,default='',null=True,blank=True)
+    ticket = models.ImageField('ticket',default='ticket.png',null=True, blank = True, upload_to='images/tickets')
+    present_status = models.CharField('Tình trạng tham dự',max_length=4,choices=event_status_choice,default=ABSENT,null=True,blank=True)
+    updated_on = models.DateTimeField('Ngày cập nhật',help_text='Lần cuối cập nhật',blank=True, null=True,auto_now = True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='registration_updated_user',default=None,blank=True,null=True)
+
+    class Meta:
+        ordering = ['full_name','-province','present_status']
+        verbose_name = '10-Đăng ký'
+        verbose_name_plural = '10-Đăng ký'
+
+    def __str__(self):
+        return f'{self.user.full_name}' #: {self.userseat}'
