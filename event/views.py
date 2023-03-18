@@ -34,3 +34,28 @@ class RegistrationListViewSet(viewsets.ViewSet):
             print(sys.exc_info())
             res['message'] = sys.exc_info()
             return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    def create(self, request):  # /api/account/
+        res = {
+            'status': 'error',
+            'communities': {},
+            'message': ''
+        }
+        print("Start add new ticket")
+        try:
+            from .models import RegistrationTemp
+            from .serializers import RegistrationTempFullSerializer
+            serializer = RegistrationTempFullSerializer(data=request.data)
+            #print(serializer.data)
+            if serializer.is_valid():
+                ticket = serializer.save()
+                ticket.save()
+                res = {
+                    'status': 'ok',
+                    'message':''
+                }
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            print(sys.exc_info())
+            res['message'] = sys.exc_info()
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -7,7 +7,7 @@ urlpatterns = [
     path('api/event/youthday/get-ticket', RegistrationListViewSet.as_view({
         'get': 'getall',
     })),
-    path('api/event/youthday/check-in', RegistrationListViewSet.as_view({
-        'get': 'search',
+    path('api/event/youthday/add-ticket', RegistrationListViewSet.as_view({
+        'get': 'create',
     })),
 ]

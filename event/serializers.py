@@ -81,4 +81,9 @@ class EventTransactionSerializer(serializers.ModelSerializer):
 class RegistrationTempSerializer(serializers.ModelSerializer):
     class Meta:
         model = RegistrationTemp
-        fields = ('id','status', 'payment_code','ticket_code','email','saint_name','full_name','birth_year','group_name','ticket')
+        fields = ('id','status', 'payment_code','ticket_code','email','saint_name','full_name','birth_year','group_name','ticket','team_no')
+
+class RegistrationTempFullSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RegistrationTemp
+        fields = ('id','status', 'payment_code','ticket_code','email','saint_name','full_name','gender','birth_year','group_name','province','go_together','team_no','type','present_status')
