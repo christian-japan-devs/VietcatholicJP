@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils import timezone
 from .models import (Event,EventProgramDetail,EventRuleContent,Registration,
             EventBoard,EventBoardAndMember,EventBoardTask,EventGroup,UserAndEventGroup,EventGroupScoreType,EventGroupScore,
-            EventTransactionAccount,EventTransaction)
+            EventTransactionAccount,EventTransaction,RegistrationTemp)
 
 # Register your models here.
 class EventAdmin(admin.ModelAdmin):
@@ -190,6 +190,17 @@ class EventTransactionAdmin(admin.ModelAdmin):
         obj.updated_user = request.user
         obj.save()
 
+class RegistrationTempAdmin(admin.ModelAdmin):
+    list_display = ('email','full_name','gender','birth_year','present_status','status','payment_code','ticket_code')
+    list_filter = ('status','province','group_name','present_status')
+    search_fields = ['full_name']
+    exclude = ('updated_user','status','payment_code')
+    list_per_page = 30
+
+    def save_model(self, request, obj, form, change):
+        obj.updated_on = timezone.now
+        obj.updated_user = request.user
+        obj.save()
 
 admin.site.register(Event,EventAdmin)
 admin.site.register(EventProgramDetail,EventProgramDetailAdmin)
@@ -204,3 +215,4 @@ admin.site.register(EventGroupScoreType,EventGroupScoreTypeAdmin)
 admin.site.register(EventGroupScore,EventGroupScoreAdmin)
 admin.site.register(EventTransactionAccount,EventTransactionAccountAdmin)
 admin.site.register(EventTransaction,EventTransactionAdmin)
+admin.site.register(RegistrationTemp,RegistrationTempAdmin)
