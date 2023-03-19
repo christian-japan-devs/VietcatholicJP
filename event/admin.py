@@ -193,7 +193,7 @@ class EventTransactionAdmin(admin.ModelAdmin):
 class RegistrationTempAdmin(admin.ModelAdmin):
     list_display = ('email','full_name','gender','birth_year','present_status','status','payment_code','ticket_code')
     list_filter = ('status','province','group_name','present_status')
-    search_fields = ['full_name']
+    search_fields = ['full_name','email']
     exclude = ('updated_user','status','payment_code')
     list_per_page = 30
 

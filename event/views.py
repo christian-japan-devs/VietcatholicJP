@@ -8,8 +8,8 @@ from lib.error_messages import *
 # Create your views here.
 
 class RegistrationListViewSet(viewsets.ViewSet):
-    permission_classes = (AllowAny,)
-
+    
+    permission_classes = [IsAuthenticated]
     # /api/community/
     def getall(self, request):
         res = {
@@ -41,7 +41,6 @@ class RegistrationListViewSet(viewsets.ViewSet):
             'communities': {},
             'message': ''
         }
-        print("Start add new ticket")
         try:
             from .models import RegistrationTemp
             from .serializers import RegistrationTempFullSerializer
@@ -54,6 +53,34 @@ class RegistrationListViewSet(viewsets.ViewSet):
                     'status': 'ok',
                     'message':''
                 }
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            print(sys.exc_info())
+            res['message'] = sys.exc_info()
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    def update(self, request):  # /api/account/
+        res = {
+            'status': 'error',
+            'communities': {},
+            'message': ''
+        }
+        try:
+            from .models import RegistrationTemp
+            from .serializers import RegistrationTempFullSerializer
+            payment_code = request.data.get('pcode', '')
+            email = request.data.get('email', '')
+            payment_status = request.data.get('pstatus','')
+            hardcode = request.data.get('hardcode', '')
+            registrationTemp = RegistrationTemp.objects.get(email=email,payment_code=payment_code)
+            if hardcode == 'admintration04292022':
+                if registrationTemp:
+                    registrationTemp.status = payment_status
+                    registrationTemp.save()
+                    res = {
+                        'status': 'ok',
+                        'message':''
+                    }
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
             print(sys.exc_info())
