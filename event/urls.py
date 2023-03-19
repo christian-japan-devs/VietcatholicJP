@@ -10,4 +10,7 @@ urlpatterns = [
     path('api/event/youthday/add-ticket', RegistrationListViewSet.as_view({
         'post': 'create',
     })),
+    path('api/event/youthday/update-ticket', RegistrationListViewSet.as_view({
+        'post': 'update',
+    })),
 ]
