@@ -191,7 +191,7 @@ class EventTransactionAdmin(admin.ModelAdmin):
         obj.save()
 
 class RegistrationTempAdmin(admin.ModelAdmin):
-    list_display = ('email','full_name','gender','birth_year','present_status','status','payment_code','ticket_code')
+    list_display = ('email','full_name','status','payment_code','ticket_code','gender','birth_year','present_status')
     list_filter = ('status','province','group_name','present_status')
     search_fields = ['full_name','email']
     exclude = ('updated_user','status','payment_code')

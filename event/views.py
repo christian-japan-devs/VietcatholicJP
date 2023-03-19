@@ -68,11 +68,11 @@ class RegistrationListViewSet(viewsets.ViewSet):
         try:
             from .models import RegistrationTemp
             from .serializers import RegistrationTempFullSerializer
-            payment_code = request.data.get('pcode', '')
+            ticket_code = request.data.get('tcode', '')
             email = request.data.get('email', '')
             payment_status = request.data.get('pstatus','')
             hardcode = request.data.get('hardcode', '')
-            registrationTemp = RegistrationTemp.objects.get(email=email,payment_code=payment_code)
+            registrationTemp = RegistrationTemp.objects.get(email=email,ticket_code=ticket_code)
             if hardcode == 'admintration04292022':
                 if registrationTemp:
                     registrationTemp.status = payment_status
