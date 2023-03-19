@@ -1,16 +1,16 @@
 from django.urls import path
 from django.contrib.auth import views
-from .views import (RegistrationListViewSet
+from .views import (RegistrationListViewSet,RegistrationAdminViewSet
 )
 
 urlpatterns = [
     path('api/event/youthday/get-ticket', RegistrationListViewSet.as_view({
         'get': 'getall',
     })),
-    path('api/event/youthday/add-ticket', RegistrationListViewSet.as_view({
+    path('api/event/youthday/add-ticket', RegistrationAdminViewSet.as_view({
         'post': 'create',
     })),
-    path('api/event/youthday/update-ticket', RegistrationListViewSet.as_view({
+    path('api/event/youthday/update-ticket', RegistrationAdminViewSet.as_view({
         'post': 'update',
     })),
 ]
