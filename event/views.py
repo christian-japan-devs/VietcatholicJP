@@ -34,7 +34,7 @@ class RegistrationListViewSet(viewsets.ViewSet):
             print(sys.exc_info())
             res['message'] = sys.exc_info()
             return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+class RegistrationAdminViewSet(viewsets.ViewSet):    
     permission_classes = [IsAuthenticated]
     def create(self, request):  # /api/account/
         res = {
@@ -60,7 +60,6 @@ class RegistrationListViewSet(viewsets.ViewSet):
             res['message'] = sys.exc_info()
             return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    permission_classes = [IsAuthenticated]
     def update(self, request):  # /api/account/
         res = {
             'status': 'error',
