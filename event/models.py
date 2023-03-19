@@ -303,9 +303,9 @@ class EventTransaction(models.Model):
 
 class RegistrationTemp(models.Model):
     status = models.CharField('Tình trạng thanh toán',max_length=4,default=NOT_PAIED,null=True,blank=True)
-    payment_code = models.CharField('Mã vé',max_length=6,default='',null=True,blank=True)
-    ticket_code = models.CharField('Mã vé',max_length=6,default='',null=True,blank=True)
-    email = models.CharField('email',max_length=30,default='')
+    payment_code = models.CharField('Mã vé',max_length=10,default='',null=True,blank=True)
+    ticket_code = models.CharField('Mã vé',max_length=10,default='',null=True,blank=True)
+    email = models.CharField('email',max_length=100,default='')
     saint_name = models.CharField('Saint name',max_length=30,default='')
     full_name = models.CharField('Name',max_length=200,default='')
     gender = models.CharField('Name',max_length=10,default='',null=True,blank=True)
