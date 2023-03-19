@@ -9,7 +9,7 @@ from lib.error_messages import *
 
 class RegistrationListViewSet(viewsets.ViewSet):
     
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     # /api/community/
     def getall(self, request):
         res = {
@@ -35,6 +35,7 @@ class RegistrationListViewSet(viewsets.ViewSet):
             res['message'] = sys.exc_info()
             return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
+    permission_classes = [IsAuthenticated]
     def create(self, request):  # /api/account/
         res = {
             'status': 'error',
@@ -59,6 +60,7 @@ class RegistrationListViewSet(viewsets.ViewSet):
             res['message'] = sys.exc_info()
             return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
+    permission_classes = [IsAuthenticated]
     def update(self, request):  # /api/account/
         res = {
             'status': 'error',
