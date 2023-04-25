@@ -5,6 +5,7 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from lib.error_messages import *
+from kanri.controller import updateAccessCount
 # Create your views here.
 
 class RegistrationListViewSet(viewsets.ViewSet):
@@ -30,6 +31,7 @@ class RegistrationListViewSet(viewsets.ViewSet):
                     serializer = RegistrationTempSerializer(tickets, many=True)
                     res['tickets'] = serializer.data
                     res['status'] = 'ok'
+                    updateAccessCount("Youth QR code")
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
             print(sys.exc_info())
