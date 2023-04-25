@@ -24,7 +24,7 @@ class RegistrationListViewSet(viewsets.ViewSet):
             payment_code = request.GET.get('pcode','none')
             get_email = request.GET.get('email','email')
             if payment_code != 'none':
-                tickets = RegistrationTemp.objects.filter(payment_code=payment_code,email=get_email).order_by('full_name')
+                tickets = RegistrationTemp.objects.filter(status='OK',payment_code=payment_code,email=get_email).order_by('full_name')
                 if(tickets):
                     serializer = RegistrationTempSerializer(tickets, many=True)
                     res['tickets'] = serializer.data
