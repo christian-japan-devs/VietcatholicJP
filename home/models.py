@@ -56,7 +56,7 @@ class Letter(models.Model):
         super(Letter, self).save(*args, **kwargs)
 
 class PostType(models.Model):
-    name = models.CharField('Tên',max_length=200,help_text='Dài không quá 200 ký tự')
+    title = models.CharField('Tên',max_length=200,help_text='Dài không quá 200 ký tự')
     slug = models.CharField('Slug',max_length=200)
     is_active = models.BooleanField('Công khai',default=True, blank=True)
     created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,default=None,blank=True,null=True,related_name='post_type_created_user')
@@ -65,10 +65,10 @@ class PostType(models.Model):
     updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='post_type_updated_user',default=None,blank=True,null=True)
 
     def __str__(self):
-        return self.name
+        return self.title
 
     class Meta:
-        ordering = ['name']
+        ordering = ['title']
         verbose_name = '02-Bài viết-01-phân loại'
         verbose_name_plural = '02-Bài viết-01-phân loại'
 
@@ -125,6 +125,12 @@ class PostContent(models.Model):
     
     def __str__(self):
         return self.title
+    
+    def save(self, *args, **kwargs):
+        if not self.id:
+            if self.image_url:
+                self.image_url = compressImage(self.image_url)
+        super(PostContent, self).save(*args, **kwargs)
 
 class ManualType(models.Model):
     title = models.CharField('Tên loại',max_length=300,help_text='Dài không quá 300 ký tự')
@@ -145,6 +151,65 @@ class ManualType(models.Model):
         ordering = ['sequence','title']
         verbose_name = '02-Hướng dẫn-04-phân loại'
         verbose_name_plural = '02-Hướng dẫn-04-phân loại'
+
+class Manual(models.Model):
+    title = models.CharField('Chủ đề',max_length=300,help_text='Dài không quá 300 ký tự')
+    slug = models.CharField('Slug',max_length=300,help_text='Chỉnh lại phần tự sinh ra cho giống với title, * không dấu')
+    language = models.CharField('Ngôn ngữ',max_length=50,choices=language_choice,default='vi')
+    image_url = models.ImageField('Hình ảnh',null=True, blank=True, upload_to='web_images/manual')
+    excerpt = models.TextField('Tóm tắt',help_text='Không quá 500 ký tự',max_length=500)
+    post_type = models.ForeignKey(PostType,verbose_name='Loại',on_delete=models.CASCADE)
+    audio_link = models.CharField('Audio Link',null=True, blank=True,default='',max_length=400)
+    is_active = models.BooleanField('Công khai',default=True, blank=True)
+    number_readed = models.SmallIntegerField('Số lượt đọc',default=0,blank=True,null=True,help_text='Số lượt đọc')
+    number_shared = models.SmallIntegerField('Số lượt chia sẻ',default=0,blank=True,null=True,help_text='Số lượt chia sẻ')
+    author = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='manual_author', default=None, blank=True, null=True)
+    reference_link = models.CharField('Nguồn tham khảo Link',null=True, blank=True,default='',max_length=5000,help_text='Nếu có nhiều nguồn vui lòng thêm dấu ";" để phân cách các nguồn tham khảo.')
+    created_on = models.DateTimeField('Created',blank=True, null=True,auto_now_add = True)
+    created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='manual_created_user',default=None,blank=True,null=True)
+    updated_on = models.DateTimeField('Updated',blank=True, null=True,auto_now = True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='manual_updated_user',default=None,blank=True,null=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['-created_on']
+        verbose_name = '02-Hướng dẫn-05-chủ đề'
+        verbose_name_plural = '02-Hướng dẫn-05-chủ đề'
+    
+    def save(self, *args, **kwargs):
+        if not self.id:
+            if self.image_url:
+                self.image_url = compressImage(self.image_url)
+        super(Manual, self).save(*args, **kwargs)
+
+class ManualStep(models.Model):
+    manual = models.ForeignKey(Manual,verbose_name='Bài',on_delete=models.CASCADE)
+    title = models.CharField('Tên mục',max_length=300,help_text='Dài không quá 300 ký tự')
+    slug = models.CharField('Slug',max_length=200,help_text='Chỉnh lại phần tự sinh ra cho giống với title, * không dấu')
+    sequence = models.CharField('Thứ tự',default='0',choices=sequence_choise,max_length=4)
+    image_url = models.ImageField('Hình ảnh',null=True, blank=True, upload_to='web_images/manual')
+    content = HTMLField('Nội dung')
+    author = models.ForeignKey(CustomUserModel, on_delete=models.CASCADE,related_name='manual_content_author', default=None, blank=True, null=True)
+    created_on = models.DateTimeField('Created',blank=True, null=True,auto_now_add = True)
+    created_user = models.ForeignKey(CustomUserModel,verbose_name='Người tạo',on_delete=models.CASCADE,related_name='manual_content_created_user',default=None,blank=True,null=True)
+    updated_on = models.DateTimeField('Updated',blank=True, null=True,auto_now = True)
+    updated_user = models.ForeignKey(CustomUserModel,verbose_name='Người cập nhật',on_delete=models.CASCADE,related_name='manual_content_updated_user',default=None,blank=True,null=True)
+
+    class Meta:
+        ordering = ['manual','sequence','-created_on']
+        verbose_name = '02-Hướng dẫn-06-nội dung'
+        verbose_name_plural = '02-Hướng dẫn-06-nội dung'
+    
+    def __str__(self):
+        return self.title
+    
+    def save(self, *args, **kwargs):
+        if not self.id:
+            if self.image_url:
+                self.image_url = compressImage(self.image_url)
+        super(ManualStep, self).save(*args, **kwargs)
 
 class Aboutus(models.Model):
     type = models.CharField('Phân loại',choices=aboutus_types,default='vcj',max_length=300,help_text='Phân loại chủ đề')

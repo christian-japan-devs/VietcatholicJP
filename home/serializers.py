@@ -3,7 +3,7 @@ from rest_framework import serializers
 from users.models import CustomUserModel
 from users.serializers import UserDetailSerializer
 from .models import (YoutubeVideo,Aboutus, Letter, MassDateSchedule, MassTimeSchedule, 
-                    Announcement, PostType, Post, PostContent, GospelRandom,
+                    Announcement, PostType, Post, PostContent, GospelRandom, ManualType, Manual, ManualStep,
                     Gospel,GospelContent,GospelReflection,CommuintyPrayer, PrayerType,Prayer,CeremonyType,Ceremony)
 from kanri.models import Father, Province, Church
 from kanri.serializers import FatherContactSerializer, ChurchContactSerializer,ProvinceSerializer
@@ -109,7 +109,6 @@ class AboutusContentSerializer(serializers.ModelSerializer):
         model = Aboutus
         fields = ('id', 'title','title_jp', 'slug', 'image_url','excerpt','content', 'author','created_on','number_shared','number_readed')
 
-
 class YoutubeVideoSerializer(serializers.ModelSerializer):
     created_user = UserDetailSerializer()
     class Meta:
@@ -119,7 +118,23 @@ class YoutubeVideoSerializer(serializers.ModelSerializer):
 class PostSlugSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostType
-        fields = ('id','name', 'slug')
+        fields = ('id','title', 'slug')
+
+class PostSerializer(serializers.ModelSerializer):
+    author = UserDetailSerializer()
+    class Meta:
+        model = Post
+        fields = ('id', 'title', 'slug','audio_link', 'image_url', 'excerpt', 'author','created_on','number_readed','number_shared')
+
+class PostContentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostContent
+        fields = ('id', 'title', 'slug', 'image_url', 'content','chapter_summary')
+
+class ManualSlugSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ManualType
+        fields = ('id','title', 'slug')
 
 class PostSerializer(serializers.ModelSerializer):
     author = UserDetailSerializer()

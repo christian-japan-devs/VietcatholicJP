@@ -37,6 +37,7 @@ class RegistrationListViewSet(viewsets.ViewSet):
             print(sys.exc_info())
             res['message'] = sys.exc_info()
             return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 class RegistrationAdminViewSet(viewsets.ViewSet):    
     permission_classes = [IsAuthenticated]
     def create(self, request):  # /api/account/
@@ -84,6 +85,39 @@ class RegistrationAdminViewSet(viewsets.ViewSet):
                     res = {
                         'status': 'ok',
                         'message':''
+                    }
+            return Response(res, status=status.HTTP_202_ACCEPTED)
+        except:
+            print(sys.exc_info())
+            res['message'] = sys.exc_info()
+            return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    def checkin(self, request):  # /api/registration/checkin
+        res = {
+            'status': 'error',
+            'communities': {},
+            'message': ''
+        }
+        try:
+            from .models import RegistrationTemp
+            from .serializers import RegistrationTempFullSerializer
+            ticket_code = request.data.get('tcode', '')
+            email = request.data.get('email', '')
+            present_status = request.data.get('pstatus','')
+            hardcode = request.data.get('hardcode', '')
+            registrationTemp = RegistrationTemp.objects.get(email=email,ticket_code=ticket_code)
+            if hardcode == 'admintration04292022':
+                if registrationTemp.present_status == 'P':
+                    rest = {
+                        'status': 'presented',
+                        'message': 'Mã này đã được duyệt!'
+                    }
+                elif registrationTemp.present_status == 'P':
+                    registrationTemp.present_status = present_status
+                    registrationTemp.save()
+                    res = {
+                        'status': 'ok',
+                        'message':'Check mã thành công!'
                     }
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:

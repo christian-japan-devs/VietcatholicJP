@@ -3,6 +3,7 @@ from django.utils import timezone
 from django import forms
 # Register your models here.
 from .models import (YoutubeVideo,Letter, PostType,Post,PostContent,
+                    ManualType, Manual, ManualStep,
                     Aboutus,Announcement,GospelRandom,Gospel,GospelContent,
                     GospelReflection, MassDateSchedule, MassTimeSchedule, ConfessSchedule,
                     LessonType,Lesson,LessonQA,LessonChapter,LessonChapterQA,PrayerType,
@@ -39,11 +40,56 @@ class LetterAdmin(admin.ModelAdmin):
         obj.updated_user = request.user
         obj.save()
 
-class PostTypeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'is_active','created_user','created_on','updated_user','updated_on')
+class ManualTypeAdmin(admin.ModelAdmin):
+    list_display = ('title', 'is_active','created_user','created_on','updated_user','updated_on')
     list_filter = ('is_active',)
-    search_fields = ['name']
-    prepopulated_fields = {'slug': ('name',)}
+    search_fields = ['title']
+    prepopulated_fields = {'slug': ('title',)}
+    exclude = ('created_on','created_user', 'updated_user','updated_on',)
+    list_per_page = 50
+
+    def save_model(self, request, obj, form, change):
+        if getattr(obj, 'created_user', None) is None:
+            obj.created_user = request.user
+        obj.updated_on = timezone.now
+        obj.updated_user = request.user
+        obj.save()
+
+class ManualAdmin(admin.ModelAdmin):
+    list_display = ('title','number_readed','number_shared','post_type','is_active','created_user','created_on','updated_user','updated_on')
+    list_filter = ('is_active','created_user',)
+    search_fields = ['title', 'content']
+    prepopulated_fields = {'slug': ('title',)}
+    exclude = ('created_on','created_user', 'updated_user','updated_on','number_readed','number_shared',)
+    list_per_page = 50
+
+    def save_model(self, request, obj, form, change):
+        if getattr(obj, 'created_user', None) is None:
+            obj.created_user = request.user
+        obj.updated_on = timezone.now
+        obj.updated_user = request.user
+        obj.save()
+
+class ManualStepAdmin(admin.ModelAdmin):
+    list_display = ('manual','title','created_user','created_on','updated_user','updated_on')
+    list_filter = ('manual',)
+    search_fields = ['title', 'content']
+    prepopulated_fields = {'slug': ('title',)}
+    exclude = ('created_on','created_user', 'updated_user','updated_on',)
+    list_per_page = 30
+
+    def save_model(self, request, obj, form, change):
+        if getattr(obj, 'created_user', None) is None:
+            obj.created_user = request.user
+        obj.updated_on = timezone.now
+        obj.updated_user = request.user
+        obj.save()
+
+class PostTypeAdmin(admin.ModelAdmin):
+    list_display = ('title', 'is_active','created_user','created_on','updated_user','updated_on')
+    list_filter = ('is_active',)
+    search_fields = ['title']
+    prepopulated_fields = {'slug': ('title',)}
     exclude = ('created_on','created_user', 'updated_user','updated_on',)
     list_per_page = 50
 
@@ -365,6 +411,9 @@ admin.site.register(Letter,LetterAdmin)
 admin.site.register(PostType,PostTypeAdmin)
 admin.site.register(Post,PostAdmin)
 admin.site.register(PostContent,PostContentAdmin)
+admin.site.register(ManualType,ManualTypeAdmin)
+admin.site.register(Manual,ManualAdmin)
+admin.site.register(ManualStep,ManualStepAdmin)
 admin.site.register(Aboutus,AboutusAdmin)
 admin.site.register(Announcement,AnnouncementAdmin)
 admin.site.register(GospelRandom,GospelRandomAdmin)
