@@ -13,4 +13,7 @@ urlpatterns = [
     path('api/event/youthday/update-ticket', RegistrationAdminViewSet.as_view({
         'post': 'update',
     })),
+    path('api/event/youthday/checkin-ticket', RegistrationAdminViewSet.as_view({
+        'post': 'checkin',
+    })),
 ]
