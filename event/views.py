@@ -106,13 +106,13 @@ class RegistrationAdminViewSet(viewsets.ViewSet):
             hardcode = request.data.get('hardcode', '')
             registrationTemp = RegistrationTemp.objects.get(email=email,ticket_code=ticket_code)
             if hardcode == 'admintration04292022' and type == 'checkin':
-                if registrationTemp.present_status == 'P':
+                if registrationTemp.present_status == 'PS':
                     rest = {
                         'status': 'presented',
                         'message': 'Mã này đã được duyệt!'
                     }
                 elif registrationTemp.present_status == 'AB':
-                    registrationTemp.present_status = present_status
+                    registrationTemp.present_status = 'PS'
                     registrationTemp.save()
                     res = {
                         'status': 'ok',
@@ -126,13 +126,13 @@ class RegistrationAdminViewSet(viewsets.ViewSet):
                     
             elif hardcode == 'admintration04292022' and type == 'inout':
                 if registrationTemp.present_status == 'PS':
-                    registrationTemp.present_status = 'OUT'
+                    registrationTemp.present_status = 'GO'
                     registrationTemp.save()
                     res = {
                         'status': 'ok',
                         'message':'Check thành công, xin mời ra.'
                     }
-                elif registrationTemp.present_status == 'OUT':
+                elif registrationTemp.present_status == 'GO':
                     registrationTemp.present_status = 'PS'
                     registrationTemp.save()
                     res = {
