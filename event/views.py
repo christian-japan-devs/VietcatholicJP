@@ -95,30 +95,55 @@ class RegistrationAdminViewSet(viewsets.ViewSet):
     def checkin(self, request):  # /api/registration/checkin
         res = {
             'status': 'error',
-            'communities': {},
             'message': ''
         }
         try:
             from .models import RegistrationTemp
-            from .serializers import RegistrationTempFullSerializer
             ticket_code = request.data.get('tcode', '')
             email = request.data.get('email', '')
+            type = request.data.get('type','checkin')
             present_status = request.data.get('pstatus','')
             hardcode = request.data.get('hardcode', '')
             registrationTemp = RegistrationTemp.objects.get(email=email,ticket_code=ticket_code)
-            if hardcode == 'admintration04292022':
+            if hardcode == 'admintration04292022' and type == 'checkin':
                 if registrationTemp.present_status == 'P':
                     rest = {
                         'status': 'presented',
                         'message': 'Mã này đã được duyệt!'
                     }
-                elif registrationTemp.present_status == 'P':
+                elif registrationTemp.present_status == 'AB':
                     registrationTemp.present_status = present_status
                     registrationTemp.save()
                     res = {
                         'status': 'ok',
                         'message':'Check mã thành công!'
                     }
+                else:
+                    res = {
+                        'status': 'error',
+                        'message':'Bạn không thể duyệt ra vào.'
+                    }
+                    
+            elif hardcode == 'admintration04292022' and type == 'inout':
+                if registrationTemp.present_status == 'PS':
+                    registrationTemp.present_status = 'OUT'
+                    registrationTemp.save()
+                    res = {
+                        'status': 'ok',
+                        'message':'Check thành công, xin mời ra.'
+                    }
+                elif registrationTemp.present_status == 'OUT':
+                    registrationTemp.present_status = 'PS'
+                    registrationTemp.save()
+                    res = {
+                        'status': 'ok',
+                        'message':'Check thành công, xin mời vào!'
+                    }
+                else:
+                   res = {
+                        'status': 'error',
+                        'message':'Bạn không check mã ra vào.'
+                    } 
             return Response(res, status=status.HTTP_202_ACCEPTED)
         except:
             print(sys.exc_info())
