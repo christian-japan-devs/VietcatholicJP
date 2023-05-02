@@ -1,7 +1,7 @@
 from django.utils.translation import gettext_lazy as _
 from lib.constants import (REGISTRED,NOT_PAIED,NOT_CONFIRM,ABSENT,PRESENTED,
     MEMBER,LEADER,VICE_LEADER,PLUS,MINUS,INCOME,OUTCOME,NOT_YET
-    ,DOING,FINISHED,DELAY,CANCEL)
+    ,DOING,FINISHED,DELAY,CANCEL,GETIN, GETOUT)
 
 # Booking status
 status_choice = (
@@ -62,6 +62,7 @@ event_status_choice = (
     (NOT_CONFIRM,'Chưa xác nhận'),
     (ABSENT,'Vắng mặt'),
     (PRESENTED,'Đã tham dự'),
+    (GETOUT,'Ra ngoài')
 )
 
 

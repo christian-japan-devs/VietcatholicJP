@@ -13,6 +13,8 @@ NOT_PAIED = 'NP'
 NOT_CONFIRM = 'NC'
 ABSENT = 'AB'
 PRESENTED = 'PS'
+GETIN = 'GI'
+GETOUT = 'GO'
 
 MEMBER = 'mb'
 LEADER = 'le'
