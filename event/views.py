@@ -39,8 +39,8 @@ class RegistrationListViewSet(viewsets.ViewSet):
             return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class RegistrationAdminViewSet(viewsets.ViewSet):    
-    #permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    #permission_classes = [AllowAny]
     def create(self, request):  # /api/account/
         res = {
             'status': 'error',
