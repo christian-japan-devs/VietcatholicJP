@@ -100,7 +100,7 @@ class RegistrationAdminViewSet(viewsets.ViewSet):
         }
         try:
             from .models import RegistrationTemp
-            ticket_code = request.GET.get('tcode', '')
+            ticket_code = request.GET.get('code', '')
             email = request.GET.get('email', '')
             type = request.GET.get('type','checkin')
             present_status = request.GET.get('pstatus','')
