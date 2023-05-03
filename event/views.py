@@ -39,8 +39,8 @@ class RegistrationListViewSet(viewsets.ViewSet):
             return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class RegistrationAdminViewSet(viewsets.ViewSet):    
-    #permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    #permission_classes = [AllowAny]
     def create(self, request):  # /api/account/
         res = {
             'status': 'error',
@@ -108,7 +108,7 @@ class RegistrationAdminViewSet(viewsets.ViewSet):
             registrationTemp = RegistrationTemp.objects.get(email=email,ticket_code=ticket_code)
             if hardcode == 'admintration04292022' and type == 'checkin':
                 if registrationTemp.present_status == 'PS':
-                    rest = {
+                    res = {
                         'status': 'presented',
                         'message': 'Mã này đã được duyệt!'
                     }
