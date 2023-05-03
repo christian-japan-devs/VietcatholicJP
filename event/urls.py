@@ -14,6 +14,6 @@ urlpatterns = [
         'post': 'update',
     })),
     path('api/event/youthday/checkin-ticket', RegistrationAdminViewSet.as_view({
-        'post': 'checkin',
+        'get': 'checkin',
     })),
 ]
