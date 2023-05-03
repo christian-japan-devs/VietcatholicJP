@@ -39,7 +39,7 @@ class RegistrationListViewSet(viewsets.ViewSet):
             return Response(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class RegistrationAdminViewSet(viewsets.ViewSet):    
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
     def create(self, request):  # /api/account/
         res = {
             'status': 'error',
@@ -73,9 +73,9 @@ class RegistrationAdminViewSet(viewsets.ViewSet):
         try:
             from .models import RegistrationTemp
             from .serializers import RegistrationTempFullSerializer
-            ticket_code = request.data.get('tcode', '')
-            email = request.data.get('email', '')
-            payment_status = request.data.get('pstatus','')
+            ticket_code = request.GET.get('code', '')
+            email = request.GET.get('email', '')
+            payment_status = request.GET.get('pstatus','')
             hardcode = request.data.get('hardcode', '')
             registrationTemp = RegistrationTemp.objects.get(email=email,ticket_code=ticket_code)
             if hardcode == 'admintration04292022':
