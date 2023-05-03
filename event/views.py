@@ -108,7 +108,7 @@ class RegistrationAdminViewSet(viewsets.ViewSet):
             registrationTemp = RegistrationTemp.objects.get(email=email,ticket_code=ticket_code)
             if hardcode == 'admintration04292022' and type == 'checkin':
                 if registrationTemp.present_status == 'PS':
-                    rest = {
+                    res = {
                         'status': 'presented',
                         'message': 'Mã này đã được duyệt!'
                     }
