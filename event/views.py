@@ -40,6 +40,7 @@ class RegistrationListViewSet(viewsets.ViewSet):
 
 class RegistrationAdminViewSet(viewsets.ViewSet):    
     #permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     def create(self, request):  # /api/account/
         res = {
             'status': 'error',
