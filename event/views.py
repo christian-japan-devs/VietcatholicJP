@@ -21,9 +21,9 @@ class RegistrationListViewSet(viewsets.ViewSet):
         try:
             from .models import RegistrationTemp
             from .serializers import RegistrationTempSerializer
-            get_code = request.GET.get('code','none')
-            payment_code = request.GET.get('pcode','none')
-            get_email = request.GET.get('email','email')
+            get_code = request.data.get('code','none')
+            payment_code = request.data.get('pcode','none')
+            get_email = request.data.get('email','email')
             if payment_code != 'none':
                 ticket = RegistrationTemp.objects.filter(status='OK',payment_code=payment_code,email=get_email).order_by('full_name')
                 if(ticket):
@@ -99,11 +99,11 @@ class RegistrationAdminViewSet(viewsets.ViewSet):
         }
         try:
             from .models import RegistrationTemp
-            ticket_code = request.data.get('tcode', '')
-            email = request.data.get('email', '')
-            type = request.data.get('type','checkin')
-            present_status = request.data.get('pstatus','')
-            hardcode = request.data.get('hardcode', '')
+            ticket_code = request.GET.get('tcode', '')
+            email = request.GET.get('email', '')
+            type = request.GET.get('type','checkin')
+            present_status = request.GET.get('pstatus','')
+            hardcode = request.GET.get('hardcode', '')
             registrationTemp = RegistrationTemp.objects.get(email=email,ticket_code=ticket_code)
             if hardcode == 'admintration04292022' and type == 'checkin':
                 if registrationTemp.present_status == 'PS':
