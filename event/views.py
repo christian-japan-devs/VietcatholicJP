@@ -21,9 +21,9 @@ class RegistrationListViewSet(viewsets.ViewSet):
         try:
             from .models import RegistrationTemp
             from .serializers import RegistrationTempSerializer
-            get_code = request.data.get('code','none')
-            payment_code = request.data.get('pcode','none')
-            get_email = request.data.get('email','email')
+            get_code = request.GET.get('code','none')
+            payment_code = request.GET.get('pcode','none')
+            get_email = request.GET.get('email','email')
             if payment_code != 'none':
                 ticket = RegistrationTemp.objects.filter(status='OK',payment_code=payment_code,email=get_email).order_by('full_name')
                 if(ticket):
